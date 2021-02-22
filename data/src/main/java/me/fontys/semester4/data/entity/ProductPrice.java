@@ -1,28 +1,30 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Table(name = "product_price")
 @Entity
 public class ProductPrice implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "productid")
-    private Long productid;
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "priceid", nullable = false)
     private Long priceid;
 
+    @ManyToOne
+    @JoinColumn(name = "productid")
+    private Product product;
+
     @Column(name = "price")
-    private String price;
+    private BigDecimal price;
 
     @Column(name = "fromdate")
     private Date fromdate;
@@ -31,19 +33,19 @@ public class ProductPrice implements Serializable {
 
     }
 
-    public ProductPrice(Long productid, Long priceid, String price, Date fromdate) {
-        this.productid = productid;
+    public ProductPrice(Long priceid, Product product, BigDecimal price, Date fromdate) {
         this.priceid = priceid;
-        this.price = price;
+        this.product = product;
+        this.setPrice(price);
         this.fromdate = fromdate;
     }
 
-    public void setProductid(Long productid) {
-        this.productid = productid;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
-    public Long getProductid() {
-        return productid;
+    public Product getProduct() {
+        return product;
     }
 
     public void setPriceid(Long priceid) {
@@ -54,11 +56,11 @@ public class ProductPrice implements Serializable {
         return priceid;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
@@ -71,12 +73,28 @@ public class ProductPrice implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductPrice that = (ProductPrice) o;
+        return product.equals(that.product) && price.equals(that.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product, price);
+    }
+
+    @Override
     public String toString() {
+        String idStr = (priceid != null) ? priceid.toString() : "null";
+        String productidStr = (product != null) ? product.getName() : "null";
+
         return "ProductPrice{" +
-                "productid=" + productid + '\'' +
-                "priceid=" + priceid + '\'' +
-                "price=" + price + '\'' +
-                "fromdate=" + fromdate + '\'' +
+                "priceid=" + idStr +
+                ", productid=" + productidStr +
+                ", price='" + price + '\'' +
+                ", fromdate=" + fromdate +
                 '}';
     }
 }

@@ -1,49 +1,43 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "ingredient")
 public class Ingredient implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ingredientid", nullable = false)
     private Long ingredientid;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "addprice")
-    private String addprice;
+    private BigDecimal addprice;
 
-    @Column(name = "spicy")
-    private String spicy;
-
-    @Column(name = "vegetarian")
-    private String vegetarian;
-
-    @Column(name = "deliveryfee")
-    private String deliveryfee;
+    @ManyToMany(mappedBy = "ingredients")
+    private Set<Product> products;
 
     protected Ingredient() {
-
+        this(null, null, null);
     }
 
-    public Ingredient(Long ingredientid, String name, String addprice, String spicy, String vegetarian,
-                      String deliveryfee) {
+    public Ingredient(Long ingredientid, String name, BigDecimal addprice) {
         this.ingredientid = ingredientid;
         this.name = name;
-        this.addprice = addprice;
-        this.spicy = spicy;
-        this.vegetarian = vegetarian;
-        this.deliveryfee = deliveryfee;
+        if (addprice != null) setAddprice(addprice);
+        products = new HashSet<>();
     }
 
     public void setIngredientid(Long ingredientid) {
@@ -62,47 +56,41 @@ public class Ingredient implements Serializable {
         return name;
     }
 
-    public void setAddprice(String addprice) {
-        this.addprice = addprice;
+    public void setAddprice(BigDecimal addprice) {
+        this.addprice = addprice.toString();
     }
 
-    public String getAddprice() {
-        return addprice;
+    public BigDecimal getAddprice() {
+        if (addprice != null) return new BigDecimal(addprice);
+        return null;
     }
 
-    public void setSpicy(String spicy) {
-        this.spicy = spicy;
+    public Set<Product> getProducts() {
+        return products;
     }
 
-    public String getSpicy() {
-        return spicy;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return name.equals(that.name);
     }
 
-    public void setVegetarian(String vegetarian) {
-        this.vegetarian = vegetarian;
-    }
-
-    public String getVegetarian() {
-        return vegetarian;
-    }
-
-    public void setDeliveryfee(String deliveryfee) {
-        this.deliveryfee = deliveryfee;
-    }
-
-    public String getDeliveryfee() {
-        return deliveryfee;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override
     public String toString() {
+        String idStr = (this.ingredientid != null) ? this.ingredientid.toString() : "null";
+        String addPriceStr = (this.addprice != null) ? this.addprice : "null";
+
         return "Ingredient{" +
-                "ingredientid=" + ingredientid + '\'' +
+                "ingredientid=" + idStr + '\'' +
                 "name=" + name + '\'' +
-                "addprice=" + addprice + '\'' +
-                "spicy=" + spicy + '\'' +
-                "vegetarian=" + vegetarian + '\'' +
-                "deliveryfee=" + deliveryfee + '\'' +
-                '}';
+                "addprice=" + addPriceStr + '\'' +
+                "}";
     }
 }
