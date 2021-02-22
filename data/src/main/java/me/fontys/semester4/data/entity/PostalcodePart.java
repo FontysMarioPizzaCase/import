@@ -90,5 +90,4 @@ public class PostalcodePart implements Serializable {
                 "even=" + even + '\'' +
                 '}';
     }
-
 }

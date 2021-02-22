@@ -1,5 +1,7 @@
 package me.fontys.semester4.dominos;
 
+import me.fontys.semester4.dominos.configuration.data.catalog.ExtraIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.PizzaIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import me.fontys.semester4.interfaces.Importer;
@@ -28,12 +30,19 @@ public class DominosImport implements CommandLineRunner {
 
     private final OrderImporter orderImporter;
     private final StoreImporter storeImporter;
+    private final PizzaIngredientsImporter pizzaIngredientsImporter;
+    private final ExtraIngredientsImporter extraIngredientsImporter;
     private final Importer pcImporter;
 
     @Autowired
-    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter, PCImporter pcImporter) {
+    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
+                         PizzaIngredientsImporter pizzaIngredientsImporter,
+                         ExtraIngredientsImporter extraIngredientsImporter,
+                         PCImporter pcImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
+        this.pizzaIngredientsImporter = pizzaIngredientsImporter;
+        this.extraIngredientsImporter = extraIngredientsImporter;
         this.pcImporter = pcImporter;
     }
 
@@ -53,6 +62,12 @@ public class DominosImport implements CommandLineRunner {
         // Do the postalcode import
         pcImporter.doImport();
         pcImporter.report();
+
+        // Do the catalog imports
+        this.pizzaIngredientsImporter.doImport();
+        this.pizzaIngredientsImporter.report();
+        this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));
