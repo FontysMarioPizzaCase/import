@@ -2,6 +2,8 @@ package me.fontys.semester4.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import java.util.Objects;
@@ -10,6 +12,7 @@ import java.util.Objects;
 public class Store {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "storeid")
     private final int storeId;
 
@@ -21,6 +24,10 @@ public class Store {
 
     protected Store() {
         this(0, null, null);
+    }
+
+    public Store(String name, String street) {
+        this(0, name, street);
     }
 
     public Store(int storeId, String name, String street) {
