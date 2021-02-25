@@ -10,7 +10,9 @@ test:
 	mvn test
 
 run:
-	docker-compose up -d && docker-compose logs -f dominos-import
+	mvn clean install package
+	docker-compose up -d
+	docker-compose logs -f dominos-import
 
 stop:
 	docker-compose down
