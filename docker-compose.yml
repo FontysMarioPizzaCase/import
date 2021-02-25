@@ -1,0 +1,11 @@
+version: '3'
+services:
+
+  postgresql:
+    image: "postgres"
+    environment:
+      - POSTGRES_USER=mariopizza
+      - POSTGRES_PASSWORD=mariopizza
+      - POSTGRES_DB=mariopizza
+    ports:
+      - "5432:5432"
