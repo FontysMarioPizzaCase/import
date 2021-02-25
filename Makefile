@@ -1,7 +1,7 @@
 default: compile build
 
 compile:
-	mvn clean install package
+	mvn clean package
 
 build:
 	docker-compose build
