@@ -32,6 +32,10 @@ public class Ingredient implements Serializable {
     @Column(name = "deliveryfee")
     private String deliveryfee;
 
+    protected Ingredient() {
+
+    }
+
     public Ingredient(Long ingredientid, String name, String addprice, String spicy, String vegetarian,
                       String deliveryfee) {
         this.ingredientid = ingredientid;

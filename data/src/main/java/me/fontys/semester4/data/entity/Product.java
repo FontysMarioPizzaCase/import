@@ -26,6 +26,10 @@ public class Product implements Serializable {
     @Column(name = "imagepath")
     private String imagepath;
 
+    protected Product() {
+
+    }
+
     public Product(Long productid, Double taxrate, String name, String imagepath) {
         this.productid = productid;
         this.taxrate = taxrate;

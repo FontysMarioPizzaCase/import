@@ -32,6 +32,10 @@ public class Customoption implements Serializable {
     @Column(name = "addprice")
     private String addprice;
 
+    protected Customoption() {
+
+    }
+
     public Customoption(Long customoptid, String name, String additionalinfoname, String additionalinfovalue, String description, String addprice) {
         this.customoptid = customoptid;
         this.name = name;

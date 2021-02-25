@@ -29,6 +29,10 @@ public class CouponActions implements Serializable {
     @Column(name = "each_x_free")
     private Long eachXFree;
 
+    protected CouponActions() {
+
+    }
+
     public CouponActions(Long actionid, Double dPercentage, String fixedprice, String freeship, Long eachXFree) {
         this.actionid = actionid;
         this.dPercentage = dPercentage;

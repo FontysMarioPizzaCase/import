@@ -29,6 +29,10 @@ public class OrderProductIngredient implements Serializable {
     @Column(name = "addprice")
     private String addprice;
 
+    protected OrderProductIngredient() {
+
+    }
+
     public OrderProductIngredient(Long ingredientid, Long orderProductid, String name, Long number, String addprice) {
         this.ingredientid = ingredientid;
         this.orderProductid = orderProductid;

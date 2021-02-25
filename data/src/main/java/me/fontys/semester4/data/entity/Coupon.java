@@ -33,6 +33,10 @@ public class Coupon implements Serializable {
     @Column(name = "condition")
     private Long condition;
 
+    protected Coupon() {
+
+    }
+
     public Coupon(Long couponid, Long action, String couponcode, Date starts, Date ends, Long condition) {
         this.couponid = couponid;
         this.action = action;

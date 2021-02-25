@@ -23,6 +23,10 @@ public class Category implements Serializable {
     @Column(name = "name")
     private String name;
 
+    protected Category() {
+
+    }
+
     public Category(Long catid, Long parentid, String name) {
         this.catid = catid;
         this.parentid = parentid;

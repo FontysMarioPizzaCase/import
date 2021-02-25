@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "order")
+@Table(name = "`order`") // https://stackoverflow.com/questions/3599803/jpa-hibernate-cant-create-entity-called-order
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +50,10 @@ public class Order implements Serializable {
 
     @Column(name = "customername")
     private String customername;
+
+    protected Order() {
+
+    }
 
     public Order(Long customer, Long orderid, Long store, Long postalcodeid, Date orderdate, Date deliverydate,
                  String takeaway, String totalprice, String deliveryprice, String appliedDiscount, Long streetnr,

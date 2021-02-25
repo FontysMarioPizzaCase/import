@@ -29,6 +29,10 @@ public class PostalcodePart implements Serializable {
     @Column(name = "even")
     private String even;
 
+    protected PostalcodePart() {
+
+    }
+
     public PostalcodePart(Long postalcodeid, String postalcode, Long starthousenr, Long endhousenr, String even) {
         this.postalcodeid = postalcodeid;
         this.postalcode = postalcode;

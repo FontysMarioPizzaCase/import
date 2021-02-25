@@ -26,6 +26,10 @@ public class CouponConditions implements Serializable {
     @Column(name = "min_quantity")
     private Long minQuantity;
 
+    protected CouponConditions() {
+
+    }
+
     public CouponConditions(Long conditionid, String minPrice, String takeaway, Long minQuantity) {
         this.conditionid = conditionid;
         this.minPrice = minPrice;

@@ -27,6 +27,10 @@ public class ProductPrice implements Serializable {
     @Column(name = "fromdate")
     private Date fromdate;
 
+    protected ProductPrice() {
+
+    }
+
     public ProductPrice(Long productid, Long priceid, String price, Date fromdate) {
         this.productid = productid;
         this.priceid = priceid;

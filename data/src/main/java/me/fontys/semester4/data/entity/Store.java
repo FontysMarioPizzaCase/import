@@ -23,6 +23,10 @@ public class Store implements Serializable {
     @Column(name = "street")
     private String street;
 
+    protected Store() {
+
+    }
+
     public Store(Long storeid, String name, String street) {
         this.storeid = storeid;
         this.name = name;

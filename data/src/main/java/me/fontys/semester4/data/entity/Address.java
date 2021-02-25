@@ -26,6 +26,10 @@ public class Address implements Serializable {
     @Column(name = "postalcodeid")
     private Long postalcodeid;
 
+    protected Address() {
+
+    }
+
     public Address(Long addressid, Long streetnr, String streetext, Long postalcodeid) {
         this.addressid = addressid;
         this.streetnr = streetnr;

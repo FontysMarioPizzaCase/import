@@ -26,6 +26,10 @@ public class Customer implements Serializable {
     @Column(name = "lastname")
     private String lastname;
 
+    protected Customer() {
+
+    }
+
     public Customer(Long customerid, String email, String name, String lastname) {
         this.customerid = customerid;
         this.email = email;

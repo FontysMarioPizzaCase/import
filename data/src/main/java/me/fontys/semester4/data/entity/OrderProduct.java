@@ -35,6 +35,10 @@ public class OrderProduct implements Serializable {
     @Column(name = "quantity")
     private Long quantity;
 
+    protected OrderProduct() {
+
+    }
+
     public OrderProduct(Long productid, Long orderid, Long orderProductid, String name, String price, Double taxrate,
                         Long quantity) {
         this.productid = productid;

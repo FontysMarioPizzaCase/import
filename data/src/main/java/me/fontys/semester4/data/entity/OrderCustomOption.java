@@ -35,6 +35,10 @@ public class OrderCustomOption implements Serializable {
     @Column(name = "addprice")
     private String addprice;
 
+    protected OrderCustomOption() {
+
+    }
+
     public OrderCustomOption(Long orderProductid, Long orderCustoptid, String name, String additionalinfoname,
                              String additionalinfovalue, String description, String addprice) {
         this.orderProductid = orderProductid;
