@@ -29,7 +29,7 @@ public class DominosImport implements CommandLineRunner {
     public void run(String... args) {
 
         // Example code
-        this.storeRepository.save(new Store("Dominos Sittard", "Stationsstraat 49"));
-        this.storeRepository.save(new Store("Dominos Eindhoven", "Karel de Grotelaan 353A"));
+        this.storeRepository.save(new Store(1L, "Dominos Sittard", "Stationsstraat 49"));
+        this.storeRepository.save(new Store(2L, "Dominos Eindhoven", "Karel de Grotelaan 353A"));
     }
 }

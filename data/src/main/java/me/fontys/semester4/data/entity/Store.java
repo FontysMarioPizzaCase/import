@@ -2,62 +2,63 @@ package me.fontys.semester4.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import java.util.Objects;
+import java.io.Serializable;
 
+@Table(name = "store")
 @Entity
-public class Store {
+public class Store implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "storeid")
-    private final int storeId;
+    @Column(name = "storeid", nullable = false)
+    private Long storeid;
 
-    @Column(name = "name")
-    private final String name;
+    @Column(name = "Name")
+    private String name;
 
     @Column(name = "street")
-    private final String street;
+    private String street;
 
-    protected Store() {
-        this(0, null, null);
-    }
-
-    public Store(String name, String street) {
-        this(0, name, street);
-    }
-
-    public Store(int storeId, String name, String street) {
-        this.storeId = storeId;
+    public Store(Long storeid, String name, String street) {
+        this.storeid = storeid;
         this.name = name;
         this.street = street;
     }
 
-    public int getStoreId() {
-        return this.storeId;
+    public void setStoreid(Long storeid) {
+        this.storeid = storeid;
+    }
+
+    public Long getStoreid() {
+        return storeid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
-        return this.name;
+        return name;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public String getStreet() {
-        return this.street;
+        return street;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Store store = (Store) o;
-        return storeId == store.storeId && Objects.equals(name, store.name) && Objects.equals(street, store.street);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(storeId, name, street);
+    public String toString() {
+        return "Store{" +
+                "storeid=" + storeid + '\'' +
+                "name=" + name + '\'' +
+                "street=" + street + '\'' +
+                '}';
     }
 }
