@@ -22,7 +22,7 @@ public class Category implements Serializable {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name="catid")
+    @JoinColumn(name="catid", insertable=false, updatable=false)
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
