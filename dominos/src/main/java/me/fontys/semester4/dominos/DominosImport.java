@@ -36,6 +36,6 @@ public class DominosImport implements CommandLineRunner {
         // Example code
         this.storeRepository.save(new Store(1L, "Dominos Sittard", "Stationsstraat 49"));
         this.storeRepository.save(new Store(2L, "Dominos Eindhoven", "Karel de Grotelaan 353A"));
-        this.productRepository.save(new Product(1L, "Pizza Margarita", 0.06, null ));
+        this.productRepository.save(new Product(3L, "Pizza Margarita", 0.06, null ));
     }
 }
