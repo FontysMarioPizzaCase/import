@@ -4,6 +4,10 @@ import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import me.fontys.semester4.data.entity.Product;
+import me.fontys.semester4.data.entity.Store;
+import me.fontys.semester4.data.repository.ProductRepository;
+import me.fontys.semester4.data.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -31,7 +35,6 @@ public class DominosImport implements CommandLineRunner {
     public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
-    }
 
     @Override
     public void run(String... args) throws IOException {
@@ -43,8 +46,5 @@ public class DominosImport implements CommandLineRunner {
 
         // Do the store import
         this.storeImporter.doImport();
-
-        long timeElapsed = System.currentTimeMillis() - start;
-        LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));
     }
 }
