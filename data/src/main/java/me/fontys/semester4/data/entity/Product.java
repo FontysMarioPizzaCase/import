@@ -17,11 +17,11 @@ public class Product implements Serializable {
     @Column(name = "productid", nullable = false)
     private Long productid;
 
-    @Column(name = "taxrate")
-    private Double taxrate;
-
     @Column(name = "name")
     private String name;
+
+    @Column(name = "taxrate")
+    private Double taxrate;
 
     @Column(name = "imagepath")
     private String imagepath;
@@ -38,7 +38,7 @@ public class Product implements Serializable {
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
 
-    public Product(Long productid, Double taxrate, String name, String imagepath) {
+    public Product(Long productid, String name, Double taxrate, String imagepath) {
         this.productid = productid;
         this.taxrate = taxrate;
         this.name = name;

@@ -1,6 +1,8 @@
 package me.fontys.semester4.dominos;
 
+import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.Store;
+import me.fontys.semester4.data.repository.ProductRepository;
 import me.fontys.semester4.data.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,10 +21,13 @@ public class DominosImport implements CommandLineRunner {
     }
 
     private final StoreRepository storeRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public DominosImport(StoreRepository storeRepository) {
+    public DominosImport(StoreRepository storeRepository, ProductRepository productRepository)
+    {
         this.storeRepository = storeRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -31,5 +36,6 @@ public class DominosImport implements CommandLineRunner {
         // Example code
         this.storeRepository.save(new Store(1L, "Dominos Sittard", "Stationsstraat 49"));
         this.storeRepository.save(new Store(2L, "Dominos Eindhoven", "Karel de Grotelaan 353A"));
+        this.productRepository.save(new Product(1L, "Pizza Margarita", 0.06, null ));
     }
 }
