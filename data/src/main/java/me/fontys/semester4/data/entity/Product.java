@@ -1,16 +1,16 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
 public class Product implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -26,47 +26,61 @@ public class Product implements Serializable {
     @Column(name = "imagepath")
     private String imagepath;
 
-    protected Product() {
+    @ManyToMany
+    @JoinTable( name = "category_product",
+            joinColumns = @JoinColumn(name="productid"),
+            inverseJoinColumns = @JoinColumn(name="catid"))
+    private Set<Category> categories;
 
-    }
+    @ManyToMany
+    @JoinTable( name = "ingredient_product",
+            joinColumns = @JoinColumn(name="productid"),
+            inverseJoinColumns = @JoinColumn(name="ingredientid"))
+    private Set<Ingredient> ingredients;
 
     public Product(Long productid, Double taxrate, String name, String imagepath) {
         this.productid = productid;
         this.taxrate = taxrate;
         this.name = name;
         this.imagepath = imagepath;
+        categories = new HashSet<>();
     }
 
-    public void setProductid(Long productid) {
-        this.productid = productid;
+    public Product() {
+
+        categories = new HashSet<>();
     }
 
     public Long getProductid() {
         return productid;
     }
 
-    public void setTaxrate(Double taxrate) {
-        this.taxrate = taxrate;
+    public void setProductid(Long productid) {
+        this.productid = productid;
     }
 
     public Double getTaxrate() {
         return taxrate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTaxrate(Double taxrate) {
+        this.taxrate = taxrate;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setImagepath(String imagepath) {
-        this.imagepath = imagepath;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getImagepath() {
         return imagepath;
+    }
+
+    public void setImagepath(String imagepath) {
+        this.imagepath = imagepath;
     }
 
     @Override

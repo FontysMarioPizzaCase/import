@@ -1,16 +1,16 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "ingredient")
 public class Ingredient implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -31,6 +31,9 @@ public class Ingredient implements Serializable {
 
     @Column(name = "deliveryfee")
     private String deliveryfee;
+
+    @ManyToMany(mappedBy = "ingredients")
+    private Set<Product> products;
 
     protected Ingredient() {
 
