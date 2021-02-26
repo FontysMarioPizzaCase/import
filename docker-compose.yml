@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  postgresql:
+    image: "postgres"
+    environment:
+      - POSTGRES_USER=mariopizza
+      - POSTGRES_PASSWORD=mariopizza
+      - POSTGRES_DB=mariopizza
+    ports:
+      - "5432:5432"
+
+  dominos-import:
+    image: dominos-import
+    build:
+      context: ./dominos
+    depends_on:
+      - postgresql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/mariopizza
