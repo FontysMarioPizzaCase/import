@@ -2,7 +2,7 @@ package me.fontys.semester4.dominos.converter.ingredient;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class IngredientRecord {
+public class PizzaAndIngredientRecord {
 
     @CsvBindByPosition(position = 0)
     private String categorie;
@@ -29,20 +29,20 @@ public class IngredientRecord {
     @CsvBindByPosition(position = 11)
     private String pizzasaus_standaard;
 
-    public IngredientRecord(){}
+    public PizzaAndIngredientRecord(){}
 
-    public IngredientRecord(String categorie,
-                            String subcategorie,
-                            String productnaam,
-                            String productomschrijving,
-                            String prijs,
-                            String bezorgtoeslag,
-                            String spicy,
-                            String vegetarisch,
-                            String beschikbaar,
-                            String aantalkeer_ingredient,
-                            String ingredientnaam,
-                            String pizzasaus_standaard) {
+    public PizzaAndIngredientRecord(String categorie,
+                                    String subcategorie,
+                                    String productnaam,
+                                    String productomschrijving,
+                                    String prijs,
+                                    String bezorgtoeslag,
+                                    String spicy,
+                                    String vegetarisch,
+                                    String beschikbaar,
+                                    String aantalkeer_ingredient,
+                                    String ingredientnaam,
+                                    String pizzasaus_standaard) {
         this.categorie = categorie;
         this.subcategorie = subcategorie;
         this.productnaam = productnaam;
@@ -55,6 +55,54 @@ public class IngredientRecord {
         this.aantalkeer_ingredient = aantalkeer_ingredient;
         this.ingredientnaam = ingredientnaam;
         this.pizzasaus_standaard = pizzasaus_standaard;
+    }
+
+    public String getCategorie() {
+        return categorie;
+    }
+
+    public String getSubcategorie() {
+        return subcategorie;
+    }
+
+    public String getProductnaam() {
+        return productnaam;
+    }
+
+    public String getProductomschrijving() {
+        return productomschrijving;
+    }
+
+    public String getPrijs() {
+        return prijs;
+    }
+
+    public String getBezorgtoeslag() {
+        return bezorgtoeslag;
+    }
+
+    public String getSpicy() {
+        return spicy;
+    }
+
+    public String getVegetarisch() {
+        return vegetarisch;
+    }
+
+    public String getBeschikbaar() {
+        return beschikbaar;
+    }
+
+    public String getAantalkeer_ingredient() {
+        return aantalkeer_ingredient;
+    }
+
+    public String getIngredientnaam() {
+        return ingredientnaam;
+    }
+
+    public String getPizzasaus_standaard() {
+        return pizzasaus_standaard;
     }
 
     @Override

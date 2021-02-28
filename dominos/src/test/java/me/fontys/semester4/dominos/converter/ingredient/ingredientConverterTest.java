@@ -9,11 +9,12 @@ public class ingredientConverterTest {
     public void Convert_works() {
         // ARRANGE
         String fileName = "C:\\Users\\884573\\Downloads\\MarioData\\pizza_ingredienten.csv";
-        var ingredientConverter = new IngredientConverter();
-        
+        char seperator = ';';
+        var ingredientConverter = new PizzaAndIngredientImporter();
+
         // ACT
         try {
-            ingredientConverter.Convert(fileName);
+            ingredientConverter.Import(fileName, seperator);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

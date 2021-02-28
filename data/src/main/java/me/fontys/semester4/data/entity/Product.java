@@ -20,6 +20,9 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "description") // TODO: Add to ERD
+    private String description;
+
     @Column(name = "taxrate")
     private Double taxrate;
 
@@ -38,16 +41,16 @@ public class Product implements Serializable {
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
 
-    public Product(Long productid, String name, Double taxrate, String imagepath) {
+    public Product(Long productid, String name, String description, Double taxrate, String imagepath) {
         this.productid = productid;
-        this.taxrate = taxrate;
         this.name = name;
+        this.description = description;
+        this.taxrate = taxrate;
         this.imagepath = imagepath;
         categories = new HashSet<>();
     }
 
-    public Product() {
-
+    protected Product() {
         categories = new HashSet<>();
     }
 

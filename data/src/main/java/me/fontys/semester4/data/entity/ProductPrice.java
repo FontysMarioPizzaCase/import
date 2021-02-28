@@ -14,12 +14,12 @@ public class ProductPrice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "productid")
-    private Long productid;
-
     @Id
     @Column(name = "priceid", nullable = false)
     private Long priceid;
+
+    @Column(name = "productid")
+    private Long productid;
 
     @Column(name = "price")
     private String price;
@@ -31,9 +31,9 @@ public class ProductPrice implements Serializable {
 
     }
 
-    public ProductPrice(Long productid, Long priceid, String price, Date fromdate) {
-        this.productid = productid;
+    public ProductPrice(Long priceid, Long productid, String price, Date fromdate) {
         this.priceid = priceid;
+        this.productid = productid;
         this.price = price;
         this.fromdate = fromdate;
     }
