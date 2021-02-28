@@ -69,10 +69,12 @@ public class Product implements Serializable {
         this.taxrate = taxrate;
         this.imagepath = imagepath;
         categories = new HashSet<>();
+        ingredients = new HashSet<>();
     }
 
     protected Product() {
         categories = new HashSet<>();
+        ingredients = new HashSet<>();
     }
 
     public Long getProductid() {
@@ -91,28 +93,36 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public void setSpicy(boolean spicy) {
-        this.spicy = spicy;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean getSpicy() {
         return spicy;
     }
 
-    public void setVegetarian(boolean vegetarian) {
-        this.vegetarian = vegetarian;
+    public void setSpicy(boolean spicy) {
+        this.spicy = spicy;
     }
 
     public boolean getVegetarian() {
         return vegetarian;
     }
 
-    public void setDeliveryfee(BigDecimal deliveryfee) {
-        this.deliveryfee = deliveryfee;
+    public void setVegetarian(boolean vegetarian) {
+        this.vegetarian = vegetarian;
     }
 
     public BigDecimal getDeliveryfee() {
         return deliveryfee;
+    }
+
+    public void setDeliveryfee(BigDecimal deliveryfee) {
+        this.deliveryfee = deliveryfee;
     }
 
     public Double getTaxrate() {
@@ -129,6 +139,14 @@ public class Product implements Serializable {
 
     public void setImagepath(String imagepath) {
         this.imagepath = imagepath;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
     }
 
     @Override

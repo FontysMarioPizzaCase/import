@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.converter.ingredient;
+package me.fontys.semester4.dominos.pizza.and.ingredient;
 
 import com.opencsv.bean.CsvBindByPosition;
 

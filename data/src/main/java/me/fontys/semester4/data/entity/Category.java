@@ -79,9 +79,11 @@ public class Category implements Serializable {
     @Override
     public String toString() {
         return "Category{" +
-                "catid=" + catid + '\'' +
-                "parentid=" + parent.getCatid() + '\'' +
-                "name=" + name + '\'' +
+                "catid=" + catid +
+                ", name='" + name + '\'' +
+                ", parent=" + parent +
+                ", children=" + children +
+                ", products=" + products +
                 '}';
     }
 }
