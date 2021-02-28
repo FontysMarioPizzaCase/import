@@ -3,6 +3,7 @@ package me.fontys.semester4.data.entity;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,8 +22,17 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description") // TODO: Add to ERD
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "spicy")
+    private Boolean spicy;
+
+    @Column(name = "vegetarian")
+    private Boolean vegetarian;
+
+    @Column(name = "deliveryfee")
+    private BigDecimal deliveryfee;
 
     @Column(name = "taxrate")
     private Double taxrate;
@@ -42,10 +52,20 @@ public class Product implements Serializable {
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
 
-    public Product(Long productid, String name, String description, Double taxrate, String imagepath) {
+    public Product(Long productid,
+                   String name,
+                   String description,
+                   boolean spicy,
+                   boolean vegetarian,
+                   BigDecimal deliveryfee,
+                   Double taxrate,
+                   String imagepath) {
         this.productid = productid;
         this.name = name;
         this.description = description;
+        this.spicy = spicy;
+        this.vegetarian = vegetarian;
+        this.deliveryfee = deliveryfee;
         this.taxrate = taxrate;
         this.imagepath = imagepath;
         categories = new HashSet<>();
@@ -63,20 +83,44 @@ public class Product implements Serializable {
         this.productid = productid;
     }
 
-    public Double getTaxrate() {
-        return taxrate;
-    }
-
-    public void setTaxrate(Double taxrate) {
-        this.taxrate = taxrate;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setSpicy(boolean spicy) {
+        this.spicy = spicy;
+    }
+
+    public boolean getSpicy() {
+        return spicy;
+    }
+
+    public void setVegetarian(boolean vegetarian) {
+        this.vegetarian = vegetarian;
+    }
+
+    public boolean getVegetarian() {
+        return vegetarian;
+    }
+
+    public void setDeliveryfee(BigDecimal deliveryfee) {
+        this.deliveryfee = deliveryfee;
+    }
+
+    public BigDecimal getDeliveryfee() {
+        return deliveryfee;
+    }
+
+    public Double getTaxrate() {
+        return taxrate;
+    }
+
+    public void setTaxrate(Double taxrate) {
+        this.taxrate = taxrate;
     }
 
     public String getImagepath() {
@@ -90,10 +134,16 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "Product{" +
-                "productid=" + productid + '\'' +
-                "taxrate=" + taxrate + '\'' +
-                "name=" + name + '\'' +
-                "imagepath=" + imagepath + '\'' +
+                "productid=" + productid +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", spicy='" + spicy + '\'' +
+                ", vegetarian='" + vegetarian + '\'' +
+                ", deliveryfee='" + deliveryfee + '\'' +
+                ", taxrate=" + taxrate +
+                ", imagepath='" + imagepath + '\'' +
+                ", categories=" + categories +
+                ", ingredients=" + ingredients +
                 '}';
     }
 }

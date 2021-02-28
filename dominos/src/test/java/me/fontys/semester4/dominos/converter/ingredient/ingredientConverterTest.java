@@ -5,18 +5,17 @@ import java.io.FileNotFoundException;
 
 public class ingredientConverterTest {
 
-    @Test
-    public void Convert_works() {
-        // ARRANGE
-        String fileName = "C:\\Users\\884573\\Downloads\\MarioData\\pizza_ingredienten.csv";
-        char seperator = ';';
-        var ingredientConverter = new PizzaAndIngredientConverter();
-
-        // ACT
-        try {
-            ingredientConverter.Analyse(fileName, seperator);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Test
+//    public void Convert_works() {
+//        // ARRANGE
+//        String fileName = "C:\\Users\\884573\\Downloads\\MarioData\\pizza_ingredienten.csv";
+//        char separator = ';';
+//
+//        // ACT
+//        try {
+//            var ingredientConverter = new PizzaAndIngredientConverter(fileName, separator);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.IOException;
-
+import java.math.BigDecimal;
 @SpringBootApplication
 @EntityScan(basePackages = "me.fontys.semester4")
 @EnableJpaRepositories(basePackages = "me.fontys.semester4")

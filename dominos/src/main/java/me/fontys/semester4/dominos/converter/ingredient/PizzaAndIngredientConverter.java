@@ -7,6 +7,7 @@ import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public class PizzaAndIngredientConverter {
             extractPrice(record);
         }
     }
-    
+
     private boolean hasNewProduct(PizzaAndIngredientRecord record) {
         for (var product : products) {
             if (record.getProductnaam().equals(product.getName())) {
@@ -110,22 +111,22 @@ public class PizzaAndIngredientConverter {
 
     private void extractProduct(PizzaAndIngredientRecord record) {
         products.add(new Product(
-                null,
+                0L,
                 record.getProductnaam(),
                 record.getProductomschrijving(),
-                null,
+                record.getSpicy().equals("Ja") ? true : false,
+                record.getVegetarisch().equals("ja") ? true : false,
+                new BigDecimal(record.getBezorgtoeslag()),
+                0.06,
                 null
         ));
     }
 
     private void extractIngredient(PizzaAndIngredientRecord record) {
         ingredients.add(new Ingredient(
-                null,
+                0L,
                 record.getIngredientnaam(),
-                null,
-                null, // TODO: up for discussion
-                null, // up for discussion
-                null // should not be in ERD?
+                null
         ));
     }
 

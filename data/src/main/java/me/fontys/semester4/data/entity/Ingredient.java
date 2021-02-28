@@ -24,15 +24,6 @@ public class Ingredient implements Serializable {
     @Column(name = "addprice")
     private String addprice;
 
-    @Column(name = "spicy")
-    private String spicy;
-
-    @Column(name = "vegetarian")
-    private String vegetarian;
-
-    @Column(name = "deliveryfee")
-    private String deliveryfee;
-
     @ManyToMany(mappedBy = "ingredients")
     private Set<Product> products;
 
@@ -40,14 +31,10 @@ public class Ingredient implements Serializable {
 
     }
 
-    public Ingredient(Long ingredientid, String name, String addprice, String spicy, String vegetarian,
-                      String deliveryfee) {
+    public Ingredient(Long ingredientid, String name, String addprice) {
         this.ingredientid = ingredientid;
         this.name = name;
         this.addprice = addprice;
-        this.spicy = spicy;
-        this.vegetarian = vegetarian;
-        this.deliveryfee = deliveryfee;
     }
 
     public void setIngredientid(Long ingredientid) {
@@ -74,39 +61,12 @@ public class Ingredient implements Serializable {
         return addprice;
     }
 
-    public void setSpicy(String spicy) {
-        this.spicy = spicy;
-    }
-
-    public String getSpicy() {
-        return spicy;
-    }
-
-    public void setVegetarian(String vegetarian) {
-        this.vegetarian = vegetarian;
-    }
-
-    public String getVegetarian() {
-        return vegetarian;
-    }
-
-    public void setDeliveryfee(String deliveryfee) {
-        this.deliveryfee = deliveryfee;
-    }
-
-    public String getDeliveryfee() {
-        return deliveryfee;
-    }
-
     @Override
     public String toString() {
         return "Ingredient{" +
                 "ingredientid=" + ingredientid + '\'' +
                 "name=" + name + '\'' +
                 "addprice=" + addprice + '\'' +
-                "spicy=" + spicy + '\'' +
-                "vegetarian=" + vegetarian + '\'' +
-                "deliveryfee=" + deliveryfee + '\'' +
                 '}';
     }
 }
