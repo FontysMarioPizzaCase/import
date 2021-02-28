@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos;
+package me.fontys.semester4.domain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
