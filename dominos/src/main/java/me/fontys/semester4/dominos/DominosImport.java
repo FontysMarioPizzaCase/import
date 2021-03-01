@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.io.IOException;
+
 @SpringBootApplication
 @EntityScan(basePackages = "me.fontys.semester4")
 @EnableJpaRepositories(basePackages = "me.fontys.semester4")
@@ -29,7 +31,7 @@ public class DominosImport implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws IOException {
         long start = System.currentTimeMillis();
 
         // Do the import
