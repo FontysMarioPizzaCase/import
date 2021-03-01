@@ -1,5 +1,6 @@
 package me.fontys.semester4.dominos;
 
+import me.fontys.semester4.data.entity.PostalcodePart;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.Store;
 import me.fontys.semester4.data.repository.*;
@@ -24,6 +25,7 @@ public class ImportAll implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final ProductPriceRepository productPriceRepository;
     private final ProductRepository productRepository;
+    private final PostalcodePartRepository postalcodePartRepository;
     private final PizzaAndIngredientConverter pizzaAndIngredientConverter;
 
     public static void main(String[] args) {
@@ -37,13 +39,14 @@ public class ImportAll implements CommandLineRunner {
                      IngredientRepository ingredientRepository,
                      CategoryRepository categoryRepository,
                      ProductPriceRepository productPriceRepository,
-                     PizzaAndIngredientConverter pizzaAndIngredientConverter)
-    {
+                     PostalcodePartRepository postalcodePartRepository,
+                     PizzaAndIngredientConverter pizzaAndIngredientConverter) {
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
         this.ingredientRepository = ingredientRepository;
         this.categoryRepository = categoryRepository;
         this.productPriceRepository = productPriceRepository;
+        this.postalcodePartRepository = postalcodePartRepository;
         this.pizzaAndIngredientConverter = pizzaAndIngredientConverter;
     }
 
@@ -62,14 +65,20 @@ public class ImportAll implements CommandLineRunner {
                 BigDecimal.valueOf(2.00),
                 0.06,
                 null));
+        this.postalcodePartRepository.save(new PostalcodePart(
+                null,
+                null,
+                null,
+                null,
+                null));
 
         importPizzaAndIngredientsCsv();
     }
 
     private void importPizzaAndIngredientsCsv() {
         try {
-            // select file TODO: file not found
-            String fileName = "/importfiles/pizza_ingredienten.csv";
+            // select file
+            String fileName = System.getenv("CSVFILE");
             char separator = ';';
 
             // alias

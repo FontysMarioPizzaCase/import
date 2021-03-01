@@ -108,7 +108,8 @@ public class PizzaAndIngredientConverter {
                 record.getProductomschrijving(),
                 record.getSpicy().equals("Ja"),
                 record.getVegetarisch().equals("ja"),
-// TODO:             new BigDecimal(record.getBezorgtoeslag()),
+// TODO: validate price
+//                new BigDecimal(record.getBezorgtoeslag()),
                 BigDecimal.TEN,
                 0.06,
                 null

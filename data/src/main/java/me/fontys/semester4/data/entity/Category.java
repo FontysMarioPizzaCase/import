@@ -23,7 +23,7 @@ public class Category implements Serializable {
     private String name;
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name="catid", insertable=false, updatable=false)
+    @JoinColumn(referencedColumnName="catid")
     private Category parent;
 
     @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
