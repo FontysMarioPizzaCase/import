@@ -21,14 +21,18 @@ public class Store implements Serializable {
     @Column(name = "street")
     private String street;
 
+    @Column(name = "municipality")
+    private String municipality;
+
     protected Store() {
 
     }
 
-    public Store(Long storeid, String name, String street) {
+    public Store(Long storeid, String name, String street, String municipality) {
         this.storeid = storeid;
         this.name = name;
         this.street = street;
+        this.municipality = municipality;
     }
 
     public void setStoreid(Long storeid) {
@@ -61,6 +65,17 @@ public class Store implements Serializable {
                 "storeid=" + storeid + '\'' +
                 "name=" + name + '\'' +
                 "street=" + street + '\'' +
+                "municipality=" + municipality + '\'' +
                 '}';
+    }
+
+    public String getMunicipality()
+    {
+        return municipality;
+    }
+
+    public void setMunicipality(String municipality)
+    {
+        this.municipality = municipality;
     }
 }

@@ -1,5 +1,7 @@
 package me.fontys.semester4.data.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -15,7 +17,15 @@ public class Order implements Serializable {
     private Long customer;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hilopooled")
+    @GenericGenerator(name = "hilopooled", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "hilo_sequence"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "100"),
+                    @org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled")
+            }
+    )
     @Column(name = "orderid", nullable = false)
     private Long orderid;
 
