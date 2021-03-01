@@ -103,7 +103,7 @@ public class PizzaAndIngredientConverter {
 
     private Product extractProduct(PizzaAndIngredientRecord record) {
         return new Product(
-                0L,
+                null,
                 record.getProductnaam(),
                 record.getProductomschrijving(),
                 record.getSpicy().equals("Ja"),
@@ -117,7 +117,7 @@ public class PizzaAndIngredientConverter {
 
     private ProductPrice extractPrice(PizzaAndIngredientRecord record, Long productId) {
         return new ProductPrice(
-                0L,
+                null,
                 productId,
                 record.getPrijs(),
                 new Date()
@@ -126,7 +126,7 @@ public class PizzaAndIngredientConverter {
 
     private Ingredient extractIngredient(PizzaAndIngredientRecord record) {
         return new Ingredient(
-                0L,
+                null,
                 record.getIngredientnaam(),
                 null
         );
@@ -134,7 +134,7 @@ public class PizzaAndIngredientConverter {
 
     private Category extractCategory(PizzaAndIngredientRecord record) {
         return new Category(
-                0L,
+                null,
                 null,
                 record.getCategorie()
         );
@@ -145,7 +145,7 @@ public class PizzaAndIngredientConverter {
                 .filter(cat -> cat.getName().equals(record.getCategorie()))
                 .findAny().orElse(null); // TODO: fix null check
         return new Category(
-                0L,
+                null,
                 parent,
                 record.getSubcategorie()
         );

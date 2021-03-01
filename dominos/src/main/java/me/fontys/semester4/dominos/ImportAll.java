@@ -2,10 +2,8 @@ package me.fontys.semester4.dominos;
 
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.Store;
-import me.fontys.semester4.data.repository.ProductRepository;
-import me.fontys.semester4.data.repository.StoreRepository;
+import me.fontys.semester4.data.repository.*;
 import me.fontys.semester4.dominos.pizza.and.ingredient.PizzaAndIngredientConverter;
-import me.fontys.semester4.dominos.pizza.and.ingredient.PizzaAndIngredientImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,27 +17,34 @@ import java.math.BigDecimal;
 @SpringBootApplication
 @EntityScan(basePackages = "me.fontys.semester4")
 @EnableJpaRepositories(basePackages = "me.fontys.semester4")
-public class StoreImport implements CommandLineRunner {
-
-    public static void main(String[] args) {
-        SpringApplication.run(StoreImport.class, args);
-    }
+public class ImportAll implements CommandLineRunner {
 
     private final StoreRepository storeRepository;
+    private final IngredientRepository ingredientRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProductPriceRepository productPriceRepository;
     private final ProductRepository productRepository;
     private final PizzaAndIngredientConverter pizzaAndIngredientConverter;
-    private final PizzaAndIngredientImporter pizzaAndIngredientImporter;
+
+    public static void main(String[] args) {
+        SpringApplication.run(ImportAll.class, args);
+    }
+
 
     @Autowired
-    public StoreImport(StoreRepository storeRepository,
-                       ProductRepository productRepository,
-                       PizzaAndIngredientConverter pizzaAndIngredientConverter,
-                       PizzaAndIngredientImporter pizzaAndIngredientImporter)
+    public ImportAll(StoreRepository storeRepository,
+                     ProductRepository productRepository,
+                     IngredientRepository ingredientRepository,
+                     CategoryRepository categoryRepository,
+                     ProductPriceRepository productPriceRepository,
+                     PizzaAndIngredientConverter pizzaAndIngredientConverter)
     {
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.categoryRepository = categoryRepository;
+        this.productPriceRepository = productPriceRepository;
         this.pizzaAndIngredientConverter = pizzaAndIngredientConverter;
-        this.pizzaAndIngredientImporter = pizzaAndIngredientImporter;
     }
 
     @Override
@@ -58,22 +63,26 @@ public class StoreImport implements CommandLineRunner {
                 0.06,
                 null));
 
-        // import pizza_ingredients.csv
-        PizzaAndIngredientConverter c = this.pizzaAndIngredientConverter;
-        PizzaAndIngredientImporter i = this.pizzaAndIngredientImporter;
+        importPizzaAndIngredientsCsv();
+    }
 
+    private void importPizzaAndIngredientsCsv() {
         try {
-            // TODO: file not found
-            String fileName = "dominos/src/main/resources/pizza_ingredienten.csv";
+            // select file TODO: file not found
+            String fileName = "/importfiles/pizza_ingredienten.csv";
             char separator = ';';
+
+            // alias
+            PizzaAndIngredientConverter c = this.pizzaAndIngredientConverter;
+
+            // convert and import
             c.convert(fileName, separator);
-            i.importProducts(c.getProducts());
-            i.importCategories(c.getCategories());
-            i.importIngredients(c.getIngredients());
-            i.importProductPrices(c.getPrices());
+//            this.productRepository.saveAll(c.getProducts());
+            this.categoryRepository.saveAll(c.getCategories());
+//            this.ingredientRepository.saveAll(c.getIngredients());
+//            this.productPriceRepository.saveAll(c.getPrices());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 }

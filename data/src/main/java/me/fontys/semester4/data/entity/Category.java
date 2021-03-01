@@ -26,10 +26,10 @@ public class Category implements Serializable {
     @JoinColumn(name="catid", insertable=false, updatable=false)
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
     private List<Category> children;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.ALL})
     private Set<Product> products;
 
     public Category(Long catid, Category parent, String name) {

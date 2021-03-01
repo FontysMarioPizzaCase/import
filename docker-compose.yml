@@ -18,3 +18,5 @@ services:
       - postgresql
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/mariopizza
+    volumes:
+      - ./importfiles:/importfiles
