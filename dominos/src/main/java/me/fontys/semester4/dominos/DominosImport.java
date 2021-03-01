@@ -2,6 +2,8 @@ package me.fontys.semester4.dominos;
 
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
+import me.fontys.semester4.interfaces.Importer;
+import me.fontys.semester4.postalcode.PCImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +11,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.IOException;
 
 @SpringBootApplication
 @EntityScan(basePackages = "me.fontys.semester4")
+@ComponentScan(basePackages = "me.fontys.semester4")
 @EnableJpaRepositories(basePackages = "me.fontys.semester4")
 public class DominosImport implements CommandLineRunner {
 
@@ -26,11 +30,13 @@ public class DominosImport implements CommandLineRunner {
 
     private final OrderImporter orderImporter;
     private final StoreImporter storeImporter;
+    private final Importer pcImporter;
 
     @Autowired
-    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter) {
+    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter, PCImporter pcImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
+        this.pcImporter = pcImporter;
     }
 
     @Override
@@ -44,6 +50,10 @@ public class DominosImport implements CommandLineRunner {
         // Do the store import
         this.storeImporter.doImport();
         this.storeImporter.report();
+
+        // Do the postalcode import
+        pcImporter.doImport();
+        pcImporter.report();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));

@@ -25,6 +25,11 @@
     <dependencies>
         <dependency>
             <groupId>me.fontys.semester4</groupId>
+            <artifactId>domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>me.fontys.semester4</groupId>
             <artifactId>data</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
