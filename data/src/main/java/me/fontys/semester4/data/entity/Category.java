@@ -22,7 +22,7 @@ public class Category implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name="catid", insertable=false, updatable=false)
     private Category parent;
 

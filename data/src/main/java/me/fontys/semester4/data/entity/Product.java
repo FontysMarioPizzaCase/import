@@ -40,13 +40,13 @@ public class Product implements Serializable {
     @Column(name = "imagepath")
     private String imagepath;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable( name = "category_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="catid"))
     private Set<Category> categories;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable( name = "ingredient_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="ingredientid"))

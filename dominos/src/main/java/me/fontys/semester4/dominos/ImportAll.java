@@ -77,10 +77,10 @@ public class ImportAll implements CommandLineRunner {
 
             // convert and import
             c.convert(fileName, separator);
-//            this.productRepository.saveAll(c.getProducts());
+            this.productRepository.saveAll(c.getProducts());
             this.categoryRepository.saveAll(c.getCategories());
-//            this.ingredientRepository.saveAll(c.getIngredients());
-//            this.productPriceRepository.saveAll(c.getPrices());
+            this.ingredientRepository.saveAll(c.getIngredients());
+            this.productPriceRepository.saveAll(c.getPrices());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
