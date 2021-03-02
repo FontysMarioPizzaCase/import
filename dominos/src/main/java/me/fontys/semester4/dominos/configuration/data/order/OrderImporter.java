@@ -127,8 +127,20 @@ public class OrderImporter {
         String couponDiscount = line[20];
         String toPayPrice = line[21];
 
+        if (storeName.isEmpty()) {
+            processWarning("Order does not have any store name");
+        }
+
         if (customerName.isEmpty()) {
             processWarning("Order does not have any customer name");
+        }
+
+        if (phoneNumber.isEmpty()) {
+            processWarning("Order does not have any phone number");
+        }
+
+        if (email.isEmpty()) {
+            processWarning("Order does not have any phone email");
         }
 
         return new Order(null, null, null, null, null,
