@@ -15,10 +15,7 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Configuration
 public class OrderImporter {
@@ -33,6 +30,8 @@ public class OrderImporter {
     private final OrderProductRepository orderProductRepository;
     private final OrderCustomOptionRepository orderCustomOptionRepository;
     private final OrderProductIngredientRepository orderProductIngredientRepository;
+
+    private final Map<String, Integer> warnings = new HashMap<>();
 
     @Autowired
     public OrderImporter(Resource[] orders, OrderRepository orderRepository,
@@ -49,6 +48,7 @@ public class OrderImporter {
     public void doImport() throws IOException {
         LOGGER.info("Starting import of orders...");
 
+        this.warnings.clear();
         List<Order> orders = new ArrayList<>();
 
         for (Resource resource : this.orders) {
@@ -58,6 +58,19 @@ public class OrderImporter {
 
         LOGGER.info(String.format("Inserting %s orders...", orders.size()));
         this.orderRepository.saveAll(orders);
+    }
+
+    public void report() {
+        int totalWarnings = this.warnings.values().stream()
+                .reduce(0, Integer::sum);
+
+        if (totalWarnings > 0) {
+            LOGGER.warn(String.format("Order import result : %s warnings", totalWarnings));
+
+            for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
+                LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
+            }
+        }
     }
 
     private List<Order> processOrderResource(Resource resource) throws IOException {
@@ -114,8 +127,20 @@ public class OrderImporter {
         String couponDiscount = line[20];
         String toPayPrice = line[21];
 
+        if (customerName.isEmpty()) {
+            processWarning("Order does not have any customer name");
+        }
+
         return new Order(null, null, null, null, null,
                 null, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
+    }
+
+    private void processWarning(String message) {
+        if (this.warnings.containsKey(message)) {
+            this.warnings.put(message, this.warnings.get(message) + 1);
+        } else {
+            this.warnings.put(message, 1);
+        }
     }
 
     private void appendDelimitedLineToOrder(String[] line, Order order) {

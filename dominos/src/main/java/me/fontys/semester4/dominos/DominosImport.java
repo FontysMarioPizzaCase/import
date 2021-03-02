@@ -36,6 +36,7 @@ public class DominosImport implements CommandLineRunner {
 
         // Do the import
         this.orderImporter.doImport();
+        this.orderImporter.report();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));
