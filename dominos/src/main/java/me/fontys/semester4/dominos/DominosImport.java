@@ -1,6 +1,7 @@
 package me.fontys.semester4.dominos;
 
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
+import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +25,24 @@ public class DominosImport implements CommandLineRunner {
     }
 
     private final OrderImporter orderImporter;
+    private final StoreImporter storeImporter;
 
     @Autowired
-    public DominosImport(OrderImporter orderImporter) {
+    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter) {
         this.orderImporter = orderImporter;
+        this.storeImporter = storeImporter;
     }
 
     @Override
     public void run(String... args) throws IOException {
         long start = System.currentTimeMillis();
 
-        // Do the import
+        // Do the order import
         this.orderImporter.doImport();
         this.orderImporter.report();
+
+        // Do the store import
+        this.storeImporter.doImport();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));

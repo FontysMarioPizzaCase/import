@@ -8,6 +8,5 @@ EXPOSE 8080
 
 COPY ./src/main/resources/application.properties /opt/mariopizza/import/application.properties
 COPY ./target/dominos-1.0-SNAPSHOT.jar /opt/mariopizza/import/dominos.jar
-COPY ./files /opt/mariopizza/import/files
 
 RUN touch api.jar
