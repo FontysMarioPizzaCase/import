@@ -52,13 +52,8 @@ public class Product implements Serializable {
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
 
-    public Product(Long productid,
-                   String name,
-                   String description,
-                   boolean spicy,
-                   boolean vegetarian,
-                   BigDecimal deliveryfee,
-                   Double taxrate,
+    public Product(Long productid, String name, String description, Boolean spicy,
+                   Boolean vegetarian, BigDecimal deliveryfee, Double taxrate,
                    String imagepath) {
         this.productid = productid;
         this.name = name;
@@ -73,8 +68,8 @@ public class Product implements Serializable {
     }
 
     protected Product() {
-        categories = new HashSet<>();
-        ingredients = new HashSet<>();
+        this(null, null, null, null,
+                null, null, null, null);
     }
 
     public Long getProductid() {

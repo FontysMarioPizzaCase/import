@@ -29,20 +29,14 @@ public class PizzaAndIngredientRecord {
     @CsvBindByPosition(position = 11)
     private String pizzasaus_standaard;
 
-    public PizzaAndIngredientRecord(){}
+    protected PizzaAndIngredientRecord(){}
 
-    public PizzaAndIngredientRecord(String categorie,
-                                    String subcategorie,
-                                    String productnaam,
-                                    String productomschrijving,
-                                    String prijs,
-                                    String bezorgtoeslag,
-                                    String spicy,
-                                    String vegetarisch,
-                                    String beschikbaar,
-                                    String aantalkeer_ingredient,
-                                    String ingredientnaam,
-                                    String pizzasaus_standaard) {
+    public PizzaAndIngredientRecord(String categorie, String subcategorie, String productnaam,
+                                    String productomschrijving, String prijs, String bezorgtoeslag,
+                                    String spicy, String vegetarisch, String beschikbaar,
+                                    String aantalkeer_ingredient, String ingredientnaam,
+                                    String pizzasaus_standaard)
+    {
         this.categorie = categorie;
         this.subcategorie = subcategorie;
         this.productnaam = productnaam;

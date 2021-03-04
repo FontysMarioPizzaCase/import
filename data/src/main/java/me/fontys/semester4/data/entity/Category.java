@@ -40,7 +40,7 @@ public class Category implements Serializable {
     }
 
     protected Category() {
-        products = new HashSet<>();
+        this(null, null, null);
     }
 
     public void setCatid(Long catid) {
