@@ -39,8 +39,7 @@ public class Category implements Serializable {
         products = new HashSet<>();
     }
 
-    public Category() {
-
+    protected Category() {
         products = new HashSet<>();
     }
 
