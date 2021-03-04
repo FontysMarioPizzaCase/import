@@ -12,8 +12,8 @@ import java.io.IOException;
 @Configuration
 public class StoreImportBootstrap {
 
-    @Value("${import.order.wildcard}")
-    private final String path = "./import-data/*.txt";
+    @Value("${import.store.wildcard}")
+    private final String path = "./import-data/winkels*.txt";
     private final ApplicationContext applicationContext;
 
     @Autowired

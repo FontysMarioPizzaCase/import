@@ -26,10 +26,7 @@ public class StoreImporter {
     private final Map<String, Integer> warnings = new HashMap<>();
 
     @Autowired
-    public StoreImporter(
-            Resource[] stores,
-            StoreRepository storeRepository
-    ) {
+    public StoreImporter(Resource[] stores, StoreRepository storeRepository) {
         this.stores = stores;
         this.storeRepository = storeRepository;
     }
@@ -65,7 +62,7 @@ public class StoreImporter {
     private List<Store> processStoreResource(Resource resource) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
-        List<String> allStrings = new ArrayList<String>();
+        List<String> allStrings = new ArrayList<>();
         String str = "";
         while(true) {
             String currentLine = in.readLine();
