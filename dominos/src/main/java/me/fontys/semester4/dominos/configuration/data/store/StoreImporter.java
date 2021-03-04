@@ -84,10 +84,15 @@ public class StoreImporter {
         if (str.length() > 0) {
             allStrings.add(str.toString());
         }
-        System.out.println(allStrings.size());
         List<Store> stores = new ArrayList<>();
         allStrings.forEach((_store) -> {
             String[] lines = _store.split("\\r?\\n");
+            // TODO I know store length is 7, what happens if this changes?
+            //   should improve in future
+            if (lines.length < 7) {
+                this.processWarning(String.format("Process store %s went wrong", _store));
+                return;
+            }
             String storeName = lines[0];
             String storeStreet = String.format("%s %s", lines[1], lines[2]);
             stores.add(new Store(null, storeName, storeStreet));
