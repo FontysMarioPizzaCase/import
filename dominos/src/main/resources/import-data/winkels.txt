@@ -1,3 +1,6 @@
+-- Let op: Dit is overzicht van alle winkels van Mario, ingetyped door een medewerker
+--  Er kunnen dus (opmaak)fouten in postcodes/straten zitten of inconsistenties!
+
 Amsterdam Aalsmeerweg
 Aalsmeerweg 
 14
