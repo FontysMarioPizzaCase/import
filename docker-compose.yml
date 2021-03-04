@@ -18,6 +18,6 @@ services:
       - postgresql
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/mariopizza
-      - CSVFILE=/importfiles/pizza_ingredienten.csv
-    volumes:
-      - ./importfiles:/importfiles
+#      - CSVFILE=/importfiles/pizza_ingredienten.csv
+#    volumes:
+#      - ./importfiles:/importfiles

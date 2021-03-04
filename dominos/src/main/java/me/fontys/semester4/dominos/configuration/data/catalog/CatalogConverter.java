@@ -1,29 +1,24 @@
-package me.fontys.semester4.dominos.pizza.and.ingredient;
+package me.fontys.semester4.dominos.configuration.data.catalog;
 
-import com.opencsv.bean.CsvToBeanBuilder;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class PizzaAndIngredientConverter {
-    private List<PizzaAndIngredientRecord> records;
+public class CatalogConverter {
     private final List<Ingredient> ingredients;
     private final List<Product> products;
     private final List<ProductPrice> prices;
     private final List<Category> categories;
 
-    public PizzaAndIngredientConverter() {
-        this.records = new ArrayList<>();
+    public CatalogConverter() {
         this.ingredients = new ArrayList<>();
         this.products = new ArrayList<>();
         this.prices = new ArrayList<>();
@@ -46,25 +41,10 @@ public class PizzaAndIngredientConverter {
         return categories;
     }
 
-    public void convert(String fileName, char separator) throws FileNotFoundException {
-        loadRecords(fileName, separator);
-        extractAndUpdate();
-
+    public void convert(List<PizzaAndIngredientRecord> records) {
         // TODO: pizzasaus, aantalkeer_ingredient, beschikbaar
         // TODO: validate();
-    }
 
-    private void loadRecords(String fileName, char separator) throws FileNotFoundException {
-        records = new CsvToBeanBuilder(new FileReader(fileName))
-                .withSeparator(separator)
-                .withIgnoreEmptyLine(true)
-                .withSkipLines(1)
-                .withType(PizzaAndIngredientRecord.class)
-                .build()
-                .parse();
-    }
-
-    private void extractAndUpdate() {
         for (var record : records) {
             // extract entities
             Product newProduct = extractProduct(record);
