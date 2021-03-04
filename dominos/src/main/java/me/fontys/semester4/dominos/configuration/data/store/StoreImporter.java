@@ -63,26 +63,26 @@ public class StoreImporter {
         BufferedReader in = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
         List<String> allStrings = new ArrayList<>();
-        String str = "";
+        StringBuilder str = new StringBuilder();
         while(true) {
             String currentLine = in.readLine();
             if (currentLine == null) {
                 break;
             } else if (currentLine.isEmpty()) {
-                if (!str.isEmpty()) {
-                    allStrings.add(str);
+                if (str.length() > 0) {
+                    allStrings.add(str.toString());
                 }
-                str = "";
+                str = new StringBuilder();
             } else {
-                if (str.isEmpty()) {
-                    str = currentLine;
+                if (str.length() == 0) {
+                    str = new StringBuilder(currentLine);
                 } else {
-                    str += "\n" + currentLine;
+                    str.append("\n").append(currentLine);
                 }
             }
         }
-        if (!str.isEmpty()) {
-            allStrings.add(str);
+        if (str.length() > 0) {
+            allStrings.add(str.toString());
         }
         System.out.println(allStrings.size());
         List<Store> stores = new ArrayList<>();
