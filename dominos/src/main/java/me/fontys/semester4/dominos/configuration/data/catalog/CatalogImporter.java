@@ -30,8 +30,7 @@ public class CatalogImporter {
     private final Map<String, Integer> warnings = new HashMap<>();
 
     @Autowired
-    public CatalogImporter(Resource[] catalogResources,
-                           ProductRepository productRepository,
+    public CatalogImporter(Resource[] catalogResources, ProductRepository productRepository,
                            IngredientRepository ingredientRepository,
                            CategoryRepository categoryRepository,
                            ProductPriceRepository productPriceRepository,

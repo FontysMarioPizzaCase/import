@@ -29,7 +29,7 @@ public class PizzaAndIngredientRecord {
     @CsvBindByPosition(position = 11)
     private String pizzasaus_standaard;
 
-    protected PizzaAndIngredientRecord(){}
+    public PizzaAndIngredientRecord(){} // keep public for CsvToBeanBuilder
 
     public PizzaAndIngredientRecord(String categorie, String subcategorie, String productnaam,
                                     String productomschrijving, String prijs, String bezorgtoeslag,
