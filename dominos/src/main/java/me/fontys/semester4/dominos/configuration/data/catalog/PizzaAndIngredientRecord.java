@@ -5,115 +5,115 @@ import com.opencsv.bean.CsvBindByPosition;
 public class PizzaAndIngredientRecord {
 
     @CsvBindByPosition(position = 0)
-    private String categorie;
+    private String category;
     @CsvBindByPosition(position = 1)
-    private String subcategorie;
+    private String subCategory;
     @CsvBindByPosition(position = 2)
-    private String productnaam;
+    private String productName;
     @CsvBindByPosition(position = 3)
-    private String productomschrijving;
+    private String productDescription;
     @CsvBindByPosition(position = 4)
-    private String prijs;
+    private String price;
     @CsvBindByPosition(position = 5)
-    private String bezorgtoeslag;
+    private String deliveryFee;
     @CsvBindByPosition(position = 6)
-    private String spicy;
+    private String isSpicy;
     @CsvBindByPosition(position = 7)
-    private String vegetarisch;
+    private String isVegetarian;
     @CsvBindByPosition(position = 8)
-    private String beschikbaar;
+    private String isAvailable;
     @CsvBindByPosition(position = 9)
-    private String aantalkeer_ingredient;
+    private String ingredientPortion;
     @CsvBindByPosition(position = 10)
-    private String ingredientnaam;
+    private String ingredientName;
     @CsvBindByPosition(position = 11)
-    private String pizzasaus_standaard;
+    private String standardPizzasauce;
 
     public PizzaAndIngredientRecord(){} // keep public for CsvToBeanBuilder
 
-    public PizzaAndIngredientRecord(String categorie, String subcategorie, String productnaam,
-                                    String productomschrijving, String prijs, String bezorgtoeslag,
-                                    String spicy, String vegetarisch, String beschikbaar,
-                                    String aantalkeer_ingredient, String ingredientnaam,
-                                    String pizzasaus_standaard)
+    public PizzaAndIngredientRecord(String category, String subCategory, String productName,
+                                    String productDescription, String price, String deliveryFee,
+                                    String isSpicy, String isVegetarian, String isAvailable,
+                                    String ingredientPortion, String ingredientName,
+                                    String standardPizzasauce)
     {
-        this.categorie = categorie;
-        this.subcategorie = subcategorie;
-        this.productnaam = productnaam;
-        this.productomschrijving = productomschrijving;
-        this.prijs = prijs;
-        this.bezorgtoeslag = bezorgtoeslag;
-        this.spicy = spicy;
-        this.vegetarisch = vegetarisch;
-        this.beschikbaar = beschikbaar;
-        this.aantalkeer_ingredient = aantalkeer_ingredient;
-        this.ingredientnaam = ingredientnaam;
-        this.pizzasaus_standaard = pizzasaus_standaard;
+        this.category = category;
+        this.subCategory = subCategory;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.price = price;
+        this.deliveryFee = deliveryFee;
+        this.isSpicy = isSpicy;
+        this.isVegetarian = isVegetarian;
+        this.isAvailable = isAvailable;
+        this.ingredientPortion = ingredientPortion;
+        this.ingredientName = ingredientName;
+        this.standardPizzasauce = standardPizzasauce;
     }
 
-    public String getCategorie() {
-        return categorie;
+    public String getCategory() {
+        return category;
     }
 
-    public String getSubcategorie() {
-        return subcategorie;
+    public String getSubCategory() {
+        return subCategory;
     }
 
-    public String getProductnaam() {
-        return productnaam;
+    public String getProductName() {
+        return productName;
     }
 
-    public String getProductomschrijving() {
-        return productomschrijving;
+    public String getProductDescription() {
+        return productDescription;
     }
 
-    public String getPrijs() {
-        return prijs;
+    public String getPrice() {
+        return price;
     }
 
-    public String getBezorgtoeslag() {
-        return bezorgtoeslag;
+    public String getDeliveryFee() {
+        return deliveryFee;
     }
 
-    public String getSpicy() {
-        return spicy;
+    public String getIsSpicy() {
+        return isSpicy;
     }
 
-    public String getVegetarisch() {
-        return vegetarisch;
+    public String getIsVegetarian() {
+        return isVegetarian;
     }
 
-    public String getBeschikbaar() {
-        return beschikbaar;
+    public String getIsAvailable() {
+        return isAvailable;
     }
 
-    public String getAantalkeer_ingredient() {
-        return aantalkeer_ingredient;
+    public String getIngredientPortion() {
+        return ingredientPortion;
     }
 
-    public String getIngredientnaam() {
-        return ingredientnaam;
+    public String getIngredientName() {
+        return ingredientName;
     }
 
-    public String getPizzasaus_standaard() {
-        return pizzasaus_standaard;
+    public String getStandardPizzasauce() {
+        return standardPizzasauce;
     }
 
     @Override
     public String toString() {
-        return "InputLine{" +
-                "categorie='" + categorie + '\'' +
-                ", subcategorie='" + subcategorie + '\'' +
-                ", productnaam='" + productnaam + '\'' +
-                ", productomschrijving='" + productomschrijving + '\'' +
-                ", prijs='" + prijs + '\'' +
-                ", bezorgtoeslag='" + bezorgtoeslag + '\'' +
-                ", spicy='" + spicy + '\'' +
-                ", vegetarisch='" + vegetarisch + '\'' +
-                ", beschikbaar='" + beschikbaar + '\'' +
-                ", aantalkeer_ingredient='" + aantalkeer_ingredient + '\'' +
-                ", ingredientnaam='" + ingredientnaam + '\'' +
-                ", pizzasaus_standaard='" + pizzasaus_standaard + '\'' +
+        return "PizzaAndIngredientRecord{" +
+                "category='" + category + '\'' +
+                ", subCategory='" + subCategory + '\'' +
+                ", productName='" + productName + '\'' +
+                ", productDescription='" + productDescription + '\'' +
+                ", price='" + price + '\'' +
+                ", deliveryFee='" + deliveryFee + '\'' +
+                ", isSpicy='" + isSpicy + '\'' +
+                ", isVegetarian='" + isVegetarian + '\'' +
+                ", isAvailable='" + isAvailable + '\'' +
+                ", ingredientPortion='" + ingredientPortion + '\'' +
+                ", ingredientName='" + ingredientName + '\'' +
+                ", standardPizzasauce='" + standardPizzasauce + '\'' +
                 '}';
     }
 }

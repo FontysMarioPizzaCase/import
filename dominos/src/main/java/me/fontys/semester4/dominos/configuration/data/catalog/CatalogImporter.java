@@ -1,6 +1,7 @@
 package me.fontys.semester4.dominos.configuration.data.catalog;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Configuration
 public class CatalogImporter {
@@ -55,38 +54,42 @@ public class CatalogImporter {
         }
 
         // convert records
-        LOGGER.info(String.format("Converting %s records...", records.size()));
         CatalogConverter c = this.catalogConverter;
         c.convert(records);
 
         // import entities
         LOGGER.info(String.format("Inserting entities..."));
-        this.productRepository.saveAll(c.getProducts());
-        this.categoryRepository.saveAll(c.getCategories());
-        this.ingredientRepository.saveAll(c.getIngredients());
-        this.productPriceRepository.saveAll(c.getPrices());
-    }
-
-    public void report() {
-        int totalWarnings = this.warnings.values().stream()
-                .reduce(0, Integer::sum);
-
-        if (totalWarnings > 0) {
-            LOGGER.warn(String.format("Store import result : %s warnings", totalWarnings));
-
-            for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
-                LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
+        for (Product p : c.getProducts()) {
+            boolean exists = this.productRepository.existsByName(p.getName());
+            if (exists) {
+                Product pOld = this.productRepository.findByName(p.getName()).get();
+                if (pOld.equals(p)) {
+                    processWarning("Duplicate product not inserted");
+                }
+                if (!pOld.equals(p)) {
+                    processWarning("Update candidate found for product. Add or update?");
+                }
+            } else {
+                this.productRepository.save(p);
             }
         }
+
+//        this.categoryRepository.saveAll(c.getCategories());
+//        this.ingredientRepository.saveAll(c.getIngredients());
+//        this.productPriceRepository.saveAll(c.getPrices());
     }
 
-    private List<PizzaAndIngredientRecord> processPizzaAndIngredientCsv(Resource resource, char separator) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+    private List<PizzaAndIngredientRecord> processPizzaAndIngredientCsv(
+            Resource resource, char separator) throws IOException {
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource.getInputStream()));
 
         List<PizzaAndIngredientRecord> records = new CsvToBeanBuilder(reader)
                 .withSeparator(separator)
                 .withIgnoreEmptyLine(true)
                 .withSkipLines(1)
+                .withIgnoreLeadingWhiteSpace(true)
                 .withType(PizzaAndIngredientRecord.class)
                 .build()
                 .parse();
@@ -99,6 +102,21 @@ public class CatalogImporter {
             this.warnings.put(message, this.warnings.get(message) + 1);
         } else {
             this.warnings.put(message, 1);
+        }
+    }
+
+    public void report() {
+        this.catalogConverter.report();
+
+        int totalWarnings = this.warnings.values().stream()
+                .reduce(0, Integer::sum);
+
+        if (totalWarnings > 0) {
+            LOGGER.warn(String.format("Catalog import result : %s warnings", totalWarnings));
+
+            for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
+                LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
+            }
         }
     }
 }

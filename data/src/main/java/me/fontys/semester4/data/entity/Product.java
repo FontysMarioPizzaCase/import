@@ -19,7 +19,7 @@ public class Product implements Serializable {
     @Column(name = "productid", nullable = false)
     private Long productid;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "description")
