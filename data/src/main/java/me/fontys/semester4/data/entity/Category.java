@@ -78,7 +78,6 @@ public class Category implements Serializable {
     }
 
     @Override
-    @Transactional // TODO: is this wanted in every tostring?
     public String toString() {
         String parentid = (parent != null) ? parent.getCatid().toString() : "null";
 
@@ -87,18 +86,7 @@ public class Category implements Serializable {
         sb.append("catid=").append(catid);
         sb.append(", name='").append(name).append('\'');
         sb.append(", parentid=").append(parentid);
-        sb.append(", childrenids={");
-        for (int i = 0; i < children.size(); i++) {
-            sb.append(children.get(i).getCatid());
-            if (i < children.size() - 1) sb.append(", ");
-        }
-        sb.append("}, productIds={");
-        int i = 0;
-        for (Product product : products) {
-            sb.append(product.getProductid());
-            if (i < children.size() - 1) sb.append(", ");
-        }
-        sb.append("}}");
+        sb.append("}");
 
         return sb.toString();
     }

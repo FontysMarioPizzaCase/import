@@ -73,7 +73,6 @@ public class ProductPrice implements Serializable {
     }
 
     @Override
-    @Transactional // TODO: is this wanted in every tostring?
     public String toString() {
         String productid = (product != null) ? product.getProductid().toString() : "null";
 
