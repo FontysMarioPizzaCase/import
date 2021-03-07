@@ -27,23 +27,17 @@ public class ProductImporter {
     }
 
     @Transactional
-    public Product importProduct(PizzaAndIngredientRecord record,
-                                 Ingredient ingredient, List<Category> categories) {
-        Product product = getProduct(record, ingredient, categories);
-        this.repository.save(product);
+    public Product extractAndImport(PizzaAndIngredientRecord record,
+                                    Ingredient ingredient, List<Category> categories) {
+        Product product = findInBuffer(record.getProductName());
 
-        return product;
-    }
-
-    private Product getProduct(PizzaAndIngredientRecord record,
-                               Ingredient ingredient, List<Category> categories) {
+        if (product != null) {
+            processWarning("Product already processed. Skipped.");
+            return product;
+        }
         if (record.getProductName().isEmpty()) {
             processWarning("Record does not have a product name");
-            return null;
-        }
-        if (existsInBuffer(record.getProductName())) {
-            processWarning("Product already processed");
-            return null;
+            throw new IllegalArgumentException();
         }
         if (record.getProductDescription().isEmpty()) {
             processWarning("Record does not have a product description");
@@ -60,7 +54,6 @@ public class ProductImporter {
 
         // query db
         Optional<Product> temp = this.repository.findByName(record.getProductName());
-        Product product;
 
         if(temp.isPresent()){
             product = temp.get();
@@ -70,6 +63,7 @@ public class ProductImporter {
             product.setVegetarian(record.getIsVegetarian().equalsIgnoreCase("JA"));
             // TODO: validate delivery fee
             product.setDeliveryfee(BigDecimal.TEN);
+            processWarning("Product updated");
         }
         else {
             product = new Product(
@@ -84,9 +78,11 @@ public class ProductImporter {
                     0.06,
                     null
             );
+            this.repository.save(product);
+            processWarning("Product created");
         }
 
-        // add relationships // TODO: check for duplicates
+        // add relationships
         product.getIngredients().add(ingredient);
         product.getCategories().addAll(categories);
 
@@ -95,13 +91,13 @@ public class ProductImporter {
         return product;
     }
 
-    private boolean existsInBuffer(String productName) {
+    private Product findInBuffer(String productName) {
         for (var product : buffer) {
             if (productName.equals(product.getName())) {
-                return true;
+                return product;
             }
         }
-        return false;
+        return null;
     }
 
     private void processWarning(String message) {
@@ -113,7 +109,7 @@ public class ProductImporter {
     }
 
     public void report() {
-        LOGGER.info(String.format("Imported %s products", this.buffer.size()));
+        LOGGER.info(String.format("Added or updated %s products", this.buffer.size()));
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);

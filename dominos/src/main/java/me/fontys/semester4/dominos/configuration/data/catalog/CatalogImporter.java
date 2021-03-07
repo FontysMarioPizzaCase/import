@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.*;
@@ -47,6 +48,7 @@ public class CatalogImporter {
         this.prices = new ArrayList<>();
     }
 
+    @Transactional
     public void doImport() throws IOException {
         LOGGER.info("Starting import of catalog records...");
         this.warnings.clear();
@@ -92,10 +94,16 @@ public class CatalogImporter {
         LOGGER.info(String.format("Converting %s records...", records.size()));
 
         for (var record : records) {
-            Ingredient ingredient = ingredientImporter.importIngredient(record);
-            List<Category> bothCategories = categoryImporter.importCategories(record);
-            Product product = productImporter.importProduct(record, ingredient, bothCategories);
-            ProductPrice price = priceImporter.importPrice(record, product);
+            try {
+                Ingredient ingredient = ingredientImporter.extractAndImport(record);
+                List<Category> bothCategories = categoryImporter.extractAndImport(record);
+                Product product = productImporter.extractAndImport(record, ingredient, bothCategories);
+                ProductPrice price = priceImporter.extractAndImport(record, product);
+            }
+            catch (Exception e){
+                processWarning(String.format("Invalid data in record: %s || ERROR: %s",
+                        record.toString(), e.toString()));
+            }
 
             // TODO: pizzasaus, aantalkeer_ingredient, beschikbaar
         }
@@ -110,6 +118,11 @@ public class CatalogImporter {
     }
 
     public void report() {
+        ingredientImporter.report();;
+        categoryImporter.report();
+        productImporter.report();
+        priceImporter.report();
+
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);
 

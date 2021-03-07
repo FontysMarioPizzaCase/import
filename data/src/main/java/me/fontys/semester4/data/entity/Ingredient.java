@@ -26,7 +26,7 @@ public class Ingredient implements Serializable {
     @Column(name = "addprice")
     private String addprice;
 
-    @ManyToMany(mappedBy = "ingredients", cascade = {CascadeType.MERGE})
+    @ManyToMany(mappedBy = "ingredients")
     private Set<Product> products;
 
     protected Ingredient() {

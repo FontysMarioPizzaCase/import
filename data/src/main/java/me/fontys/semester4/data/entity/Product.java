@@ -43,19 +43,19 @@ public class Product implements Serializable {
     @Column(name = "imagepath")
     private String imagepath;
 
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable( name = "category_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="catid"))
     private Set<Category> categories;
 
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable( name = "ingredient_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
 
-    @OneToMany(mappedBy = "product", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<ProductPrice> prices;
 
     public Product(Long productid, String name, String description, Boolean spicy,

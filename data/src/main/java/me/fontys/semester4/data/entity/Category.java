@@ -28,10 +28,10 @@ public class Category implements Serializable {
     @JoinColumn(referencedColumnName = "catid")
     private Category parent;
 
-    @OneToMany(mappedBy = "parent", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Category> children;
 
-    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.MERGE})
+    @ManyToMany(mappedBy = "categories")
     private Set<Product> products;
 
     public Category(Long catid, Category parent, String name) {

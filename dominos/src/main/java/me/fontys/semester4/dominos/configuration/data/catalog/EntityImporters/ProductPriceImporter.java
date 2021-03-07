@@ -26,31 +26,30 @@ public class ProductPriceImporter {
     }
 
     @Transactional
-    public ProductPrice importPrice(PizzaAndIngredientRecord record, Product product) {
-        ProductPrice price = getPrice(record, product);
-        this.repository.save(price);
+    public ProductPrice extractAndImport(PizzaAndIngredientRecord record, Product product) {
+        // TODO: findInBuffer doesn't work
+        ProductPrice price = findInBuffer(record.getPrice(), product);
 
-        return price;
-    }
-
-    private ProductPrice getPrice(PizzaAndIngredientRecord record, Product product) {
+        if (price != null) {
+            processWarning("Product price already processed. Skipped.");
+            return price;
+        }
         if (record.getPrice().isEmpty()) {
             processWarning("Record does not have a product price");
-            return null;
-        }
-        if (existsInBuffer(record.getPrice(), product)) {
-            processWarning("Product price already processed");
-            return null;
+            throw new IllegalArgumentException();
         }
 
+
         // query db
-        ProductPrice price;
         try (Stream<ProductPrice> stream = this.repository
-                .findByProductAndPrice(product.getProductid(), record.getPrice()))
+                // TODO: fix prices!
+                // .findByProductAndPrice(product.getProductid(), record.getPrice()))
+                .findByPriceAndProduct_Productid("66.66", product.getProductid()))
         {
             if (stream.count() > 0) {
                 price = stream.findFirst().get();
                 // no props to set
+                processWarning("Price updated");
             } else {
                 price = new ProductPrice(
                         null,
@@ -58,6 +57,8 @@ public class ProductPriceImporter {
                         record.getPrice(),
                         new Date()
                 );
+                this.repository.save(price);
+                processWarning("Price created");
             }
         }
         buffer.add(price);
@@ -65,16 +66,16 @@ public class ProductPriceImporter {
         return price;
     }
 
-    private boolean existsInBuffer(String priceStr, Product product) {
+    private ProductPrice findInBuffer(String priceStr, Product product) {
         for (var price : buffer) {
             if (price.getPriceid().toString().equals(priceStr)) {
                 if (price.getProduct().getProductid().equals(product.getProductid())) {
                     // cannot compare dates
-                    return true;
+                    return price;
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private void processWarning(String message) {
@@ -86,7 +87,7 @@ public class ProductPriceImporter {
     }
 
     public void report() {
-        LOGGER.info(String.format("Imported %s product prices", this.buffer.size()));
+        LOGGER.info(String.format("Added or updated %s product prices", this.buffer.size()));
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);

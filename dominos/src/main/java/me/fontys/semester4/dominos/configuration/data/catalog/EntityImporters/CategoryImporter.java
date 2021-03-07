@@ -24,45 +24,43 @@ public class CategoryImporter<T> {
     }
 
     @Transactional
-    public List<Category> importCategories(PizzaAndIngredientRecord record) {
-        Category parent = getCategory(record.getCategoryName());
-        Category child = getCategory(record.getSubCategoryName(), parent);
+    public List<Category> extractAndImport(PizzaAndIngredientRecord record) {
+        Category parent = extractAndImport(record.getCategoryName());
+        Category child = extractAndImport(record.getSubCategoryName(), parent);
 
-        List<Category> bothCategories = new ArrayList<>();
-        bothCategories.add(parent);
-        bothCategories.add(child);
-
-        this.repository.saveAll(bothCategories);
-
-        return bothCategories;
+        return new ArrayList<>(List.of(parent, child));
     }
 
-    private Category getCategory(String name, Category parent) {
-        Category child = getCategory(name);
+    private Category extractAndImport(String name, Category parent) {
+        Category child = extractAndImport(name);
         child.setParent(parent);
         return child;
     }
 
-    private Category getCategory(String name) {
+    private Category extractAndImport(String name) {
+        Category category = findInBuffer(name);
+
+        if (category != null) {
+            processWarning("Category already processed. Skipped.");
+            return category;
+        }
         if (name.isEmpty()) {
             processWarning("Record does not have a category name");
-            return null;
-        }
-        if (existsInBuffer(name)) {
-            processWarning("Category already processed");
-            return null;
+            throw new IllegalArgumentException();
         }
 
         // query db
         Optional<Category> temp = this.repository.findByName(name);
-        Category category;
 
         if(temp.isPresent()){
             category = temp.get();
             // no props to set
+            processWarning("Category updated");
         }
         else {
             category = new Category(null, null, name);
+            this.repository.save(category);
+            processWarning("Category created");
         }
 
         buffer.add(category);
@@ -70,13 +68,13 @@ public class CategoryImporter<T> {
         return category;
     }
 
-    private boolean existsInBuffer(String categoryName) {
+    private Category findInBuffer(String categoryName) {
         for (var category : buffer) {
             if (categoryName.equals(category.getName())) {
-                return true;
+                return category;
             }
         }
-        return false;
+        return null;
     }
 
     private void processWarning(String message) {
@@ -88,7 +86,7 @@ public class CategoryImporter<T> {
     }
 
     public void report() {
-        LOGGER.info(String.format("Imported %s categories", this.buffer.size()));
+        LOGGER.info(String.format("Added or updated %s categories", this.buffer.size()));
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);

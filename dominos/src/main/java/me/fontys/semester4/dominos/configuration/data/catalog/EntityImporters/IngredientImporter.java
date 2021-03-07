@@ -24,50 +24,43 @@ public class IngredientImporter {
     }
 
     @Transactional
-    public Ingredient importIngredient(PizzaAndIngredientRecord record) {
-        Ingredient ingredient = getIngredient(record);
-        this.repository.save(ingredient);
+    public Ingredient extractAndImport(PizzaAndIngredientRecord record) {
+        Ingredient ingredient = findInBuffer(record.getIngredientName());
 
-        return ingredient;
-    }
-
-    private Ingredient getIngredient(PizzaAndIngredientRecord record) {
+        if (ingredient != null) {
+            processWarning("Ingredient already processed. Skipped.");
+            return ingredient;
+        }
         if (record.getIngredientName().isEmpty()) {
             processWarning("Record does not have an ingredient name");
-            return null;
-        }
-        if (existsInBuffer(record.getIngredientName())) {
-            processWarning("Ingredient already processed");
-            return null;
+            throw new IllegalArgumentException();
         }
 
         // query db
-        Optional<Ingredient> temp = this.repository.findByName(record.getProductName());
-        Ingredient ingredient;
+        Optional<Ingredient> temp = this.repository.findByName(record.getIngredientName());
 
         if(temp.isPresent()){
             ingredient = temp.get();
             // no props to set
+            processWarning("Ingredient updated");
         }
         else {
-            ingredient = new Ingredient(
-                    null,
-                    record.getIngredientName(),
-                    null
-            );
+            ingredient = new Ingredient(null, record.getIngredientName(), null);
+            this.repository.save(ingredient);
+            processWarning("Ingredient created");
         }
         buffer.add(ingredient);
 
         return ingredient;
     }
 
-    private boolean existsInBuffer(String ingredientName) {
+    private Ingredient findInBuffer(String ingredientName) {
         for (var ingredient : buffer) {
             if (ingredientName.equals(ingredient.getName())) {
-                return true;
+                return ingredient;
             }
         }
-        return false;
+        return null;
     }
 
     private void processWarning(String message) {
@@ -79,7 +72,7 @@ public class IngredientImporter {
     }
 
     public void report() {
-        LOGGER.info(String.format("Imported %s ingredients", this.buffer.size()));
+        LOGGER.info(String.format("Added or updated %s ingredients", this.buffer.size()));
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);
