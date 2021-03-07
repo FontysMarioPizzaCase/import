@@ -1,5 +1,7 @@
 package me.fontys.semester4.data.entity;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
@@ -149,18 +151,34 @@ public class Product implements Serializable {
     }
 
     @Override
+    @Transactional // TODO: is this wanted in every tostring?
     public String toString() {
-        return "Product{" +
-                "productid=" + productid +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", spicy='" + spicy + '\'' +
-                ", vegetarian='" + vegetarian + '\'' +
-                ", deliveryfee='" + deliveryfee + '\'' +
-                ", taxrate=" + taxrate +
-                ", imagepath='" + imagepath + '\'' +
-                ", categories=" + categories +
-                ", ingredients=" + ingredients +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Product{");
+        sb.append("productid=").append(productid);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", spicy='").append(spicy).append('\'');
+        sb.append(", vegetarian='").append(vegetarian).append('\'');
+        sb.append(", deliveryfee='").append(deliveryfee).append('\'');
+        sb.append(", taxrate=").append(taxrate);
+        sb.append(", imagepath='").append(imagepath).append('\'');
+        sb.append(", categoryIds={");
+        int i = 0;
+        for (Category category : categories) {
+            sb.append(category.getCatid());
+            if (i < categories.size() - 1) sb.append(", ");
+            i++;
+        }
+        sb.append("}, ingredientIds={");
+        i = 0;
+        for (Ingredient ingredient : ingredients) {
+            sb.append(ingredient.getIngredientid());
+            if (i < categories.size() - 1) sb.append(", ");
+            i++;
+        }
+        sb.append("}}");
+
+        return sb.toString();
     }
 }

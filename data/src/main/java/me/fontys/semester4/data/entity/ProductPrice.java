@@ -1,5 +1,7 @@
 package me.fontys.semester4.data.entity;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -71,12 +73,17 @@ public class ProductPrice implements Serializable {
     }
 
     @Override
+    @Transactional // TODO: is this wanted in every tostring?
     public String toString() {
-        return "ProductPrice{" +
-                "productid=" + product.getProductid() + '\'' +
-                "priceid=" + priceid + '\'' +
-                "price=" + price + '\'' +
-                "fromdate=" + fromdate + '\'' +
-                '}';
+        String productid = (product != null) ? product.getProductid().toString() : "null";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("ProductPrice{");
+        sb.append("priceid=").append(priceid);
+        sb.append(", productid=").append(productid);
+        sb.append(", price='").append(price).append('\'');
+        sb.append(", fromdate=").append(fromdate);
+        sb.append('}');
+        return sb.toString();
     }
 }
