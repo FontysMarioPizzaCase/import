@@ -51,11 +51,11 @@ public class PizzaAndIngredientRecord {
         this.standardPizzasauce = standardPizzasauce;
     }
 
-    public String getCategory() {
+    public String getCategoryName() {
         return category;
     }
 
-    public String getSubCategory() {
+    public String getSubCategoryName() {
         return subCategory;
     }
 

@@ -3,6 +3,7 @@ package me.fontys.semester4.data.entity;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table(name = "product_price")
@@ -16,8 +17,9 @@ public class ProductPrice implements Serializable {
     @Column(name = "priceid", nullable = false)
     private Long priceid;
 
-    @Column(name = "productid")
-    private Long productid;
+    @ManyToOne
+    @JoinColumn(name = "productid")
+    private Product product;
 
     @Column(name = "price")
     private String price;
@@ -29,19 +31,19 @@ public class ProductPrice implements Serializable {
 
     }
 
-    public ProductPrice(Long priceid, Long productid, String price, Date fromdate) {
+    public ProductPrice(Long priceid, Product product, String price, Date fromdate) {
         this.priceid = priceid;
-        this.productid = productid;
+        this.product = product;
         this.price = price;
         this.fromdate = fromdate;
     }
 
-    public void setProductid(Long productid) {
-        this.productid = productid;
+    public void setProductid(Product product) {
+        this.product = product;
     }
 
-    public Long getProductid() {
-        return productid;
+    public Product getProduct() {
+        return product;
     }
 
     public void setPriceid(Long priceid) {
@@ -52,12 +54,12 @@ public class ProductPrice implements Serializable {
         return priceid;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void setPrice(BigDecimal price) {
+        this.price = price.toString();
     }
 
-    public String getPrice() {
-        return price;
+    public BigDecimal getPrice() {
+        return new BigDecimal(price);
     }
 
     public void setFromdate(Date fromdate) {
@@ -71,7 +73,7 @@ public class ProductPrice implements Serializable {
     @Override
     public String toString() {
         return "ProductPrice{" +
-                "productid=" + productid + '\'' +
+                "productid=" + product.getProductid() + '\'' +
                 "priceid=" + priceid + '\'' +
                 "price=" + price + '\'' +
                 "fromdate=" + fromdate + '\'' +

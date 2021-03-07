@@ -5,6 +5,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -40,17 +41,20 @@ public class Product implements Serializable {
     @Column(name = "imagepath")
     private String imagepath;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable( name = "category_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="catid"))
     private Set<Category> categories;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable( name = "ingredient_product",
             joinColumns = @JoinColumn(name="productid"),
             inverseJoinColumns = @JoinColumn(name="ingredientid"))
     private Set<Ingredient> ingredients;
+
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.MERGE})
+    private List<ProductPrice> prices;
 
     public Product(Long productid, String name, String description, Boolean spicy,
                    Boolean vegetarian, BigDecimal deliveryfee, Double taxrate,

@@ -1,78 +1,82 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.Converters;
+package me.fontys.semester4.dominos.configuration.data.catalog.EntityImporters;
 
 import me.fontys.semester4.data.entity.Category;
-import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.repository.CategoryRepository;
-import me.fontys.semester4.data.repository.IngredientRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.PizzaAndIngredientRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CategoryImporter<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryImporter.class);
 
     private final Map<String, Integer> warnings = new HashMap<>();
-    private final List<Category> categories;
+    private final List<Category> buffer;
     private final CategoryRepository repository;
-
-    public List<Category> getCategories() {
-        return categories;
-    }
 
     public CategoryImporter(CategoryRepository repository) {
         this.repository = repository;
-        this.categories = new ArrayList<>();
+        this.buffer = new ArrayList<>();
     }
 
-    public List<Category> process(PizzaAndIngredientRecord record) {
-        List<Category> cats = new ArrayList<>();
-        cats.add(processCategory(record.getCategory(), record));
-        cats.add(processCategory(record.getSubCategory(), record));
-        cats.get(1).setParent(cats.get(0));
+    @Transactional
+    public List<Category> importCategories(PizzaAndIngredientRecord record) {
+        Category parent = getCategory(record.getCategoryName());
+        Category child = getCategory(record.getSubCategoryName(), parent);
 
-        return cats;
+        List<Category> bothCategories = new ArrayList<>();
+        bothCategories.add(parent);
+        bothCategories.add(child);
+
+        this.repository.saveAll(bothCategories);
+
+        return bothCategories;
     }
 
-    private Category processCategory(String name, PizzaAndIngredientRecord record) {
+    private Category getCategory(String name, Category parent) {
+        Category child = getCategory(name);
+        child.setParent(parent);
+        return child;
+    }
+
+    private Category getCategory(String name) {
         if (name.isEmpty()) {
             processWarning("Record does not have a category name");
             return null;
         }
-        if (existsByName(name)) {
+        if (existsInBuffer(name)) {
             processWarning("Category already processed");
             return null;
         }
 
-        Category newCategory = new Category(
-                null,
-                null,
-                record.getCategory()
-        );
-        categories.add(newCategory);
+        // query db
+        Optional<Category> temp = this.repository.findByName(name);
+        Category category;
 
-        // TODO: find and save per one
+        if(temp.isPresent()){
+            category = temp.get();
+            // no props to set
+        }
+        else {
+            category = new Category(null, null, name);
+        }
 
-        return newCategory;
+        buffer.add(category);
+
+        return category;
     }
 
-    private boolean existsByName(String categoryName) {
-        for (var category : categories) {
+    private boolean existsInBuffer(String categoryName) {
+        for (var category : buffer) {
             if (categoryName.equals(category.getName())) {
                 return true;
             }
         }
         return false;
-    }
-
-    public void saveAll() {
-        this.repository.saveAll(this.categories);
     }
 
     private void processWarning(String message) {
@@ -84,13 +88,13 @@ public class CategoryImporter<T> {
     }
 
     public void report() {
-        LOGGER.info(String.format("Converted %s categories", this.categories.size()));
+        LOGGER.info(String.format("Imported %s categories", this.buffer.size()));
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);
 
         if (totalWarnings > 0) {
-            LOGGER.warn(String.format("Product conversion result : %s warnings", totalWarnings));
+            LOGGER.warn(String.format("Category import result : %s warnings", totalWarnings));
 
             for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
                 LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));

@@ -22,14 +22,14 @@ public class Category implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     @JoinColumn(referencedColumnName="catid")
     private Category parent;
 
-    @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "parent", cascade = {CascadeType.MERGE})
     private List<Category> children;
 
-    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.MERGE})
     private Set<Product> products;
 
     public Category(Long catid, Category parent, String name) {
