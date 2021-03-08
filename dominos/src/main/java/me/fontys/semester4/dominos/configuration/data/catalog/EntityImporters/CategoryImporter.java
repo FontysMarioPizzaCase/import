@@ -49,20 +49,7 @@ public class CategoryImporter {
             throw new IllegalArgumentException();
         }
 
-        // query db
-        Optional<Category> temp = this.repository.findByName(name);
-
-        if(temp.isPresent()){
-            category = temp.get();
-            // no props to set
-            processWarning("Category updated");
-        }
-        else {
-            category = new Category(null, null, name);
-            this.repository.save(category);
-            processWarning("Category created");
-        }
-
+        category = saveNewOrUpdate(name);
         buffer.add(category);
 
         return category;
@@ -75,6 +62,27 @@ public class CategoryImporter {
             }
         }
         return null;
+    }
+
+    private Category saveNewOrUpdate(String name) {
+        Category category;
+        Optional<Category> temp = this.repository.findByName(name);
+
+        if(temp.isPresent()){
+            category = temp.get();
+            processWarning("No Category properties to update");
+        }
+        else {
+            category = saveNewCategory(name);
+            processWarning("Category created");
+        }
+        return category;
+    }
+
+    private Category saveNewCategory(String name) {
+        Category category = new Category(null, null, name);
+        this.repository.save(category);
+        return category;
     }
 
     private void processWarning(String message) {

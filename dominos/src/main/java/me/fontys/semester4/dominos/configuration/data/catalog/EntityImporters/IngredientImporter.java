@@ -36,19 +36,7 @@ public class IngredientImporter {
             throw new IllegalArgumentException();
         }
 
-        // query db
-        Optional<Ingredient> temp = this.repository.findByName(record.getIngredientName());
-
-        if(temp.isPresent()){
-            ingredient = temp.get();
-            // no props to set
-            processWarning("Ingredient updated");
-        }
-        else {
-            ingredient = new Ingredient(null, record.getIngredientName(), null);
-            this.repository.save(ingredient);
-            processWarning("Ingredient created");
-        }
+        ingredient = saveNewOrUpdate(record);
         buffer.add(ingredient);
 
         return ingredient;
@@ -61,6 +49,27 @@ public class IngredientImporter {
             }
         }
         return null;
+    }
+
+    private Ingredient saveNewOrUpdate(PizzaAndIngredientRecord record) {
+        Ingredient ingredient;
+        Optional<Ingredient> temp = this.repository.findByName(record.getIngredientName());
+
+        if(temp.isPresent()){
+            ingredient = temp.get();
+            processWarning("No Ingredient properties to update");
+        }
+        else {
+            ingredient = saveNewIngredient(record);
+            processWarning("Ingredient created");
+        }
+        return ingredient;
+    }
+
+    private Ingredient saveNewIngredient(PizzaAndIngredientRecord record) {
+        Ingredient ingredient = new Ingredient(null, record.getIngredientName(), null);
+        this.repository.save(ingredient);
+        return ingredient;
     }
 
     private void processWarning(String message) {

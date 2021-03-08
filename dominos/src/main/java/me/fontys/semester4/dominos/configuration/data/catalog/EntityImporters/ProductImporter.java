@@ -54,38 +54,7 @@ public class ProductImporter {
             processWarning("Record does not have a product delivery fee");
         }
 
-        // query db
-        Optional<Product> temp = this.repository.findByName(record.getProductName());
-
-        if(temp.isPresent()){
-            product = temp.get();
-            product.setName(record.getProductName());
-            product.setDescription(record.getProductDescription());
-            product.setSpicy(record.getIsSpicy().equalsIgnoreCase("JA"));
-            product.setVegetarian(record.getIsVegetarian().equalsIgnoreCase("JA"));
-            product.setDeliveryfee(priceCleaner.clean(record.getDeliveryFee()));
-            processWarning("Product updated");
-        }
-        else {
-            product = new Product(
-                    null,
-                    record.getProductName(),
-                    record.getProductDescription(),
-                    record.getIsSpicy().equalsIgnoreCase("JA"),
-                    record.getIsVegetarian().equalsIgnoreCase("JA"),
-                    priceCleaner.clean(record.getDeliveryFee()),
-                    // TODO: input taxrate?
-                    0.06,
-                    null
-            );
-            this.repository.save(product);
-            processWarning("Product created");
-        }
-
-        // add relationships
-        product.getIngredients().add(ingredient);
-        product.getCategories().addAll(categories);
-
+        product = saveNewOrUpdate(record, ingredient, categories);
         buffer.add(product);
 
         return product;
@@ -98,6 +67,57 @@ public class ProductImporter {
             }
         }
         return null;
+    }
+
+    private Product saveNewOrUpdate(PizzaAndIngredientRecord record, Ingredient ingredient, List<Category> categories) {
+        Product product;
+        Optional<Product> temp = this.repository.findByName(record.getProductName());
+
+        if(temp.isPresent()){
+            product = temp.get();
+            product = updateProduct(product, record);
+            processWarning("Product updated");
+        }
+        else {
+            product = saveNewProduct(record);
+            processWarning("Product created");
+        }
+
+        addRelationships(product, ingredient, categories);
+
+        return product;
+    }
+
+    private Product updateProduct(Product product, PizzaAndIngredientRecord record) {
+        product.setName(record.getProductName());
+        product.setDescription(record.getProductDescription());
+        product.setSpicy(record.getIsSpicy().equalsIgnoreCase("JA"));
+        product.setVegetarian(record.getIsVegetarian().equalsIgnoreCase("JA"));
+        product.setDeliveryfee(priceCleaner.clean(record.getDeliveryFee()));
+
+        return product;
+    }
+
+    private Product saveNewProduct(PizzaAndIngredientRecord record) {
+        Product product = new Product(
+                null,
+                record.getProductName(),
+                record.getProductDescription(),
+                record.getIsSpicy().equalsIgnoreCase("JA"),
+                record.getIsVegetarian().equalsIgnoreCase("JA"),
+                priceCleaner.clean(record.getDeliveryFee()),
+                // TODO: input taxrate?
+                0.06,
+                null
+        );
+        this.repository.save(product);
+
+        return product;
+    }
+
+    private void addRelationships(Product product, Ingredient ingredient, List<Category> categories) {
+        product.getIngredients().add(ingredient);
+        product.getCategories().addAll(categories);
     }
 
     private void processWarning(String message) {

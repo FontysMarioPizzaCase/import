@@ -44,31 +44,7 @@ public class ProductPriceImporter {
             return productPrice;
         }
 
-        // query db
-        try (Stream<ProductPrice> stream = this.repository
-                .findByPriceAndProduct_Productid(price.toString(), product.getProductid())) {
-
-            Optional<ProductPrice> temp = stream.findFirst();
-
-            if (temp.isPresent()) {
-                productPrice = temp.get();
-                // no props to set
-                processWarning("Price updated");
-            } else {
-                productPrice = new ProductPrice(
-                        null,
-                        product,
-                        price,
-                        new Date()
-                );
-                this.repository.save(productPrice);
-                processWarning("Price created");
-            }
-        } catch (Exception e) {
-            processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
-            throw e;
-        }
-
+        productPrice = saveNewOrUpdate(product, price);
         buffer.add(productPrice);
 
         return productPrice;
@@ -84,6 +60,40 @@ public class ProductPriceImporter {
             }
         }
         return null;
+    }
+
+    private ProductPrice saveNewOrUpdate(Product product, BigDecimal price) {
+        ProductPrice productPrice;
+        Optional<ProductPrice> temp;
+
+        try (Stream<ProductPrice> stream = this.repository
+                .findByPriceAndProduct_Productid(price.toString(), product.getProductid())) {
+            temp = stream.findFirst();
+        } catch (Exception e) {
+            processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
+            throw e;
+        }
+
+        if (temp.isPresent()) {
+            productPrice = temp.get();
+            processWarning("No ProductPrice properties to update");
+        } else {
+            productPrice = saveNewProductPrice(price, product);
+            processWarning("ProductPrice created");
+        }
+
+        return productPrice;
+    }
+
+    private ProductPrice saveNewProductPrice(BigDecimal price, Product product) {
+        ProductPrice productPrice = new ProductPrice(
+                null,
+                product,
+                price,
+                new Date()
+        );
+        this.repository.save(productPrice);
+        return productPrice;
     }
 
     private void processWarning(String message) {
