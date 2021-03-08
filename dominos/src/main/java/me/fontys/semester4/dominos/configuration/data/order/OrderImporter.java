@@ -5,6 +5,8 @@ import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
 import me.fontys.semester4.data.repository.OrderRepository;
+import me.fontys.semester4.dominos.configuration.data.ImportTest;
+import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordCountTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,10 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class OrderImporter {
@@ -71,6 +76,18 @@ public class OrderImporter {
                 LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
             }
         }
+    }
+
+    public void test() {
+        LOGGER.info("Running test assertions...");
+
+        // Setup test dependencies, bit dirty but it works...
+        OrderImportRecordCountTest.orderRepository = orderRepository;
+        OrderImportRecordCountTest.orderProductRepository = orderProductRepository;
+        OrderImportRecordCountTest.orderCustomOptionRepository = orderCustomOptionRepository;
+        OrderImportRecordCountTest.orderProductIngredientRepository = orderProductIngredientRepository;
+
+        ImportTest.test("Order", OrderImportRecordCountTest.class);
     }
 
     private List<Order> processOrderResource(Resource resource) throws IOException {
