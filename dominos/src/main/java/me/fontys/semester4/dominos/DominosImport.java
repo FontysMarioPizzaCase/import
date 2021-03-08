@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 import java.io.IOException;
 
 @SpringBootApplication
@@ -43,7 +44,7 @@ public class DominosImport implements CommandLineRunner {
         long start = System.currentTimeMillis();
 
         // Do the order import
-//        this.orderImporter.doImport(); TODO: PUT BACK
+        // this.orderImporter.doImport(); TODO: PUT BACK
         this.orderImporter.report();
 
         // Do the store import

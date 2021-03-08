@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog;
+package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients;
 
 import com.opencsv.bean.CsvBindByPosition;
 

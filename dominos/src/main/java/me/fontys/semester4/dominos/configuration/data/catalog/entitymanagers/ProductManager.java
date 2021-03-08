@@ -1,11 +1,11 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.EntityImporters;
+package me.fontys.semester4.dominos.configuration.data.catalog.entitymanagers;
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.repository.ProductRepository;
-import me.fontys.semester4.dominos.configuration.data.catalog.PizzaAndIngredientRecord;
-import me.fontys.semester4.dominos.configuration.data.catalog.Util.PriceCleaner;
+import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.PizzaAndIngredientRecord;
+import me.fontys.semester4.dominos.configuration.data.catalog.util.PriceCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class ProductImporter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductImporter.class);
+public class ProductManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductManager.class);
 
     private final Map<String, Integer> warnings = new HashMap<>();
     private final List<Product> buffer;
     private final ProductRepository repository;
     private final PriceCleaner priceCleaner;
 
-    public ProductImporter(ProductRepository repository, PriceCleaner priceCleaner) {
+    public ProductManager(ProductRepository repository, PriceCleaner priceCleaner) {
         this.repository = repository;
         this.priceCleaner = priceCleaner;
         this.buffer = new ArrayList<>();

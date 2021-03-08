@@ -3,6 +3,7 @@ package me.fontys.semester4.data.entity;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,10 +32,10 @@ public class Ingredient implements Serializable {
         this(null, null, null);
     }
 
-    public Ingredient(Long ingredientid, String name, String addprice) {
+    public Ingredient(Long ingredientid, String name, BigDecimal addprice) {
         this.ingredientid = ingredientid;
         this.name = name;
-        this.addprice = addprice;
+        if (addprice != null) setAddprice(addprice);
         products = new HashSet<>();
     }
 
@@ -54,12 +55,12 @@ public class Ingredient implements Serializable {
         return name;
     }
 
-    public void setAddprice(String addprice) {
-        this.addprice = addprice;
+    public void setAddprice(BigDecimal addprice) {
+        this.addprice = addprice.toString();
     }
 
-    public String getAddprice() {
-        return addprice;
+    public BigDecimal getAddprice() {
+        return new BigDecimal(addprice);
     }
 
     public Set<Product> getProducts() {

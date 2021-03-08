@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog;
+package me.fontys.semester4.dominos.configuration.data.catalog.extraingredientsurcharge;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,18 +10,18 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 
 @Configuration
-public class CatalogImportBootstrap {
+public class ExtraIngredientSurchargeImportBootstrap {
 
-    @Value("${import.catalog.wildcard}")
-    private final String path = "./import-data/pizza_ingredienten.csv";
+    @Value("${import.ingredientssurcharge}")
+    private final String path = "./import-data/ExtraIngredienten*.csv";
     private final ApplicationContext applicationContext;
 
     @Autowired
-    public CatalogImportBootstrap(ApplicationContext applicationContext) {
+    public ExtraIngredientSurchargeImportBootstrap(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    @Bean(name = "catalogResources")
+    @Bean(name = "ingredientSurcharge")
     public Resource[] getResources() throws IOException {
         return this.applicationContext.getResources(this.path);
     }
