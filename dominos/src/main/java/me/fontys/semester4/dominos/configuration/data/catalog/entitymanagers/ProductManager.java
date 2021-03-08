@@ -62,7 +62,7 @@ public class ProductManager {
 
     private Product findInBuffer(String productName) {
         for (var product : buffer) {
-            if (productName.equals(product.getName())) {
+            if (productName.trim().equalsIgnoreCase(product.getName().trim())) {
                 return product;
             }
         }
@@ -71,7 +71,7 @@ public class ProductManager {
 
     private Product saveNewOrUpdate(PizzaAndIngredientRecord record, Ingredient ingredient, List<Category> categories) {
         Product product;
-        Optional<Product> temp = this.repository.findByName(record.getProductName());
+        Optional<Product> temp = this.repository.findByName(record.getProductName()); // TODO: iets met case + unique constraint op naam
 
         if(temp.isPresent()){
             product = temp.get();
@@ -89,7 +89,7 @@ public class ProductManager {
     }
 
     private Product updateProduct(Product product, PizzaAndIngredientRecord record) {
-        product.setName(record.getProductName());
+        product.setName(record.getProductName()); // TODO: case en data aanpassingen nog
         product.setDescription(record.getProductDescription());
         product.setSpicy(record.getIsSpicy().equalsIgnoreCase("JA"));
         product.setVegetarian(record.getIsVegetarian().equalsIgnoreCase("JA"));

@@ -53,6 +53,8 @@ public class PizzaWithIngredientsImporter {
 
         List<PizzaAndIngredientRecord> records = processResources();
         importEntities(records);
+
+        // TODO: does @Transactional automatically close and flush session? How to check?
     }
 
     private List<PizzaAndIngredientRecord> processResources() throws IOException {
