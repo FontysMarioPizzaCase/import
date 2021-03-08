@@ -46,6 +46,7 @@ public class DominosImport implements CommandLineRunner {
         // Do the order import
         this.orderImporter.doImport();
         this.orderImporter.report();
+        this.orderImporter.test();
 
         // Do the store import
         this.storeImporter.doImport();
