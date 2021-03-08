@@ -28,7 +28,6 @@ public class ProductManager {
         this.buffer = new ArrayList<>();
     }
 
-    @Transactional
     public Product extractAndImport(PizzaAndIngredientRecord record,
                                     Ingredient ingredient, List<Category> categories) {
         Product product = findInBuffer(record.getProductName());

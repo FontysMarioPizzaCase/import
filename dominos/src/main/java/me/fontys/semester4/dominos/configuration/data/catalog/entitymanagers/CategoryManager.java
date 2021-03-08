@@ -23,7 +23,6 @@ public class CategoryManager {
         this.buffer = new ArrayList<>();
     }
 
-    @Transactional
     public List<Category> extractAndImport(PizzaAndIngredientRecord record) {
         Category parent = extractAndImport(record.getCategoryName());
         Category child = extractAndImport(record.getSubCategoryName(), parent);

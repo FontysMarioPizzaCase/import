@@ -29,7 +29,6 @@ public class ProductPriceManager {
         this.buffer = new ArrayList<>();
     }
 
-    @Transactional
     public ProductPrice extractAndImport(PizzaAndIngredientRecord record, Product product) {
         if (record.getPrice().isEmpty()) {
             processWarning("Record does not have a product price");

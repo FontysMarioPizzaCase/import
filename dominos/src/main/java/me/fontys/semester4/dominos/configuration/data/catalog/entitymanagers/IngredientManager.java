@@ -31,7 +31,6 @@ public class IngredientManager {
         this.buffer2 = new ArrayList<>(); // TODO: temp, will refactor
     }
 
-    @Transactional
     public Ingredient extractAndImport(PizzaAndIngredientRecord record) {
         Ingredient ingredient = findInBuffer(record.getIngredientName());
 
@@ -50,7 +49,7 @@ public class IngredientManager {
         return ingredient;
     }
 
-    @Transactional // TODO: temp, will refactor
+    // TODO: temp, will refactor
     public Ingredient extractAndImport(ExtraIngredientSurchargeRecord record) {
         Ingredient ingredient = findInBuffer2(record.getIngredientName());
 
