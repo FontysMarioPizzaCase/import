@@ -5,7 +5,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
-import me.fontys.semester4.data.entity.ProductPrice;
 import me.fontys.semester4.dominos.configuration.data.catalog.EntityImporters.CategoryImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.EntityImporters.IngredientImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.EntityImporters.ProductImporter;
@@ -27,9 +26,8 @@ public class CatalogImporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
 
     @Qualifier("catalogResources")
-    private final Resource[] catalogResources;
-    private final List<ProductPrice> prices;
     private final Map<String, Integer> warnings = new HashMap<>();
+    private final Resource[] catalogResources;
     private final ProductImporter productImporter;
     private final IngredientImporter ingredientImporter;
     private final CategoryImporter categoryImporter;
@@ -45,7 +43,6 @@ public class CatalogImporter {
         this.ingredientImporter = ingredientImporter;
         this.categoryImporter = categoryImporter;
         this.priceImporter = priceImporter;
-        this.prices = new ArrayList<>();
     }
 
     @Transactional
@@ -62,18 +59,18 @@ public class CatalogImporter {
 
         for (Resource resource : this.catalogResources) {
             LOGGER.info("Reading resource " + resource.getFilename());
-            records.addAll(this.processCsv(resource, ';'));
+            records.addAll(this.processCsv(resource));
         }
         return records;
     }
 
-    private List<PizzaAndIngredientRecord> processCsv(Resource resource,
-                                                      char separator) throws IOException {
+    private List<PizzaAndIngredientRecord> processCsv(Resource resource) throws IOException {
+        final char separator = ';';
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 resource.getInputStream()));
 
-        CsvToBean beans = new CsvToBeanBuilder(reader)
+        CsvToBean<PizzaAndIngredientRecord> beans = new CsvToBeanBuilder<PizzaAndIngredientRecord>(reader)
                 .withSeparator(separator)
                 .withIgnoreEmptyLine(true)
                 .withSkipLines(1)
@@ -81,11 +78,9 @@ public class CatalogImporter {
                 .withType(PizzaAndIngredientRecord.class)
                 .withThrowExceptions(false)
                 .build();
-        List records = beans.parse();
+        List<PizzaAndIngredientRecord> records = beans.parse();
 
-        beans.getCapturedExceptions().stream().forEach((e) -> {
-            processWarning("Inconsistent data: " + e);
-        });
+        beans.getCapturedExceptions().forEach((e) -> processWarning("Inconsistent data: " + e));
 
         return records;
     }
@@ -98,9 +93,8 @@ public class CatalogImporter {
                 Ingredient ingredient = ingredientImporter.extractAndImport(record);
                 List<Category> bothCategories = categoryImporter.extractAndImport(record);
                 Product product = productImporter.extractAndImport(record, ingredient, bothCategories);
-                ProductPrice price = priceImporter.extractAndImport(record, product);
-            }
-            catch (Exception e){
+                priceImporter.extractAndImport(record, product);
+            } catch (Exception e) {
                 processWarning(String.format("Invalid data in record: %s || ERROR: %s",
                         record.toString(), e.toString()));
             }
@@ -118,7 +112,8 @@ public class CatalogImporter {
     }
 
     public void report() {
-        ingredientImporter.report();;
+        ingredientImporter.report();
+
         categoryImporter.report();
         productImporter.report();
         priceImporter.report();

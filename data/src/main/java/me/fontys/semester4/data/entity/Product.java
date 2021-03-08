@@ -1,11 +1,10 @@
 package me.fontys.semester4.data.entity;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,15 +43,15 @@ public class Product implements Serializable {
     private String imagepath;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable( name = "category_product",
-            joinColumns = @JoinColumn(name="productid"),
-            inverseJoinColumns = @JoinColumn(name="catid"))
+    @JoinTable(name = "category_product",
+            joinColumns = @JoinColumn(name = "productid"),
+            inverseJoinColumns = @JoinColumn(name = "catid"))
     private Set<Category> categories;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable( name = "ingredient_product",
-            joinColumns = @JoinColumn(name="productid"),
-            inverseJoinColumns = @JoinColumn(name="ingredientid"))
+    @JoinTable(name = "ingredient_product",
+            joinColumns = @JoinColumn(name = "productid"),
+            inverseJoinColumns = @JoinColumn(name = "ingredientid"))
     private Set<Ingredient> ingredients;
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -71,6 +70,7 @@ public class Product implements Serializable {
         this.imagepath = imagepath;
         categories = new HashSet<>();
         ingredients = new HashSet<>();
+        prices = new ArrayList<>();
     }
 
     protected Product() {
@@ -150,20 +150,22 @@ public class Product implements Serializable {
         return ingredients;
     }
 
+    public List<ProductPrice> getPrices() {
+        return prices;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Product{");
-        sb.append("productid=").append(productid);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", spicy='").append(spicy).append('\'');
-        sb.append(", vegetarian='").append(vegetarian).append('\'');
-        sb.append(", deliveryfee='").append(deliveryfee).append('\'');
-        sb.append(", taxrate=").append(taxrate);
-        sb.append(", imagepath='").append(imagepath).append('\'');
-        sb.append("}");
-
-        return sb.toString();
+        return "Product{" +
+                "productid=" + productid +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", spicy='" + spicy + '\'' +
+                ", vegetarian='" + vegetarian + '\'' +
+                ", deliveryfee='" + deliveryfee + '\'' +
+                ", taxrate=" + taxrate +
+                ", imagepath='" + imagepath + '\'' +
+                "}";
     }
+
 }

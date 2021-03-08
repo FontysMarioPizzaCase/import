@@ -1,7 +1,5 @@
 package me.fontys.semester4.data.entity;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
@@ -81,13 +79,10 @@ public class Category implements Serializable {
     public String toString() {
         String parentid = (parent != null) ? parent.getCatid().toString() : "null";
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Category{");
-        sb.append("catid=").append(catid);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", parentid=").append(parentid);
-        sb.append("}");
-
-        return sb.toString();
+        return "Category{" +
+                "catid=" + catid +
+                ", name='" + name + '\'' +
+                ", parentid=" + parentid +
+                "}";
     }
 }

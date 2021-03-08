@@ -1,11 +1,9 @@
 package me.fontys.semester4.data.entity;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -30,13 +28,14 @@ public class Ingredient implements Serializable {
     private Set<Product> products;
 
     protected Ingredient() {
-
+        this(null, null, null);
     }
 
     public Ingredient(Long ingredientid, String name, String addprice) {
         this.ingredientid = ingredientid;
         this.name = name;
         this.addprice = addprice;
+        products = new HashSet<>();
     }
 
     public void setIngredientid(Long ingredientid) {
@@ -63,14 +62,16 @@ public class Ingredient implements Serializable {
         return addprice;
     }
 
+    public Set<Product> getProducts() {
+        return products;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Ingredient{");
-        sb.append("ingredientid=").append(ingredientid).append('\'');
-        sb.append("name=").append(name).append('\'');
-        sb.append("addprice=").append(addprice).append('\'');
-        sb.append("}");
-        return sb.toString();
+        return "Ingredient{" +
+                "ingredientid=" + ingredientid + '\'' +
+                "name=" + name + '\'' +
+                "addprice=" + addprice + '\'' +
+                "}";
     }
 }

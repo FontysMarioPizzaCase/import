@@ -1,9 +1,7 @@
 package me.fontys.semester4.data.entity;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +10,7 @@ import java.util.Date;
 @Entity
 public class ProductPrice implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -76,13 +75,11 @@ public class ProductPrice implements Serializable {
     public String toString() {
         String productid = (product != null) ? product.getProductid().toString() : "null";
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("ProductPrice{");
-        sb.append("priceid=").append(priceid);
-        sb.append(", productid=").append(productid);
-        sb.append(", price='").append(price).append('\'');
-        sb.append(", fromdate=").append(fromdate);
-        sb.append('}');
-        return sb.toString();
+        return "ProductPrice{" +
+                "priceid=" + priceid +
+                ", productid=" + productid +
+                ", price='" + price + '\'' +
+                ", fromdate=" + fromdate +
+                '}';
     }
 }

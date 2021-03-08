@@ -29,14 +29,14 @@ public class PizzaAndIngredientRecord {
     @CsvBindByPosition(position = 11)
     private String standardPizzasauce;
 
-    public PizzaAndIngredientRecord(){} // keep public for CsvToBeanBuilder
+    public PizzaAndIngredientRecord() {
+    } // keep public for CsvToBeanBuilder
 
     public PizzaAndIngredientRecord(String category, String subCategory, String productName,
                                     String productDescription, String price, String deliveryFee,
                                     String isSpicy, String isVegetarian, String isAvailable,
                                     String ingredientPortion, String ingredientName,
-                                    String standardPizzasauce)
-    {
+                                    String standardPizzasauce) {
         this.category = category;
         this.subCategory = subCategory;
         this.productName = productName;

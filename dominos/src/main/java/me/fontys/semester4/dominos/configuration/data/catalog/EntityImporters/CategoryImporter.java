@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class CategoryImporter<T> {
+public class CategoryImporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryImporter.class);
 
     private final Map<String, Integer> warnings = new HashMap<>();
