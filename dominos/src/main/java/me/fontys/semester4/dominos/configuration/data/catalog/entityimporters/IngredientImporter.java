@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.entitymanagers;
+package me.fontys.semester4.dominos.configuration.data.catalog.entityimporters;
 
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.repository.IngredientRepository;
@@ -8,14 +8,13 @@ import me.fontys.semester4.dominos.configuration.data.catalog.util.PriceCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Service
-public class IngredientManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IngredientManager.class);
+public class IngredientImporter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IngredientImporter.class);
 
     private final Map<String, Integer> warnings = new HashMap<>();
     private final List<Ingredient> buffer1;
@@ -23,8 +22,8 @@ public class IngredientManager {
     private final IngredientRepository repository;
     private final PriceCleaner priceCleaner;
 
-    public IngredientManager(IngredientRepository repository,
-                             PriceCleaner priceCleaner) {
+    public IngredientImporter(IngredientRepository repository,
+                              PriceCleaner priceCleaner) {
         this.repository = repository;
         this.priceCleaner = priceCleaner;
         this.buffer1 = new ArrayList<>();

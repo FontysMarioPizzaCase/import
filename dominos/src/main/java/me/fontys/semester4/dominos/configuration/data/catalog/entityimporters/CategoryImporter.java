@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.entitymanagers;
+package me.fontys.semester4.dominos.configuration.data.catalog.entityimporters;
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.repository.CategoryRepository;
@@ -6,19 +6,18 @@ import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredien
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
-public class CategoryManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryManager.class);
+public class CategoryImporter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryImporter.class);
 
     private final Map<String, Integer> warnings = new HashMap<>();
     private final List<Category> buffer;
     private final CategoryRepository repository;
 
-    public CategoryManager(CategoryRepository repository) {
+    public CategoryImporter(CategoryRepository repository) {
         this.repository = repository;
         this.buffer = new ArrayList<>();
     }

@@ -2,13 +2,14 @@ package me.fontys.semester4.dominos.configuration.data.catalog.extraingredientsu
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import me.fontys.semester4.dominos.configuration.data.catalog.entitymanagers.IngredientManager;
+import me.fontys.semester4.dominos.configuration.data.catalog.entityimporters.IngredientImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
@@ -26,16 +27,16 @@ public class ExtraIngedientSurchargeImporter {
 
     private final Map<String, Integer> warnings = new HashMap<>();
     private final Resource[] resources;
-    private final IngredientManager ingredientManager;
+    private final IngredientImporter ingredientImporter;
 
     @Autowired
     public ExtraIngedientSurchargeImporter(@Qualifier("ingredientSurcharge") Resource[] resources,
-                                           IngredientManager ingredientManager) {
+                                           IngredientImporter ingredientImporter) {
         this.resources = resources;
-        this.ingredientManager = ingredientManager;
+        this.ingredientImporter = ingredientImporter;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doImport() throws IOException {
         LOGGER.info("Starting import of ingredient surcharge records...");
         this.warnings.clear();
@@ -81,7 +82,7 @@ public class ExtraIngedientSurchargeImporter {
 
         for (var record : records) {
             try {
-                ingredientManager.extractAndImport(record);
+                ingredientImporter.extractAndImport(record);
             } catch (Exception e) {
                 processWarning(String.format("Invalid data in record: %s || ERROR: %s",
                         record.toString(), e.toString()));
@@ -98,7 +99,7 @@ public class ExtraIngedientSurchargeImporter {
     }
 
     public void report() {
-        ingredientManager.report();
+        ingredientImporter.report();
 
         int totalWarnings = this.warnings.values().stream()
                 .reduce(0, Integer::sum);
