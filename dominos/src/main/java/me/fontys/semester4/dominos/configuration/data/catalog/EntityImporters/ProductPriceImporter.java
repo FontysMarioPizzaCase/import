@@ -4,11 +4,13 @@ import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
 import me.fontys.semester4.data.repository.ProductPriceRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.PizzaAndIngredientRecord;
+import me.fontys.semester4.dominos.configuration.data.catalog.Util.PriceCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -19,59 +21,65 @@ public class ProductPriceImporter {
     private final Map<String, Integer> warnings = new HashMap<>();
     private final List<ProductPrice> buffer;
     private final ProductPriceRepository repository;
+    private final PriceCleaner priceCleaner;
 
-    public ProductPriceImporter(ProductPriceRepository repository) {
+    public ProductPriceImporter(ProductPriceRepository repository, PriceCleaner priceCleaner) {
         this.repository = repository;
+        this.priceCleaner = priceCleaner;
         this.buffer = new ArrayList<>();
     }
 
     @Transactional
     public ProductPrice extractAndImport(PizzaAndIngredientRecord record, Product product) {
-        // TODO: findInBuffer doesn't work
-        ProductPrice price = findInBuffer(record.getPrice(), product);
-
-        if (price != null) {
-            processWarning("Product price already processed. Skipped.");
-            return price;
-        }
         if (record.getPrice().isEmpty()) {
             processWarning("Record does not have a product price");
             throw new IllegalArgumentException();
         }
 
+        BigDecimal price = priceCleaner.clean(record.getPrice());
+        ProductPrice productPrice = findInBuffer(price, product.getProductid());
+
+        if (productPrice != null) {
+            processWarning("Product price already processed. Skipped.");
+            return productPrice;
+        }
 
         // query db
         try (Stream<ProductPrice> stream = this.repository
-                // TODO: fix prices!
-                // .findByProductAndPrice(product.getProductid(), record.getPrice()))
-                .findByPriceAndProduct_Productid("66.66", product.getProductid()))
-        {
-            if (stream.count() > 0) {
-                price = stream.findFirst().get();
+                .findByPriceAndProduct_Productid(price.toString(), product.getProductid())) {
+
+            Optional<ProductPrice> temp = stream.findFirst();
+
+            if (temp.isPresent()) {
+                productPrice = temp.get();
                 // no props to set
                 processWarning("Price updated");
             } else {
-                price = new ProductPrice(
+                productPrice = new ProductPrice(
                         null,
                         product,
-                        record.getPrice(),
+                        price,
                         new Date()
                 );
-                this.repository.save(price);
+                this.repository.save(productPrice);
                 processWarning("Price created");
             }
+        } catch (Exception e) {
+            processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
+            throw e;
         }
-        buffer.add(price);
 
-        return price;
+        buffer.add(productPrice);
+
+        return productPrice;
     }
 
-    private ProductPrice findInBuffer(String priceStr, Product product) {
-        for (var price : buffer) {
-            if (price.getPriceid().toString().equals(priceStr)) {
-                if (price.getProduct().getProductid().equals(product.getProductid())) {
+    private ProductPrice findInBuffer(BigDecimal price, Long productId) {
+        for (var productPrice : buffer) {
+            if (price.equals(productPrice.getPrice())) {
+                if (productId.equals(productPrice.getProduct().getProductid())) {
                     // cannot compare dates
-                    return price;
+                    return productPrice;
                 }
             }
         }

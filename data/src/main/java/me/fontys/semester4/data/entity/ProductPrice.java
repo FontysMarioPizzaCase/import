@@ -33,10 +33,10 @@ public class ProductPrice implements Serializable {
 
     }
 
-    public ProductPrice(Long priceid, Product product, String price, Date fromdate) {
+    public ProductPrice(Long priceid, Product product, BigDecimal price, Date fromdate) {
         this.priceid = priceid;
         this.product = product;
-        this.price = price;
+        this.setPrice(price);
         this.fromdate = fromdate;
     }
 

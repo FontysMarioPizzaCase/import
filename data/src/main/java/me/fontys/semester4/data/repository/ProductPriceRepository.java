@@ -11,5 +11,6 @@ import java.util.stream.Stream;
 
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, Long>, JpaSpecificationExecutor<ProductPrice> {
     Stream<ProductPrice> findByPriceAndProduct_Productid(String price, Long productid);
+    Optional<ProductPrice> findByPrice(String price);
     boolean existsByPriceAndProduct_Productid(String price, Long productid);
 }

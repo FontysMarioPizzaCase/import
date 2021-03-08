@@ -5,6 +5,7 @@ import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.repository.ProductRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.PizzaAndIngredientRecord;
+import me.fontys.semester4.dominos.configuration.data.catalog.Util.PriceCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,11 @@ public class ProductImporter {
     private final Map<String, Integer> warnings = new HashMap<>();
     private final List<Product> buffer;
     private final ProductRepository repository;
+    private final PriceCleaner priceCleaner;
 
-    public ProductImporter(ProductRepository repository) {
+    public ProductImporter(ProductRepository repository, PriceCleaner priceCleaner) {
         this.repository = repository;
+        this.priceCleaner = priceCleaner;
         this.buffer = new ArrayList<>();
     }
 
@@ -61,8 +64,7 @@ public class ProductImporter {
             product.setDescription(record.getProductDescription());
             product.setSpicy(record.getIsSpicy().equalsIgnoreCase("JA"));
             product.setVegetarian(record.getIsVegetarian().equalsIgnoreCase("JA"));
-            // TODO: validate delivery fee
-            product.setDeliveryfee(BigDecimal.TEN);
+            product.setDeliveryfee(priceCleaner.clean(record.getDeliveryFee()));
             processWarning("Product updated");
         }
         else {
@@ -72,9 +74,8 @@ public class ProductImporter {
                     record.getProductDescription(),
                     record.getIsSpicy().equalsIgnoreCase("JA"),
                     record.getIsVegetarian().equalsIgnoreCase("JA"),
-                    // TODO: validate delivery fee
-                    // new BigDecimal(record.getBezorgtoeslag()),
-                    BigDecimal.TEN,
+                    priceCleaner.clean(record.getDeliveryFee()),
+                    // TODO: input taxrate?
                     0.06,
                     null
             );
