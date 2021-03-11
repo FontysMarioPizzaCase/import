@@ -43,14 +43,14 @@ public class DominosImport implements CommandLineRunner {
     public void run(String... args) throws IOException {
         long start = System.currentTimeMillis();
 
+        // Do the store import
+        this.storeImporter.doImport();
+        this.storeImporter.report();
+
         // Do the order import
         this.orderImporter.doImport();
         this.orderImporter.report();
         this.orderImporter.test();
-
-        // Do the store import
-        this.storeImporter.doImport();
-        this.storeImporter.report();
 
         // Do the postalcode import
         pcImporter.doImport();
