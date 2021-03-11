@@ -1,6 +1,6 @@
 package me.fontys.semester4.dominos;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
+import me.fontys.semester4.dominos.configuration.data.extraingredients.ExtraIngedientSurchargeImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import java.io.IOException;
 public class DominosImport implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DominosImport.class);
-
     public static void main(String[] args) {
         SpringApplication.run(DominosImport.class, args);
     }
@@ -28,15 +27,17 @@ public class DominosImport implements CommandLineRunner {
     private final OrderImporter orderImporter;
     private final StoreImporter storeImporter;
     private final CatalogImporter catalogImporter;
+    private final ExtraIngedientSurchargeImporter extraIngredientsImporter;
 
     @Autowired
     public DominosImport(OrderImporter orderImporter,
                          StoreImporter storeImporter,
-                         CatalogImporter catalogImporter
-    ) {
+                         CatalogImporter catalogImporter,
+                         ExtraIngedientSurchargeImporter extraIngredientsImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
         this.catalogImporter = catalogImporter;
+        this.extraIngredientsImporter = extraIngredientsImporter;
     }
 
     @Override
@@ -53,5 +54,9 @@ public class DominosImport implements CommandLineRunner {
         // Do the catalog imports
         this.catalogImporter.doImport();
         this.catalogImporter.report();
+
+        // Do the extra ingredients import
+        this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
     }
 }

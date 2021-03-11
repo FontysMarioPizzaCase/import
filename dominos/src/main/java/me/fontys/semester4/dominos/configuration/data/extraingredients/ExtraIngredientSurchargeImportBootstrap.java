@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.extraingredientsurcharge;
+package me.fontys.semester4.dominos.configuration.data.extraingredients;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

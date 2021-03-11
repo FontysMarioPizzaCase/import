@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.extraingredientsurcharge;
+package me.fontys.semester4.dominos.configuration.data.extraingredients;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;

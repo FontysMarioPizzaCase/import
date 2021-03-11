@@ -1,8 +1,8 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.extract;
+package me.fontys.semester4.dominos.configuration.data.catalog.extract;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.Importer;
+import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class Extractor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Importer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
     private CleanerUtil cleanerUtil;

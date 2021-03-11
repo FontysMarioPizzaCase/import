@@ -1,24 +1,20 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.load;
+package me.fontys.semester4.dominos.configuration.data.catalog.load;
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.extraingredientsurcharge.ExtraIngredientSurchargeRecord;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.Importer;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.extract.RawCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Service
 public class Loader
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Importer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
 
@@ -33,6 +29,17 @@ public class Loader
         this.warnings.clear();
 
         // TODO: logic that checks exists, and then bulk inserts/updates??
+        // - e.g.   INSERT INTO TABLE (id, name, age) VALUES (1, "A", 19), (2, "B", 17), (3, "C", 22)
+        //          ON DUPLICATE KEY UPDATE name = VALUES (name), ...
+        //          ---> requires e.g. 'name' to be a unique key
+        //          ---> postgres version:
+        //                  INSERT INTO the_table (id, column_1, column_2)
+        //                  VALUES (1, 'A', 'X'), (2, 'B', 'Y'), (3, 'C', 'Z')
+        //                  ON CONFLICT (id) DO UPDATE
+        //                  SET column_1 = excluded.column_1,
+        //                      column_2 = excluded.column_2;
+        // - or     use triggers
+
     }
 
 

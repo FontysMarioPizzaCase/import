@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.extract;
+package me.fontys.semester4.dominos.configuration.data.catalog.extract;
 
 import java.math.BigDecimal;
 

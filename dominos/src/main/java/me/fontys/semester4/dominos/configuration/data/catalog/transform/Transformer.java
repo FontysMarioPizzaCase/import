@@ -1,11 +1,11 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.transform;
+package me.fontys.semester4.dominos.configuration.data.catalog.transform;
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.Importer;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.extract.CsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.extract.CsvLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 public class Transformer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Importer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
     private Set<Ingredient> ingredients;
