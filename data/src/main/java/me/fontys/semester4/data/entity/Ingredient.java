@@ -72,8 +72,8 @@ public class Ingredient implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Ingredient ingredient = (Ingredient) o;
-        return name == ingredient.name;
+        Ingredient that = (Ingredient) o;
+        return name.equals(that.name);
     }
 
     @Override
@@ -83,10 +83,13 @@ public class Ingredient implements Serializable {
 
     @Override
     public String toString() {
+        String idStr = (this.ingredientid != null) ? this.ingredientid.toString() : "null";
+        String addPriceStr = (this.addprice != null) ? this.addprice : "null";
+
         return "Ingredient{" +
-                "ingredientid=" + ingredientid + '\'' +
+                "ingredientid=" + idStr + '\'' +
                 "name=" + name + '\'' +
-                "addprice=" + addprice + '\'' +
+                "addprice=" + addPriceStr + '\'' +
                 "}";
     }
 }

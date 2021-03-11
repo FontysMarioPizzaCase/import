@@ -17,30 +17,30 @@ public class Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
-    private List<Ingredient> ingredients;
-    private List<Category> categories;
-    private List<Product> products;
-    private List<ProductPrice> prices;
+    private Set<Ingredient> ingredients;
+    private Set<Category> categories;
+    private Set<Product> products;
+    private Set<ProductPrice> prices;
 
-    public List<Ingredient> getIngredients() {
+    public Set<Ingredient> getIngredients() {
         return ingredients;
     }
-    public List<Category> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
-    public List<ProductPrice> getPrices() {
+    public Set<ProductPrice> getPrices() {
         return prices;
     }
 
 
     public Transformer(){
-        ingredients = new ArrayList<>();
-        categories = new ArrayList<>();
-        products = new ArrayList<>();
-        prices = new ArrayList<>();
+        ingredients = new HashSet<>();
+        categories = new HashSet<>();
+        products = new HashSet<>();
+        prices = new HashSet<>();
     }
 
     public void toEntities(List<CsvLine> csvLines) {
@@ -71,8 +71,8 @@ public class Transformer {
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
         products.add(product);
-        categories.add(parent);
         categories.add(child);
+        categories.add(parent); // only working order!
         ingredients.add(ingredient);
         prices.add(price);
 

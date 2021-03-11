@@ -150,7 +150,7 @@ public class Product implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return name == product.name;
+        return name.equals(product.name);
     }
 
     @Override
@@ -160,8 +160,10 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
+        String idStr = (productid != null) ? productid.toString() : "null";
+
         return "Product{" +
-                "productid=" + productid +
+                "productid=" + idStr +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", spicy='" + spicy + '\'' +

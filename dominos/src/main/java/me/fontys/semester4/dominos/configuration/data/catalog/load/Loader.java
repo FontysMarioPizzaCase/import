@@ -34,8 +34,8 @@ public class Loader {
         this.productPriceRepository = productPriceRepository;
     }
 
-    public void loadIntoDb(List<Product> products, List<Category> categories,
-                           List<Ingredient> ingredients, List<ProductPrice> prices) {
+    public void loadIntoDb(Set<Product> products, Set<Category> categories,
+                           Set<Ingredient> ingredients, Set<ProductPrice> prices) {
         LOGGER.info(String.format("Loading into db: \n" +
                         "- %s products \n" +
                         "- %s categories \n" +
@@ -56,27 +56,9 @@ public class Loader {
         for (ProductPrice price : prices) {
             saveNewOrUpdate(price);
         }
-
-//        this.productRepository.saveAll(products);
-//        this.categoryRepository.saveAll(categories);
-//        this.ingredientRepository.saveAll(ingredients);
-//        this.productPriceRepository.saveAll(prices);
-
-        // TODO: logic that checks exists, and then bulk inserts/updates??
-        // - e.g.   INSERT INTO TABLE (id, name, age) VALUES (1, "A", 19), (2, "B", 17), (3, "C", 22)
-        //          ON DUPLICATE KEY UPDATE name = VALUES (name), ...
-        //          ---> requires e.g. 'name' to be a unique key
-        //          ---> postgres version:
-        //                  INSERT INTO the_table (id, column_1, column_2)
-        //                  VALUES (1, 'A', 'X'), (2, 'B', 'Y'), (3, 'C', 'Z')
-        //                  ON CONFLICT (id) DO UPDATE
-        //                  SET column_1 = excluded.column_1,
-        //                      column_2 = excluded.column_2;
-        // - or     use triggers
-
     }
 
-    // TODO: REFACTOR!! BELOW
+    // TODO: REFACTOR duplicate code!!? Needs repository interface
     private void saveNewOrUpdate(Ingredient ingredient) {
         Optional<Ingredient> temp = this.ingredientRepository.findByNameIgnoreCase(ingredient.getName());
 
@@ -100,7 +82,6 @@ public class Loader {
             processWarning("Category created");
         }
     }
-
 
     private void saveNewOrUpdate(ProductPrice price) {
         Optional<ProductPrice> temp;

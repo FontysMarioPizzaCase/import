@@ -76,23 +76,23 @@ public class ProductPrice implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductPrice pp = (ProductPrice) o;
-        return product.getName() == pp.product.getName() &&
-                price == pp.price;
+        ProductPrice that = (ProductPrice) o;
+        return product.equals(that.product) && price.equals(that.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(price, product.getName());
+        return Objects.hash(product, price);
     }
 
     @Override
     public String toString() {
-        String productid = (product != null) ? product.getProductid().toString() : "null";
+        String idStr = (priceid != null) ? priceid.toString() : "null";
+        String productidStr = (product != null) ? product.getName() : "null";
 
         return "ProductPrice{" +
-                "priceid=" + priceid +
-                ", productid=" + productid +
+                "priceid=" + idStr +
+                ", productid=" + productidStr +
                 ", price='" + price + '\'' +
                 ", fromdate=" + fromdate +
                 '}';

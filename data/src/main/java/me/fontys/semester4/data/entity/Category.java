@@ -80,8 +80,8 @@ public class Category implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Category c = (Category) o;
-        return name == c.name;
+        Category category = (Category) o;
+        return name.equals(category.name);
     }
 
     @Override
@@ -91,12 +91,13 @@ public class Category implements Serializable {
 
     @Override
     public String toString() {
-        String parentid = (parent != null) ? parent.getCatid().toString() : "null";
+        String parentStr = (parent != null) ? parent.getName() : "null";
+        String idStr = (this.catid != null) ? this.catid.toString() : "null";
 
         return "Category{" +
-                "catid=" + catid +
+                "catid=" + idStr +
                 ", name='" + name + '\'' +
-                ", parentid=" + parentid +
+                ", parentid=" + parentStr +
                 "}";
     }
 }
