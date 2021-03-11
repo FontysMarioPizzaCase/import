@@ -29,8 +29,9 @@ public class Order implements Serializable {
     @Column(name = "orderid", nullable = false)
     private Long orderid;
 
-    @Column(name = "store")
-    private Long store;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store", nullable = false)
+    private Store store;
 
     @Column(name = "postalcodeid")
     private Long postalcodeid;
@@ -63,7 +64,7 @@ public class Order implements Serializable {
 
     }
 
-    public Order(Long customer, Long orderid, Long store, Long postalcodeid, Date orderdate, Date deliverydate,
+    public Order(Long customer, Long orderid, Store store, Long postalcodeid, Date orderdate, Date deliverydate,
                  String takeaway, String totalprice, String deliveryprice, String appliedDiscount, Long streetnr,
                  String customername) {
         this.customer = customer;
@@ -96,11 +97,11 @@ public class Order implements Serializable {
         return orderid;
     }
 
-    public void setStore(Long store) {
+    public void setStore(Store store) {
         this.store = store;
     }
 
-    public Long getStore() {
+    public Store getStore() {
         return store;
     }
 
