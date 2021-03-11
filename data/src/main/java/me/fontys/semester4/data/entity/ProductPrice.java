@@ -5,6 +5,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Table(name = "product_price")
 @Entity
@@ -69,6 +70,20 @@ public class ProductPrice implements Serializable {
 
     public Date getFromdate() {
         return fromdate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductPrice pp = (ProductPrice) o;
+        return product.getName() == pp.product.getName() &&
+                price == pp.price;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price, product.getName());
     }
 
     @Override

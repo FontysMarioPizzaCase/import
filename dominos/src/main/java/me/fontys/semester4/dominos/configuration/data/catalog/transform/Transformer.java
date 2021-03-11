@@ -17,33 +17,30 @@ public class Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
-    private Set<Ingredient> ingredients;
-    private Set<Category> categories;
-    private Set<Product> products;
-    private Set<ProductPrice> prices;
+    private List<Ingredient> ingredients;
+    private List<Category> categories;
+    private List<Product> products;
+    private List<ProductPrice> prices;
 
-    public Set<Ingredient> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
-
-    public Set<Category> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
-
-    public Set<Product> getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
-
-    public Set<ProductPrice> getPrices() {
+    public List<ProductPrice> getPrices() {
         return prices;
     }
 
 
     public Transformer(){
-        ingredients = new HashSet<>();
-        categories = new HashSet<>();
-        products = new HashSet<>();
-        prices = new HashSet<>();
+        ingredients = new ArrayList<>();
+        categories = new ArrayList<>();
+        products = new ArrayList<>();
+        prices = new ArrayList<>();
     }
 
     public void toEntities(List<CsvLine> csvLines) {
@@ -66,19 +63,23 @@ public class Transformer {
         final double TAXRATE = 0.06; // TODO: user input?
         final Date FROMDATE = new Date();
 
-        ingredients.add(new Ingredient(null, l.getIngredientName(), null));
-        Category parent = new Category(null, null, l.getCategoryName());
-        categories.add(parent);
-        categories.add(new Category(null, parent, l.getSubCategoryName()));
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), l.getDeliveryFee(), TAXRATE, null);
+        Category parent = new Category(null, null, l.getCategoryName());
+        Category child = new Category(null, parent, l.getSubCategoryName());
+        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null);
+        ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
+
         products.add(product);
-        prices.add(new ProductPrice(null, product, l.getPrice(), FROMDATE));
+        categories.add(parent);
+        categories.add(child);
+        ingredients.add(ingredient);
+        prices.add(price);
+
+        product.getIngredients().add(ingredient);
+        product.getCategories().add(parent);
+        product.getCategories().add(child);
     }
-
-
-
-
 
 
 

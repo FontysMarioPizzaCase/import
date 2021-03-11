@@ -1,13 +1,12 @@
 package me.fontys.semester4.data.entity;
 
+import org.hibernate.annotations.SQLInsert;
+
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "product")
@@ -81,77 +80,82 @@ public class Product implements Serializable {
     public Long getProductid() {
         return productid;
     }
+    public String getName() {
+        return name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public boolean getSpicy() {
+        return spicy;
+    }
+    public boolean getVegetarian() {
+        return vegetarian;
+    }
+    public BigDecimal getDeliveryfee() {
+        return deliveryfee;
+    }
+    public Double getTaxrate() {
+        return taxrate;
+    }
+    public String getImagepath() {
+        return imagepath;
+    }
+    public Set<Category> getCategories() {
+        return categories;
+    }
+    public Set<Ingredient> getIngredients() {
+        return ingredients;
+    }
+    public List<ProductPrice> getPrices() {
+        return prices;
+    }
 
     public void setProductid(Long productid) {
         this.productid = productid;
     }
-
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public boolean getSpicy() {
-        return spicy;
-    }
-
     public void setSpicy(boolean spicy) {
         this.spicy = spicy;
     }
-
-    public boolean getVegetarian() {
-        return vegetarian;
-    }
-
     public void setVegetarian(boolean vegetarian) {
         this.vegetarian = vegetarian;
     }
-
-    public BigDecimal getDeliveryfee() {
-        return deliveryfee;
-    }
-
     public void setDeliveryfee(BigDecimal deliveryfee) {
         this.deliveryfee = deliveryfee;
     }
-
-    public Double getTaxrate() {
-        return taxrate;
-    }
-
     public void setTaxrate(Double taxrate) {
         this.taxrate = taxrate;
     }
-
-    public String getImagepath() {
-        return imagepath;
-    }
-
     public void setImagepath(String imagepath) {
         this.imagepath = imagepath;
     }
-
-    public Set<Category> getCategories() {
-        return categories;
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+    public void setPrices(List<ProductPrice> prices) {
+        this.prices = prices;
     }
 
-    public Set<Ingredient> getIngredients() {
-        return ingredients;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return name == product.name;
     }
 
-    public List<ProductPrice> getPrices() {
-        return prices;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override
@@ -167,5 +171,6 @@ public class Product implements Serializable {
                 ", imagepath='" + imagepath + '\'' +
                 "}";
     }
+
 
 }

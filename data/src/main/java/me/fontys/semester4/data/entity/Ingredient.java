@@ -5,6 +5,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -19,7 +20,7 @@ public class Ingredient implements Serializable {
     @Column(name = "ingredientid", nullable = false)
     private Long ingredientid;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "addprice")
@@ -65,6 +66,19 @@ public class Ingredient implements Serializable {
 
     public Set<Product> getProducts() {
         return products;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient ingredient = (Ingredient) o;
+        return name == ingredient.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

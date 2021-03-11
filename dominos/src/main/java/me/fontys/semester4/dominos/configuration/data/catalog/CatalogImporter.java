@@ -45,8 +45,6 @@ public class CatalogImporter {
         transformer.toEntities(records);
         loader.loadIntoDb(transformer.getProducts(), transformer.getCategories(),
                 transformer.getIngredients(), transformer.getPrices());
-
-        // TODO: does @Transactional automatically close and flush session? How to check?
     }
 
 
