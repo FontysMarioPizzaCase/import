@@ -19,7 +19,9 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ public class OrderImporter {
     private final OrderCustomOptionRepository orderCustomOptionRepository;
     private final OrderProductIngredientRepository orderProductIngredientRepository;
     private final StoreRepository storeRepository;
+    private final OrderDateFormatter orderDateFormatter;
 
     private final Map<String, Integer> warnings = new HashMap<>();
 
@@ -47,16 +50,17 @@ public class OrderImporter {
                          OrderProductRepository orderProductRepository,
                          OrderCustomOptionRepository orderCustomOptionRepository,
                          OrderProductIngredientRepository orderProductIngredientRepository,
-                         StoreRepository storeRepository) {
+                         StoreRepository storeRepository, OrderDateFormatter orderDateFormatter) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderCustomOptionRepository = orderCustomOptionRepository;
         this.orderProductIngredientRepository = orderProductIngredientRepository;
         this.storeRepository = storeRepository;
+        this.orderDateFormatter = orderDateFormatter;
     }
 
-    public void doImport() throws IOException {
+    public void doImport() throws IOException, ParseException {
         LOGGER.info("Starting import of orders...");
 
         this.warnings.clear();
@@ -96,7 +100,7 @@ public class OrderImporter {
         ImportTest.test("Order", OrderImportRecordCountTest.class);
     }
 
-    private List<Order> processOrderResource(Resource resource) throws IOException {
+    private List<Order> processOrderResource(Resource resource) throws IOException, ParseException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
         List<Order> result = new ArrayList<>();
@@ -126,7 +130,7 @@ public class OrderImporter {
         return rowIndex <= 5;
     }
 
-    private Order createNewOrderFromLine(String[] line) {
+    private Order createNewOrderFromLine(String[] line) throws ParseException {
         String storeName = line[0];
         String customerName = line[1];
         String phoneNumber = line[2];
@@ -168,12 +172,19 @@ public class OrderImporter {
 
         Optional<Store> store = this.storeRepository.findByName(storeName);
         if (store.isEmpty()) {
-            processWarning("Order has an unknown store name!");
+            processWarning("Order has an unknown store name");
             return null;
         }
 
-        return new Order(null, null, store.get(), null, null,
-                null, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
+        Date orderDateParsed = this.orderDateFormatter.fromString(orderDate);
+        if (orderDateParsed == null) {
+            processWarning("Order has no order date");
+        }
+
+        Date deliveryDateParsed = this.orderDateFormatter.fromString(deliveryDate);
+
+        return new Order(null, null, store.get(), null, orderDateParsed,
+                deliveryDateParsed, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
     }
 
     private void processWarning(String message) {

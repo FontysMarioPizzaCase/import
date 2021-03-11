@@ -40,7 +40,7 @@ public class DominosImport implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws IOException {
+    public void run(String... args) throws Exception {
         long start = System.currentTimeMillis();
 
         // Do the store import
