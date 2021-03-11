@@ -44,7 +44,7 @@ public class DominosImport implements CommandLineRunner {
         long start = System.currentTimeMillis();
 
         // Do the order import
-        // this.orderImporter.doImport(); TODO: PUT BACK
+//         this.orderImporter.doImport();
         this.orderImporter.report();
 
         // Do the store import

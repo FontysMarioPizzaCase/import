@@ -1,8 +1,8 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients;
+package me.fontys.semester4.dominos.configuration.data.catalog.pizzawithingredients.extract;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class PizzaAndIngredientRecord {
+public class RawCsvLine {
 
     @CsvBindByPosition(position = 0)
     private String category;
@@ -29,14 +29,14 @@ public class PizzaAndIngredientRecord {
     @CsvBindByPosition(position = 11)
     private String standardPizzasauce;
 
-    public PizzaAndIngredientRecord() {
+    public RawCsvLine() {
     } // keep public for CsvToBeanBuilder
 
-    public PizzaAndIngredientRecord(String category, String subCategory, String productName,
-                                    String productDescription, String price, String deliveryFee,
-                                    String isSpicy, String isVegetarian, String isAvailable,
-                                    String ingredientPortion, String ingredientName,
-                                    String standardPizzasauce) {
+    public RawCsvLine(String category, String subCategory, String productName,
+                      String productDescription, String price, String deliveryFee,
+                      String isSpicy, String isVegetarian, String isAvailable,
+                      String ingredientPortion, String ingredientName,
+                      String standardPizzasauce) {
         this.category = category;
         this.subCategory = subCategory;
         this.productName = productName;
