@@ -8,7 +8,7 @@ import me.fontys.semester4.data.repository.OrderProductRepository;
 import me.fontys.semester4.data.repository.OrderRepository;
 import me.fontys.semester4.data.repository.StoreRepository;
 import me.fontys.semester4.dominos.configuration.data.ImportTest;
-import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordCountTest;
+import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordValidityTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,12 +92,12 @@ public class OrderImporter {
         LOGGER.info("Running test assertions...");
 
         // Setup test dependencies, bit dirty but it works...
-        OrderImportRecordCountTest.orderRepository = orderRepository;
-        OrderImportRecordCountTest.orderProductRepository = orderProductRepository;
-        OrderImportRecordCountTest.orderCustomOptionRepository = orderCustomOptionRepository;
-        OrderImportRecordCountTest.orderProductIngredientRepository = orderProductIngredientRepository;
+        OrderImportRecordValidityTest.orderRepository = orderRepository;
+        OrderImportRecordValidityTest.orderProductRepository = orderProductRepository;
+        OrderImportRecordValidityTest.orderCustomOptionRepository = orderCustomOptionRepository;
+        OrderImportRecordValidityTest.orderProductIngredientRepository = orderProductIngredientRepository;
 
-        ImportTest.test("Order", OrderImportRecordCountTest.class);
+        ImportTest.test("Order", OrderImportRecordValidityTest.class);
     }
 
     private List<Order> processOrderResource(Resource resource) throws IOException, ParseException {
