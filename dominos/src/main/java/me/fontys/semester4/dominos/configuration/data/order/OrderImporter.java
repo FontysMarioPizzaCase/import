@@ -1,10 +1,12 @@
 package me.fontys.semester4.dominos.configuration.data.order;
 
 import me.fontys.semester4.data.entity.Order;
+import me.fontys.semester4.data.entity.Store;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
 import me.fontys.semester4.data.repository.OrderRepository;
+import me.fontys.semester4.data.repository.StoreRepository;
 import me.fontys.semester4.dominos.configuration.data.ImportTest;
 import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordCountTest;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Configuration
 public class OrderImporter {
@@ -35,6 +38,7 @@ public class OrderImporter {
     private final OrderProductRepository orderProductRepository;
     private final OrderCustomOptionRepository orderCustomOptionRepository;
     private final OrderProductIngredientRepository orderProductIngredientRepository;
+    private final StoreRepository storeRepository;
 
     private final Map<String, Integer> warnings = new HashMap<>();
 
@@ -42,12 +46,14 @@ public class OrderImporter {
     public OrderImporter(Resource[] orders, OrderRepository orderRepository,
                          OrderProductRepository orderProductRepository,
                          OrderCustomOptionRepository orderCustomOptionRepository,
-                         OrderProductIngredientRepository orderProductIngredientRepository) {
+                         OrderProductIngredientRepository orderProductIngredientRepository,
+                         StoreRepository storeRepository) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderCustomOptionRepository = orderCustomOptionRepository;
         this.orderProductIngredientRepository = orderProductIngredientRepository;
+        this.storeRepository = storeRepository;
     }
 
     public void doImport() throws IOException {
@@ -160,7 +166,13 @@ public class OrderImporter {
             processWarning("Order does not have any phone email");
         }
 
-        return new Order(null, null, null, null, null,
+        Optional<Store> store = this.storeRepository.findByName(storeName);
+        if (store.isEmpty()) {
+            processWarning("Order has an unknown store name!");
+            return null;
+        }
+
+        return new Order(null, null, store.get(), null, null,
                 null, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
     }
 
