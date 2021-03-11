@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class Extractor {
+public class DataExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
     private final Map<String, Integer> warnings = new HashMap<>();
 
     private CleanerUtil cleanerUtil;
 
-    public Extractor(CleanerUtil cleanerUtil) {
+    public DataExtractor(CleanerUtil cleanerUtil) {
         this.cleanerUtil = cleanerUtil;
     }
 

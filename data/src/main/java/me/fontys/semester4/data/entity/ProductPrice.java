@@ -24,7 +24,7 @@ public class ProductPrice implements Serializable {
     private Product product;
 
     @Column(name = "price")
-    private String price;
+    private BigDecimal price;
 
     @Column(name = "fromdate")
     private Date fromdate;
@@ -40,7 +40,7 @@ public class ProductPrice implements Serializable {
         this.fromdate = fromdate;
     }
 
-    public void setProductid(Product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 
@@ -57,11 +57,11 @@ public class ProductPrice implements Serializable {
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price.toString();
+        this.price = price;
     }
 
     public BigDecimal getPrice() {
-        return new BigDecimal(price);
+        return price;
     }
 
     public void setFromdate(Date fromdate) {

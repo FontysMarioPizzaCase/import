@@ -34,60 +34,41 @@ public class Loader {
         this.productPriceRepository = productPriceRepository;
     }
 
-    public void loadIntoDb(Set<Product> products, Set<Category> categories,
-                           Set<Ingredient> ingredients, Set<ProductPrice> prices) {
-        LOGGER.info(String.format("Loading into db: \n" +
-                        "- %s products \n" +
-                        "- %s categories \n" +
-                        "- %s ingredients \n" +
-                        "- %s product prices",
-                products.size(), categories.size(), ingredients.size(), prices.size()));
-        this.warnings.clear();
 
-        for (Ingredient ingredient : ingredients) {
-            saveNewOrUpdate(ingredient);
-        }
-        for (Category category : categories) {
-            saveNewOrUpdate(category);
-        }
-        for (Product product : products) {
-            saveNewOrUpdate(product);
-        }
-        for (ProductPrice price : prices) {
-            saveNewOrUpdate(price);
-        }
-    }
-
-    // TODO: REFACTOR duplicate code!!? Needs repository interface
-    private void saveNewOrUpdate(Ingredient ingredient) {
+    // TODO: refactor wanted??
+    public Ingredient toDb(Ingredient ingredient) {
         Optional<Ingredient> temp = this.ingredientRepository.findByNameIgnoreCase(ingredient.getName());
 
         if (temp.isPresent()) {
-            ingredient = temp.get(); // detach also possible?
+            ingredient = temp.get();
             processWarning("No Ingredient properties to update");
         } else {
             this.ingredientRepository.save(ingredient);
             processWarning("Ingredient saved");
         }
+
+        return ingredient;
     }
 
-    private void saveNewOrUpdate(Category category) {
+    public Category toDb(Category category) {
         Optional<Category> temp = this.categoryRepository.findByNameIgnoreCase(category.getName());
 
         if (temp.isPresent()) {
-            category = temp.get(); // detach also possible?
+            category = temp.get();
             processWarning("No Category properties to update");
         } else {
             this.categoryRepository.save(category);
             processWarning("Category created");
         }
+
+        return category;
     }
 
-    private void saveNewOrUpdate(ProductPrice price) {
+    public ProductPrice toDb(ProductPrice price, Product product) {
         Optional<ProductPrice> temp;
 
         try (Stream<ProductPrice> stream = this.productPriceRepository
-                .findByPriceAndProduct_Productid(price.getPrice(), price.getProduct().getProductid())) {
+                .findByPriceAndProduct_Productid(price.getPrice(), product.getProductid())) {
             temp = stream.findFirst();
         } catch (Exception e) {
             processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
@@ -95,15 +76,17 @@ public class Loader {
         }
 
         if (temp.isPresent()) {
-            price = temp.get(); // detach also possible?
+            price = temp.get();
             processWarning("No ProductPrice properties to update");
         } else {
             this.productPriceRepository.save(price);
             processWarning("ProductPrice created");
         }
+
+        return price;
     }
 
-    private void saveNewOrUpdate(Product product) {
+    public Product toDb(Product product) {
         Optional<Product> temp = this.productRepository.findByNameIgnoreCase(product.getName());
 
         if (temp.isPresent()) {
@@ -115,10 +98,11 @@ public class Loader {
             this.productRepository.save(product);
             processWarning("Product created");
         }
+
+        return product;
     }
 
     private void updateProduct(Product dbProduct, Product p) {
-        dbProduct.setProductid(p.getProductid());
         dbProduct.setName(p.getName());
         dbProduct.setDescription(p.getDescription());
         dbProduct.setSpicy(p.getSpicy());
@@ -126,9 +110,9 @@ public class Loader {
         dbProduct.setDeliveryfee(p.getDeliveryfee());
         dbProduct.setTaxrate(p.getTaxrate());
         dbProduct.setImagepath(p.getImagepath());
-        dbProduct.setCategories(p.getCategories());
-        dbProduct.setIngredients(p.getIngredients());
-        dbProduct.setPrices(p.getPrices());
+//        dbProduct.setCategories(p.getCategories());
+//        dbProduct.setIngredients(p.getIngredients());
+//        dbProduct.setPrices(p.getPrices());
     }
 
 

@@ -20,7 +20,8 @@ public class Ingredient implements Serializable {
     @Column(name = "ingredientid", nullable = false)
     private Long ingredientid;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true) // TODO:
+//    @Column(name = "name")
     private String name;
 
     @Column(name = "addprice")
