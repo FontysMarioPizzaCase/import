@@ -1,5 +1,6 @@
 package me.fontys.semester4.dominos.configuration.data.order.test;
 
+import me.fontys.semester4.data.entity.Order;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
@@ -9,10 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.Preconditions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("Order import record count")
-public class OrderImportRecordCountTest {
+public class OrderImportRecordValidityTest {
 
     public static OrderRepository orderRepository;
     public static OrderProductRepository orderProductRepository;
@@ -28,8 +29,10 @@ public class OrderImportRecordCountTest {
     }
 
     @Test
-    @DisplayName("Check imported row count")
-    public void checkImportedRowCount() {
-        assertEquals(40000, orderRepository.findAll().size());
+    @DisplayName("Ensure all orders have an order date")
+    public void testOrderDate() {
+        for (Order order : orderRepository.findAll()) {
+            assertNotNull(order.getOrderdate());
+        }
     }
 }
