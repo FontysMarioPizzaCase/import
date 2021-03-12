@@ -85,36 +85,36 @@ public class CatalogImporter {
         Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null);
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
-        if(!products.contains(product)) {
+        if (!products.contains(product)) {
             product = loader.toDb(product);
             products.add(product);
         }
 
-        if(!categories.contains(child)){
+        if (!categories.contains(child)) {
             child = loader.toDb(child);
             categories.add(child);
         }
 
-        if(!categories.contains(parent)){
+        if (!categories.contains(parent)) {
             parent = loader.toDb(parent);
             categories.add(parent);
         }
 
-        if(!ingredients.contains(ingredient)) {
+        if (!ingredients.contains(ingredient)) {
             ingredient = loader.toDb(ingredient);
             ingredients.add(ingredient);
         }
 
-        if(!prices.contains(price)) {
+        if (!prices.contains(price)) {
             price = loader.toDb(price, product);
             prices.add(price);
         }
 
-        child.setParent(parent);
-        price.setProduct(product);
-        product.getIngredients().add(ingredient);
-        product.getCategories().add(parent);
-        product.getCategories().add(child);
+        //        child.setParent(parent);
+//        price.setProduct(product);
+//        product.getIngredients().add(ingredient);
+//        product.getCategories().add(parent);
+//        product.getCategories().add(child);
     }
 
 
