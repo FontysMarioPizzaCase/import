@@ -34,6 +34,11 @@ public class CatalogImporter {
     private Set<Product> products;
     private Set<ProductPrice> prices;
 
+    Map<Category, Category> categoryParentCache = new HashMap<>();
+    Map<ProductPrice, Product> priceProductCache = new HashMap<>();
+    Map<Product, Ingredient> productIngredientCache = new HashMap<>();
+    Map<Product, Category> productCategoryCache = new HashMap<>();
+
     @Autowired
     public CatalogImporter(@Qualifier("pizzaWithIngredients") Resource[] resources,
                            DataExtractor dataExtractor, Loader loader) {
@@ -45,6 +50,10 @@ public class CatalogImporter {
         categories = new HashSet<>();
         products = new HashSet<>();
         prices = new HashSet<>();
+        categoryParentCache = new HashMap<>();
+        priceProductCache = new HashMap<>();
+        productIngredientCache = new HashMap<>();
+        productCategoryCache = new HashMap<>();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -61,6 +70,8 @@ public class CatalogImporter {
         LOGGER.info(String.format("Converting %s csvLines...", csvLines.size()));
         this.warnings.clear();
 
+        // TODO: pizzasaus (+ contraint), aantalkeer_ingredient, beschikbaar
+
         for (var line : csvLines) {
             try {
                 transformAndSave(line);
@@ -69,8 +80,18 @@ public class CatalogImporter {
                         line.toString(), e.toString()));
                 throw e;
             }
-
-            // TODO: pizzasaus (+ contraint), aantalkeer_ingredient, beschikbaar
+        }
+        for (Map.Entry<Category, Category> entry : categoryParentCache.entrySet()) {
+            entry.getKey().setParent(entry.getValue());
+        }
+        for (Map.Entry<ProductPrice, Product> entry : priceProductCache.entrySet()) {
+            entry.getKey().setProduct(entry.getValue());
+        }
+        for (Map.Entry<Product, Ingredient> entry : productIngredientCache.entrySet()) {
+            entry.getKey().getIngredients().add(entry.getValue());
+        }
+        for (Map.Entry<Product, Category> entry : productCategoryCache.entrySet()) {
+            entry.getKey().getCategories().add(entry.getValue());
         }
     }
 
@@ -110,15 +131,12 @@ public class CatalogImporter {
             prices.add(price);
         }
 
-        //        child.setParent(parent);
-//        price.setProduct(product);
-//        product.getIngredients().add(ingredient);
-//        product.getCategories().add(parent);
-//        product.getCategories().add(child);
+        categoryParentCache.put(child, parent);
+        priceProductCache.put(price, product);
+        productIngredientCache.put(product, ingredient);
+        productCategoryCache.put(product, parent);
+        productCategoryCache.put(product, child);
     }
-
-
-
 
 
     private void processWarning(String message) {
