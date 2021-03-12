@@ -35,7 +35,7 @@ public class Loader {
     }
 
 
-    // TODO: refactor wanted??
+    // TODO: refactor wanted?? Generic is messy cause toDB methods are not quite the same
     public Ingredient toDb(Ingredient ingredient) {
         Optional<Ingredient> temp = this.ingredientRepository.findByNameIgnoreCase(ingredient.getName());
 
@@ -116,7 +116,7 @@ public class Loader {
     }
 
 
-    // REFACTOR ABOVE
+
 
 
     private void processWarning(String message) {

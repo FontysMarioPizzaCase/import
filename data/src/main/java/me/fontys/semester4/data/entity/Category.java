@@ -21,7 +21,6 @@ public class Category implements Serializable {
     private Long catid;
 
     @Column(name = "name", unique = true) // todo:
-//    @Column(name = "name")
     private String name;
 
     @ManyToOne
@@ -29,7 +28,6 @@ public class Category implements Serializable {
     private Category parent;
 
     @OneToMany(mappedBy = "parent", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-//    @OneToMany(mappedBy = "parent")
     private List<Category> children;
 
     @ManyToMany(mappedBy = "categories")

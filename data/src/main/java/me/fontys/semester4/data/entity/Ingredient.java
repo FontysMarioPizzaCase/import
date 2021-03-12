@@ -21,7 +21,6 @@ public class Ingredient implements Serializable {
     private Long ingredientid;
 
     @Column(name = "name", unique = true) // TODO:
-//    @Column(name = "name")
     private String name;
 
     @Column(name = "addprice")

@@ -29,15 +29,15 @@ public class CatalogImporter {
     private DataExtractor dataExtractor;
     private Loader loader;
 
-    private Set<Ingredient> ingredients;
-    private Set<Category> categories;
-    private Set<Product> products;
-    private Set<ProductPrice> prices;
+    private Map<Long, Ingredient> ingredients;
+    private Map<Long, Category> categories;
+    private Map<Long, Product> products;
+    private Map<Long, ProductPrice> prices;
 
-    Map<Category, Category> categoryParentCache = new HashMap<>();
-    Map<ProductPrice, Product> priceProductCache = new HashMap<>();
-    Map<Product, Ingredient> productIngredientCache = new HashMap<>();
-    Map<Product, Category> productCategoryCache = new HashMap<>();
+    private Map<Category, Category> category_parent;
+    private Map<ProductPrice, Product> price_product;
+    private Map<Product, Ingredient> product_ingredient;
+    private Map<Product, Category> product_category;
 
     @Autowired
     public CatalogImporter(@Qualifier("pizzaWithIngredients") Resource[] resources,
@@ -46,14 +46,14 @@ public class CatalogImporter {
         this.dataExtractor = dataExtractor;
         this.loader = loader;
 
-        ingredients = new HashSet<>();
-        categories = new HashSet<>();
-        products = new HashSet<>();
-        prices = new HashSet<>();
-        categoryParentCache = new HashMap<>();
-        priceProductCache = new HashMap<>();
-        productIngredientCache = new HashMap<>();
-        productCategoryCache = new HashMap<>();
+        ingredients = new HashMap<>();
+        categories = new HashMap<>();
+        products = new HashMap<>();
+        prices = new HashMap<>();
+        category_parent = new HashMap<>();
+        price_product = new HashMap<>();
+        product_ingredient = new HashMap<>();
+        product_category = new HashMap<>();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -62,11 +62,11 @@ public class CatalogImporter {
         this.warnings.clear();
 
         List<CsvLine> csvLines = dataExtractor.extract(resources);
-        transformAndSave(csvLines);
+        updateOrPersistEntities(csvLines);
     }
 
 
-    public void transformAndSave(List<CsvLine> csvLines) {
+    public void updateOrPersistEntities(List<CsvLine> csvLines) {
         LOGGER.info(String.format("Converting %s csvLines...", csvLines.size()));
         this.warnings.clear();
 
@@ -74,69 +74,76 @@ public class CatalogImporter {
 
         for (var line : csvLines) {
             try {
-                transformAndSave(line);
+                updateOrPersistEntities(line);
             } catch (Exception e) {
                 processWarning(String.format("Invalid data in line: %s || ERROR: %s",
                         line.toString(), e.toString()));
-                throw e;
+                throw e; // dev
             }
         }
-        for (Map.Entry<Category, Category> entry : categoryParentCache.entrySet()) {
-            entry.getKey().setParent(entry.getValue());
-        }
-        for (Map.Entry<ProductPrice, Product> entry : priceProductCache.entrySet()) {
-            entry.getKey().setProduct(entry.getValue());
-        }
-        for (Map.Entry<Product, Ingredient> entry : productIngredientCache.entrySet()) {
-            entry.getKey().getIngredients().add(entry.getValue());
-        }
-        for (Map.Entry<Product, Category> entry : productCategoryCache.entrySet()) {
-            entry.getKey().getCategories().add(entry.getValue());
-        }
+        updateRelationships();
     }
 
-    private void transformAndSave(CsvLine l) {
+    private void updateOrPersistEntities(CsvLine l) {
         final double TAXRATE = 0.06; // TODO: user input?
         final Date FROMDATE = new Date();
 
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), l.getDeliveryFee(), TAXRATE, null);
-        Category parent = new Category(null, null, l.getCategoryName());
-        Category child = new Category(null, null, l.getSubCategoryName());
+        Category mainCat = new Category(null, null, l.getCategoryName());
+        Category subCat = new Category(null, null, l.getSubCategoryName());
         Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null);
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
-        if (!products.contains(product)) {
+        if (!categories.containsKey(mainCat.getCatid())) {
+            mainCat = loader.toDb(mainCat);
+            categories.put(mainCat.getCatid(), mainCat);
+        }
+
+        if (!categories.containsKey(subCat.getCatid())) {
+            subCat = loader.toDb(subCat);
+            categories.put(subCat.getCatid(), subCat);
+            category_parent.put(subCat, categories.get(mainCat.getCatid()));
+        }
+
+        if (!products.containsKey(product.getProductid())) {
             product = loader.toDb(product);
-            products.add(product);
+            products.put(product.getProductid(), product);
+            product_category.put(product, categories.get(mainCat.getCatid()));
+            product_category.put(product, categories.get(subCat.getCatid()));
         }
 
-        if (!categories.contains(child)) {
-            child = loader.toDb(child);
-            categories.add(child);
-        }
-
-        if (!categories.contains(parent)) {
-            parent = loader.toDb(parent);
-            categories.add(parent);
-        }
-
-        if (!ingredients.contains(ingredient)) {
+        if (!ingredients.containsKey(ingredient.getIngredientid())) {
             ingredient = loader.toDb(ingredient);
-            ingredients.add(ingredient);
+            ingredients.put(ingredient.getIngredientid(), ingredient);
+            product_ingredient.put(products.get(product.getProductid()), ingredient);
         }
 
-        if (!prices.contains(price)) {
+        if (!prices.containsKey(price.getPriceid())) {
             price = loader.toDb(price, product);
-            prices.add(price);
+            prices.put(price.getPriceid(), price);
+            price_product.put(price, products.get(product.getProductid()));
         }
-
-        categoryParentCache.put(child, parent);
-        priceProductCache.put(price, product);
-        productIngredientCache.put(product, ingredient);
-        productCategoryCache.put(product, parent);
-        productCategoryCache.put(product, child);
     }
+
+
+    private void updateRelationships() {
+        for (Map.Entry<Category, Category> entry : category_parent.entrySet()) {
+            entry.getKey().setParent(entry.getValue());
+        }
+        for (Map.Entry<ProductPrice, Product> entry : price_product.entrySet()) {
+            entry.getKey().setProduct(entry.getValue());
+        }
+        for (Map.Entry<Product, Ingredient> entry : product_ingredient.entrySet()) {
+            entry.getKey().addIngredient(entry.getValue());
+        }
+        for (Map.Entry<Product, Category> entry : product_category.entrySet()) {
+            entry.getKey().addCategory(entry.getValue());
+        }
+    }
+
+
+
 
 
     private void processWarning(String message) {

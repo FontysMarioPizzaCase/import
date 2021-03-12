@@ -20,8 +20,7 @@ public class Product implements Serializable {
     @Column(name = "productid", nullable = false)
     private Long productid;
 
-    @Column(name = "name", unique = true) // todo:
-//    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "description")
@@ -43,21 +42,18 @@ public class Product implements Serializable {
     private String imagepath;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-//    @ManyToMany
     @JoinTable(name = "category_product",
             joinColumns = @JoinColumn(name = "productid"),
             inverseJoinColumns = @JoinColumn(name = "catid"))
     private Set<Category> categories;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-//    @ManyToMany
     @JoinTable(name = "ingredient_product",
             joinColumns = @JoinColumn(name = "productid"),
             inverseJoinColumns = @JoinColumn(name = "ingredientid"))
     private Set<Ingredient> ingredients;
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-//    @OneToMany(mappedBy = "product")
     private List<ProductPrice> prices;
 
     public Product(Long productid, String name, String description, Boolean spicy,
@@ -179,4 +175,11 @@ public class Product implements Serializable {
     }
 
 
+    public void addIngredient(Ingredient value) {
+        this.ingredients.add(value);
+    }
+
+    public void addCategory(Category value) {
+        this.categories.add(value);
+    }
 }
