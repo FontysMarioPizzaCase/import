@@ -1,8 +1,5 @@
 package me.fontys.semester4.tempdata.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
