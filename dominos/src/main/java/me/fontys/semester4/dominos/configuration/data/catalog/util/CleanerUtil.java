@@ -14,7 +14,14 @@ public class CleanerUtil {
     }
 
     public String cleanString(String string) {
-        return string.trim().toUpperCase();
+        return string.trim().toLowerCase()
+                .replaceAll("[^\\x20-\\x7E]", "");
+    }
+
+    public boolean cleanBool(String string, String trueValue) {
+        return string.trim().toLowerCase()
+                .replaceAll("[^\\x20-\\x7E]", "")
+                .equalsIgnoreCase(trueValue);
     }
 }
 

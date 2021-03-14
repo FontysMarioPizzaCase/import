@@ -1,6 +1,7 @@
 package me.fontys.semester4.dominos;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.ExtraIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.OverigeProductenImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.PizzaIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
@@ -32,18 +33,23 @@ public class DominosImport implements CommandLineRunner {
     private final StoreImporter storeImporter;
     private final PizzaIngredientsImporter pizzaIngredientsImporter;
     private final ExtraIngredientsImporter extraIngredientsImporter;
+    private final OverigeProductenImporter overigeProductenImporter;
     private final Importer pcImporter;
+
 
     @Autowired
     public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
                          PizzaIngredientsImporter pizzaIngredientsImporter,
                          ExtraIngredientsImporter extraIngredientsImporter,
+                         ExtraIngredientsImporter extraIngredientsImporter,
+                         OverigeProductenImporter overigeProductenImporter
                          PCImporter pcImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
         this.pizzaIngredientsImporter = pizzaIngredientsImporter;
         this.extraIngredientsImporter = extraIngredientsImporter;
         this.pcImporter = pcImporter;
+        this.overigeProductenImporter = overigeProductenImporter;
     }
 
     @Override
@@ -62,6 +68,8 @@ public class DominosImport implements CommandLineRunner {
         this.pizzaIngredientsImporter.doImport();
         this.pizzaIngredientsImporter.report();
         this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
+        this.overigeProductenImporter.doImport();
         this.extraIngredientsImporter.report();
 
         // Do the order import

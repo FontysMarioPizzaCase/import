@@ -1,22 +1,19 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.prepare.validate;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.PizzaIngredientsRawCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.ExtraIngredientRawCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.OverigProductRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PizzaIngredientsDataValidator extends DataValidator<PizzaIngredientsRawCsvLine> {
+public class OverigeProductenDataValidator extends DataValidator<OverigProductRawCsvLine> {
 
-    public PizzaIngredientsDataValidator(ExtendedLoggerFactory extendedLoggerFactory) {
+    public OverigeProductenDataValidator(ExtendedLoggerFactory extendedLoggerFactory) {
         super(extendedLoggerFactory);
     }
 
     @Override
-    protected void validate(PizzaIngredientsRawCsvLine line){
-        if (line.getIngredientName().isEmpty()) {
-            extendedLogger.processWarning("Record does not have an ingredient name");
-            throw new IllegalArgumentException();
-        }
+    protected void validate(OverigProductRawCsvLine line) {
         if (line.getCategoryName().isEmpty()) {
             extendedLogger.processWarning("Record does not have a category name");
             throw new IllegalArgumentException();
@@ -41,9 +38,6 @@ public class PizzaIngredientsDataValidator extends DataValidator<PizzaIngredient
         }
         if (line.getIsVegetarian().isEmpty()) {
             extendedLogger.processWarning("Record does not have a product vegetarian indicator");
-        }
-        if (line.getDeliveryFee().isEmpty()) {
-            extendedLogger.processWarning("Record does not have a product delivery fee");
         }
     }
 }
