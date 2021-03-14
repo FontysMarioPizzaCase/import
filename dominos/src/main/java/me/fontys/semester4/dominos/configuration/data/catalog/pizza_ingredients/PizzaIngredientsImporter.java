@@ -4,8 +4,7 @@ import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.*;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.csv_models.PizzaIngredientsCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.csv_models.PizzaIngredientsRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
@@ -30,13 +29,13 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
     private final Set<Relationship<Product, Ingredient>> product_ingredient;
     private final Set<Relationship<Product, Category>> product_category;
 
-
     @Autowired
     public PizzaIngredientsImporter(ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("pizzaWithIngredients") Resource[] resources,
-                                    PizzaIngredientsDataPrepper pizzaIngredientsDataExtractor,
+                                    PizzaIngredientsDataExtractor dataExtractor,
+                                    PizzaIngredientsDataValidator validator, PizzaIngredientsDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, pizzaIngredientsDataExtractor, loader);
+        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         ingredients = new HashMap<>();
         categories = new HashMap<>();
         products = new HashMap<>();

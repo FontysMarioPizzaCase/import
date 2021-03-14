@@ -3,8 +3,7 @@ package me.fontys.semester4.dominos.configuration.data.catalog.overige_producten
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.*;
 import me.fontys.semester4.dominos.configuration.data.catalog.overige_producten.csv_models.OverigProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.overige_producten.csv_models.OverigProductRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
@@ -29,9 +28,10 @@ public class OverigeProductenImporter extends CsvImporter<OverigProductRawCsvLin
     @Autowired
     public OverigeProductenImporter(ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("overigeProducten") Resource[] resources,
-                                    OverigeProductenDataPrepper overigeProductenDataPrepper,
+                                    OverigeProductenDataExtractor dataExtractor,
+                                    OverigeProductenDataValidator validator, OverigeProductenDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, overigeProductenDataPrepper, loader);
+        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();
