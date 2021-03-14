@@ -4,10 +4,12 @@ import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
+import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.load.DatabaseLoader;
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.PizzaIngredientsDataPrepper;
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.PizzaIngredientsCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.PizzaIngredientsRawCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.ExtraIngredientDataPrepper;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.OverigeProductenDataPrepper;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.extract.OverigeProductenDataExtractor;
+import me.fontys.semester4.dominos.configuration.data.catalog.prepare.models.*;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,53 +22,45 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-public class PizzaIngredientsImporter extends CatalogImporter<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
-
-    private final Map<Long, Ingredient> ingredients;
+public class OverigeProductenImporter extends CatalogImporter<OverigProductRawCsvLine, OverigProductCsvLine> {
     private final Map<Long, Category> categories;
     private final Map<Long, Product> products;
     private final Map<Long, ProductPrice> prices;
 
     private final Map<Category, Category> category_parent;
     private final Map<ProductPrice, Product> price_product;
-    private final Map<Product, Ingredient> product_ingredient;
     private final Map<Product, Category> product_category;
 
-
     @Autowired
-    public PizzaIngredientsImporter(ExtendedLoggerFactory extendedLoggerFactory,
-                                    @Qualifier("pizzaWithIngredients") Resource[] resources,
-                                    PizzaIngredientsDataPrepper pizzaIngredientsDataExtractor,
+    public OverigeProductenImporter(ExtendedLoggerFactory extendedLoggerFactory,
+                                    @Qualifier("overigeProducten") Resource[] resources,
+                                    OverigeProductenDataPrepper overigeProductenDataPrepper,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, pizzaIngredientsDataExtractor, loader);
-        ingredients = new HashMap<>();
+        super(extendedLoggerFactory, resources, overigeProductenDataPrepper, loader);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();
         category_parent = new HashMap<>();
         price_product = new HashMap<>();
-        product_ingredient = new HashMap<>();
         product_category = new HashMap<>();
     }
 
     @Override
-    protected void doImport(List<PizzaIngredientsCsvLine> csvLines) {
+    protected void doImport(List<OverigProductCsvLine> csvLines) {
         super.doImport(csvLines); // calls transformAndLoad below
         loadCachedRelationships();
     }
 
     @Override
-    protected void transformAndLoad(PizzaIngredientsCsvLine l) {
-        // TODO: pizzasaus (+ contraint), aantalkeer_ingredient
-
+    protected void transformAndLoad(OverigProductCsvLine l) {
         final double TAXRATE = 0.06; // TODO: user input?
+        final boolean ISAVAILABLE = true;
         final Date FROMDATE = new Date();
 
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
-                l.isSpicy(), l.isVegetarian(), l.isAvailable(), TAXRATE, null);
+                l.isSpicy(), l.isVegetarian(), ISAVAILABLE, TAXRATE, null);
         Category mainCat = new Category(null, null, l.getCategoryName());
         Category subCat = new Category(null, null, l.getSubCategoryName());
-        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null);
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
         if (!categories.containsKey(mainCat.getCatid())) {
@@ -87,12 +81,6 @@ public class PizzaIngredientsImporter extends CatalogImporter<PizzaIngredientsRa
             product_category.put(product, categories.get(subCat.getCatid()));
         }
 
-        if (!ingredients.containsKey(ingredient.getIngredientid())) {
-            ingredient = loader.toDb(ingredient);
-            ingredients.put(ingredient.getIngredientid(), ingredient);
-            product_ingredient.put(products.get(product.getProductid()), ingredient);
-        }
-
         if (!prices.containsKey(price.getPriceid())) {
             price = loader.toDb(price, product);
             prices.put(price.getPriceid(), price);
@@ -106,9 +94,6 @@ public class PizzaIngredientsImporter extends CatalogImporter<PizzaIngredientsRa
         }
         for (Map.Entry<ProductPrice, Product> entry : price_product.entrySet()) {
             entry.getKey().setProduct(entry.getValue());
-        }
-        for (Map.Entry<Product, Ingredient> entry : product_ingredient.entrySet()) {
-            entry.getKey().addIngredient(entry.getValue());
         }
         for (Map.Entry<Product, Category> entry : product_category.entrySet()) {
             entry.getKey().addCategory(entry.getValue());

@@ -1,6 +1,7 @@
 package me.fontys.semester4.dominos;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.ExtraIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.OverigeProductenImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.PizzaIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
@@ -21,6 +22,8 @@ import java.io.IOException;
 public class DominosImport implements CommandLineRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DominosImport.class);
+
+
     public static void main(String[] args) {
         SpringApplication.run(DominosImport.class, args);
     }
@@ -29,15 +32,18 @@ public class DominosImport implements CommandLineRunner {
     private final StoreImporter storeImporter;
     private final PizzaIngredientsImporter pizzaIngredientsImporter;
     private final ExtraIngredientsImporter extraIngredientsImporter;
+    private OverigeProductenImporter overigeProductenImporter;
 
     @Autowired
     public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
                          PizzaIngredientsImporter pizzaIngredientsImporter,
-                         ExtraIngredientsImporter extraIngredientsImporter) {
+                         ExtraIngredientsImporter extraIngredientsImporter,
+                         OverigeProductenImporter overigeProductenImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
         this.pizzaIngredientsImporter = pizzaIngredientsImporter;
         this.extraIngredientsImporter = extraIngredientsImporter;
+        this.overigeProductenImporter = overigeProductenImporter;
     }
 
     @Override
@@ -55,6 +61,8 @@ public class DominosImport implements CommandLineRunner {
         this.pizzaIngredientsImporter.doImport();
         this.pizzaIngredientsImporter.report();
         this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
+        this.overigeProductenImporter.doImport();
         this.extraIngredientsImporter.report();
     }
 }
