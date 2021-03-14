@@ -226,6 +226,16 @@ public class OrderImporter {
         if (line.length < 8) return null;
 
         String customerName = line[1];
+
+        String[] customerNameSplit = customerName.split(" ");
+        String firstName = customerNameSplit[0];
+        StringBuilder lastName = new StringBuilder();
+
+        for (int i = 0; i < customerNameSplit.length; i++) {
+            if (i == 0) continue;
+            lastName.append(" ").append(customerNameSplit[i]);
+        }
+
         String email = line[3];
         String deliveryType = line[7];
 
@@ -236,15 +246,13 @@ public class OrderImporter {
             processWarning("Order does not have any email");
         }
 
-        if ("afhalen".equalsIgnoreCase(deliveryType) && (customerName == null || customerName.isEmpty() ||
-                email == null || email.isEmpty())) {
+        if ("afhalen".equalsIgnoreCase(deliveryType) && (customerName.isEmpty() || email == null || email.isEmpty())) {
 
             // It was delivery, and we have no customer name & email. We can skip this
             return null;
         }
 
-        // TODO split customer first and last name
-        return new Customer(null, email, customerName, customerName);
+        return new Customer(null, email, firstName, lastName.toString());
     }
 
     private void processWarning(String message) {
