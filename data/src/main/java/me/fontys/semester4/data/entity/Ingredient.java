@@ -57,12 +57,11 @@ public class Ingredient implements Serializable {
     }
 
     public void setAddprice(BigDecimal addprice) {
-        this.addprice = addprice.toString();
+        this.addprice = addprice;
     }
 
     public BigDecimal getAddprice() {
-        if (addprice != null) return new BigDecimal(addprice);
-        return null;
+        return addprice;
     }
 
     public Set<Product> getProducts() {
@@ -85,7 +84,7 @@ public class Ingredient implements Serializable {
     @Override
     public String toString() {
         String idStr = (this.ingredientid != null) ? this.ingredientid.toString() : "null";
-        String addPriceStr = (this.addprice != null) ? this.addprice : "null";
+        String addPriceStr = (this.addprice != null) ? this.addprice.toString() : "null";
 
         return "Ingredient{" +
                 "ingredientid=" + idStr + '\'' +
