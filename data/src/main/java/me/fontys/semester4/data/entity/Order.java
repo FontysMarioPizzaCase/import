@@ -43,13 +43,13 @@ public class Order implements Serializable {
     private Date deliverydate;
 
     @Column(name = "takeaway")
-    private String takeaway;
+    private boolean takeaway;
 
     @Column(name = "totalprice")
-    private String totalprice;
+    private float totalprice;
 
     @Column(name = "deliveryprice")
-    private String deliveryprice;
+    private float deliveryprice;
 
     @Column(name = "applied_discount")
     private String appliedDiscount;
@@ -65,7 +65,7 @@ public class Order implements Serializable {
     }
 
     public Order(Long customer, Long orderid, Store store, Long postalcodeid, Date orderdate, Date deliverydate,
-                 String takeaway, String totalprice, String deliveryprice, String appliedDiscount, Long streetnr,
+                 boolean takeaway, float totalprice, float deliveryprice, String appliedDiscount, Long streetnr,
                  String customername) {
         this.customer = customer;
         this.orderid = orderid;
@@ -129,27 +129,27 @@ public class Order implements Serializable {
         return deliverydate;
     }
 
-    public void setTakeaway(String takeaway) {
+    public void setTakeaway(boolean takeaway) {
         this.takeaway = takeaway;
     }
 
-    public String getTakeaway() {
+    public boolean getTakeaway() {
         return takeaway;
     }
 
-    public void setTotalprice(String totalprice) {
+    public void setTotalprice(float totalprice) {
         this.totalprice = totalprice;
     }
 
-    public String getTotalprice() {
+    public float getTotalprice() {
         return totalprice;
     }
 
-    public void setDeliveryprice(String deliveryprice) {
+    public void setDeliveryprice(float deliveryprice) {
         this.deliveryprice = deliveryprice;
     }
 
-    public String getDeliveryprice() {
+    public float getDeliveryprice() {
         return deliveryprice;
     }
 
