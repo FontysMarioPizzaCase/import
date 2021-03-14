@@ -148,7 +148,10 @@ public class OrderImporter {
 
             String[] lineDetails = line.split(";");
 
-            result.add(getCustomerFromLine(lineDetails));
+            Customer customer = getCustomerFromLine(lineDetails);
+            if (customer == null) continue;
+
+            result.add(customer);
         }
         return result;
     }
