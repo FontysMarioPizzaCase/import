@@ -1,8 +1,8 @@
 package me.fontys.semester4.dominos;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.ExtraIngredientsImporter;
-import me.fontys.semester4.dominos.configuration.data.catalog.OverigeProductenImporter;
-import me.fontys.semester4.dominos.configuration.data.catalog.PizzaIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.ExtraIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.overige_producten.OverigeProductenImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.PizzaIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import me.fontys.semester4.interfaces.Importer;

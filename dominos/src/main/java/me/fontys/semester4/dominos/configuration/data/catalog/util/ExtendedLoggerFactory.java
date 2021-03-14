@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ExtendedLoggerFactory {
-    public ExtendedLogger get(Logger logger){
+    public ExtendedLogger extendedLogger(Logger logger){
         return new ExtendedLogger(logger);
     }
 }
