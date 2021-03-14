@@ -20,7 +20,7 @@ public class Category implements Serializable {
     @Column(name = "catid", nullable = false)
     private Long catid;
 
-    @Column(name = "name", unique = true) // todo:
+    @Column(name = "name", unique = true)
     private String name;
 
     @ManyToOne

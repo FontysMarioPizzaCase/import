@@ -1,6 +1,5 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.prepare.clean;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.extract.DataExtractor;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.CleanerUtil;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
