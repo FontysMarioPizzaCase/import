@@ -29,11 +29,11 @@ public class Product implements Serializable {
     @Column(name = "spicy")
     private Boolean spicy;
 
+    @Column(name = "available")
+    private Boolean available;
+
     @Column(name = "vegetarian")
     private Boolean vegetarian;
-
-    @Column(name = "deliveryfee")
-    private BigDecimal deliveryfee;
 
     @Column(name = "taxrate")
     private Double taxrate;
@@ -57,14 +57,14 @@ public class Product implements Serializable {
     private List<ProductPrice> prices;
 
     public Product(Long productid, String name, String description, Boolean spicy,
-                   Boolean vegetarian, BigDecimal deliveryfee, Double taxrate,
+                   Boolean vegetarian, Boolean available, Double taxrate,
                    String imagepath) {
         this.productid = productid;
         this.name = name;
         this.description = description;
         this.spicy = spicy;
         this.vegetarian = vegetarian;
-        this.deliveryfee = deliveryfee;
+        this.available = available;
         this.taxrate = taxrate;
         this.imagepath = imagepath;
         categories = new HashSet<>();
@@ -73,8 +73,8 @@ public class Product implements Serializable {
     }
 
     protected Product() {
-        this(null, null, null, null,
-                null, null, null, null);
+        this(null, null, null, null, null,
+                null, null, null);
     }
 
     public Long getProductid() {
@@ -92,8 +92,8 @@ public class Product implements Serializable {
     public boolean getVegetarian() {
         return vegetarian;
     }
-    public BigDecimal getDeliveryfee() {
-        return deliveryfee;
+    public boolean getAvailable() {
+        return available;
     }
     public Double getTaxrate() {
         return taxrate;
@@ -126,8 +126,8 @@ public class Product implements Serializable {
     public void setVegetarian(boolean vegetarian) {
         this.vegetarian = vegetarian;
     }
-    public void setDeliveryfee(BigDecimal deliveryfee) {
-        this.deliveryfee = deliveryfee;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
     public void setTaxrate(Double taxrate) {
         this.taxrate = taxrate;
@@ -168,7 +168,7 @@ public class Product implements Serializable {
                 ", description='" + description + '\'' +
                 ", spicy='" + spicy + '\'' +
                 ", vegetarian='" + vegetarian + '\'' +
-                ", deliveryfee='" + deliveryfee + '\'' +
+                ", available='" + available + '\'' +
                 ", taxrate=" + taxrate +
                 ", imagepath='" + imagepath + '\'' +
                 "}";

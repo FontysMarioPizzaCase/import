@@ -24,9 +24,9 @@ public class PizzaIngredientsDataCleaner extends DataCleaner<PizzaIngredientsRaw
         String productDescription = util.cleanString(raw.getProductDescription());
         BigDecimal price = util.cleanPrice(raw.getPrice());
         BigDecimal deliveryFee = util.cleanPrice(raw.getDeliveryFee());
-        boolean isSpicy = raw.getIsSpicy().equalsIgnoreCase("JA");
-        boolean isVegetarian = raw.getIsVegetarian().equalsIgnoreCase("JA");
-        boolean isAvailable = raw.getIsVegetarian().equalsIgnoreCase("JA");
+        boolean isSpicy = util.cleanBool(raw.getIsSpicy(), "JA");
+        boolean isVegetarian = util.cleanBool(raw.getIsVegetarian(), "JA");
+        boolean isAvailable = util.cleanBool(raw.getIsAvailable(), "JA");
         int ingredientPortion = Integer.parseInt(raw.getIngredientPortion());
         String ingredientName = util.cleanString(raw.getIngredientName());
         String standardPizzasauce = util.cleanString(raw.getStandardPizzasauce());

@@ -117,7 +117,6 @@ public class DatabaseLoader implements HasExtendedLogger {
         dbProduct.setDescription(p.getDescription());
         dbProduct.setSpicy(p.getSpicy());
         dbProduct.setVegetarian(p.getVegetarian());
-        dbProduct.setDeliveryfee(p.getDeliveryfee());
         dbProduct.setTaxrate(p.getTaxrate());
         dbProduct.setImagepath(p.getImagepath());
     }
