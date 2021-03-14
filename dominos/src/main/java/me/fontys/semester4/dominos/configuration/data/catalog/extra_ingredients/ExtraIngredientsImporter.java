@@ -1,9 +1,9 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients;
 
 import me.fontys.semester4.data.entity.Ingredient;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.CatalogImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

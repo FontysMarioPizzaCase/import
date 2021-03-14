@@ -1,13 +1,10 @@
-package me.fontys.semester4.dominos.configuration.data.catalog;
+package me.fontys.semester4.dominos.configuration.data.catalog.general;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.prepare.DataPrepper;
-import me.fontys.semester4.dominos.configuration.data.catalog.load.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.HasExtendedLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,9 +23,9 @@ public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
     protected DatabaseLoader loader;
 
     public CsvImporter(ExtendedLoggerFactory extendedLoggerFactory,
-                       @Qualifier("pizzaWithIngredients") Resource[] resources,
-                       DataPrepper<RawT, CleanT> dataPrepper, DatabaseLoader loader) {
-        this.extendedLogger = extendedLoggerFactory.get(LOGGER);
+                       Resource[] resources, DataPrepper<RawT, CleanT> dataPrepper,
+                       DatabaseLoader loader) {
+        this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
         this.dataPrepper = dataPrepper;
         this.loader = loader;
