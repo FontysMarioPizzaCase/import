@@ -61,7 +61,8 @@ public class Ingredient implements Serializable {
     }
 
     public BigDecimal getAddprice() {
-        return new BigDecimal(addprice);
+        if (addprice != null) return new BigDecimal(addprice);
+        return null;
     }
 
     public Set<Product> getProducts() {

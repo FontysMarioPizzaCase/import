@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog;
+package me.fontys.semester4.dominos.configuration.data.catalog.bootstrap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,14 +10,14 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 
 @Configuration
-public class CatalogImportBootstrap {
+public class PizzaIngredientsImportBootstrap {
 
     @Value("${import.pizzawithingredients}")
     private final String path = "./import-data/pizza_ingredienten*.csv";
     private final ApplicationContext applicationContext;
 
     @Autowired
-    public CatalogImportBootstrap(ApplicationContext applicationContext) {
+    public PizzaIngredientsImportBootstrap(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

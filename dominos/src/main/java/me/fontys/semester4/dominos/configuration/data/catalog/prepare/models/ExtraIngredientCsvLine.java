@@ -1,23 +1,22 @@
-package me.fontys.semester4.dominos.configuration.data.extraingredients;
+package me.fontys.semester4.dominos.configuration.data.catalog.prepare.models;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class ExtraIngredientSurchargeRecord {
+import java.math.BigDecimal;
+
+public class ExtraIngredientCsvLine {
 
     @CsvBindByPosition(position = 0)
-    private String ingredientName;
+    private final String ingredientName;
     @CsvBindByPosition(position = 1)
-    private String addPrice;
+    private final BigDecimal addPrice;
 
-    public ExtraIngredientSurchargeRecord() {
-    } // keep public for CsvToBeanBuilder
-
-    public ExtraIngredientSurchargeRecord(String ingredientName, String addPrice) {
+    public ExtraIngredientCsvLine(String ingredientName, BigDecimal addPrice) {
         this.ingredientName = ingredientName;
         this.addPrice = addPrice;
     }
 
-    public String getAddPrice() {
+    public BigDecimal getAddPrice() {
         return addPrice;
     }
 

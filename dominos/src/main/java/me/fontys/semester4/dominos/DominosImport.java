@@ -1,6 +1,7 @@
 package me.fontys.semester4.dominos;
 
-import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.ExtraIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.PizzaIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import org.slf4j.Logger;
@@ -26,15 +27,17 @@ public class DominosImport implements CommandLineRunner {
 
     private final OrderImporter orderImporter;
     private final StoreImporter storeImporter;
-    private final CatalogImporter catalogImporter;
+    private final PizzaIngredientsImporter pizzaIngredientsImporter;
+    private final ExtraIngredientsImporter extraIngredientsImporter;
 
     @Autowired
-    public DominosImport(OrderImporter orderImporter,
-                         StoreImporter storeImporter,
-                         CatalogImporter catalogImporter) {
+    public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
+                         PizzaIngredientsImporter pizzaIngredientsImporter,
+                         ExtraIngredientsImporter extraIngredientsImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
-        this.catalogImporter = catalogImporter;
+        this.pizzaIngredientsImporter = pizzaIngredientsImporter;
+        this.extraIngredientsImporter = extraIngredientsImporter;
     }
 
     @Override
@@ -49,11 +52,9 @@ public class DominosImport implements CommandLineRunner {
         this.storeImporter.doImport();
 
         // Do the catalog imports
-        this.catalogImporter.doImport();
-        this.catalogImporter.report();
-
-        // Do the extra ingredients import
-//        this.extraIngredientsImporter.doImport();
-//        this.extraIngredientsImporter.report();
+        this.pizzaIngredientsImporter.doImport();
+        this.pizzaIngredientsImporter.report();
+        this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
     }
 }

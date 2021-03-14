@@ -8,43 +8,47 @@ import me.fontys.semester4.data.repository.CategoryRepository;
 import me.fontys.semester4.data.repository.IngredientRepository;
 import me.fontys.semester4.data.repository.ProductPriceRepository;
 import me.fontys.semester4.data.repository.ProductRepository;
-import me.fontys.semester4.dominos.configuration.data.catalog.CatalogImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.util.HasExtendedLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public class Loader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
-    private final Map<String, Integer> warnings = new HashMap<>();
+public class DatabaseLoader implements HasExtendedLogger {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
+    protected final ExtendedLogger extendedLogger;
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final IngredientRepository ingredientRepository;
     private final ProductPriceRepository productPriceRepository;
 
-    public Loader(ProductRepository productRepository, CategoryRepository categoryRepository,
-                  IngredientRepository ingredientRepository, ProductPriceRepository productPriceRepository) {
+    public DatabaseLoader(ExtendedLoggerFactory extendedLoggerFactory, ProductRepository productRepository, CategoryRepository categoryRepository,
+                          IngredientRepository ingredientRepository, ProductPriceRepository productPriceRepository) {
+        this.extendedLogger = extendedLoggerFactory.get(LOGGER);
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.ingredientRepository = ingredientRepository;
         this.productPriceRepository = productPriceRepository;
     }
 
-
     // TODO: refactor wanted?? Generic is messy cause toDB methods are not quite the same
     public Ingredient toDb(Ingredient ingredient) {
         Optional<Ingredient> temp = this.ingredientRepository.findByNameIgnoreCase(ingredient.getName());
 
         if (temp.isPresent()) {
+            Ingredient newData = ingredient;
             ingredient = temp.get();
-            processWarning("No Ingredient properties to update");
+            updateIngredient(ingredient, newData);
+            extendedLogger.processWarning("Ingredient updated");
         } else {
             this.ingredientRepository.save(ingredient);
-            processWarning("Ingredient saved");
+            extendedLogger.processWarning("Ingredient saved");
         }
 
         return ingredient;
@@ -55,10 +59,10 @@ public class Loader {
 
         if (temp.isPresent()) {
             category = temp.get();
-            processWarning("No Category properties to update");
+            extendedLogger.processWarning("No Category properties to update");
         } else {
             this.categoryRepository.save(category);
-            processWarning("Category created");
+            extendedLogger.processWarning("Category created");
         }
 
         return category;
@@ -71,16 +75,16 @@ public class Loader {
                 .findByPriceAndProduct_Productid(price.getPrice(), product.getProductid())) {
             temp = stream.findFirst();
         } catch (Exception e) {
-            processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
+            extendedLogger.processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
             throw e;
         }
 
         if (temp.isPresent()) {
             price = temp.get();
-            processWarning("No ProductPrice properties to update");
+            extendedLogger.processWarning("No ProductPrice properties to update");
         } else {
             this.productPriceRepository.save(price);
-            processWarning("ProductPrice created");
+            extendedLogger.processWarning("ProductPrice created");
         }
 
         return price;
@@ -93,13 +97,19 @@ public class Loader {
             Product newData = product;
             product = temp.get();
             updateProduct(product, newData);
-            processWarning("Product updated");
+            extendedLogger.processWarning("Product updated");
         } else {
             this.productRepository.save(product);
-            processWarning("Product created");
+            extendedLogger.processWarning("Product created");
         }
 
         return product;
+    }
+
+    private void updateIngredient(Ingredient dbIngredient, Ingredient i) {
+        dbIngredient.setName(i.getName());
+        if(i.getAddprice() != null)
+            dbIngredient.setAddprice(i.getAddprice());
     }
 
     private void updateProduct(Product dbProduct, Product p) {
@@ -110,33 +120,14 @@ public class Loader {
         dbProduct.setDeliveryfee(p.getDeliveryfee());
         dbProduct.setTaxrate(p.getTaxrate());
         dbProduct.setImagepath(p.getImagepath());
-//        dbProduct.setCategories(p.getCategories());
-//        dbProduct.setIngredients(p.getIngredients());
-//        dbProduct.setPrices(p.getPrices());
     }
 
-
-
-
-
-    private void processWarning(String message) {
-        if (this.warnings.containsKey(message)) {
-            this.warnings.put(message, this.warnings.get(message) + 1);
-        } else {
-            this.warnings.put(message, 1);
-        }
-    }
-
+    @Override
     public void report() {
-        int totalWarnings = this.warnings.values().stream()
-                .reduce(0, Integer::sum);
+        extendedLogger.report();
+    }
 
-        if (totalWarnings > 0) {
-            LOGGER.warn(String.format("Catalog import result : %s warnings", totalWarnings));
-
-            for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
-                LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
-            }
-        }
+    public void clearWarnings() {
+        extendedLogger.clearWarnings();
     }
 }

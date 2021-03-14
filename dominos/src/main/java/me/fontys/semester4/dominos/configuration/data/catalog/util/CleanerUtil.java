@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.extract;
+package me.fontys.semester4.dominos.configuration.data.catalog.util;
 
 import org.springframework.stereotype.Service;
 

@@ -1,26 +1,26 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.extract;
+package me.fontys.semester4.dominos.configuration.data.catalog.prepare.models;
 
 import java.math.BigDecimal;
 
-public class CsvLine {
-    private String categoryName;
-    private String subCategoryName;
-    private String productName;
-    private String productDescription;
-    private BigDecimal price;
-    private BigDecimal deliveryFee;
-    private boolean isSpicy;
-    private boolean isVegetarian;
-    private boolean isAvailable;
-    private int ingredientPortion;
-    private String ingredientName;
-    private String standardPizzasauce;
+public class PizzaIngredientsCsvLine {
+    private final String categoryName;
+    private final String subCategoryName;
+    private final String productName;
+    private final String productDescription;
+    private final BigDecimal price;
+    private final BigDecimal deliveryFee;
+    private final boolean isSpicy;
+    private final boolean isVegetarian;
+    private final boolean isAvailable;
+    private final int ingredientPortion;
+    private final String ingredientName;
+    private final String standardPizzasauce;
 
 
-    public CsvLine(String categoryName, String subCategoryName, String productName,
-                   String productDescription, BigDecimal price, BigDecimal deliveryFee,
-                   boolean isSpicy, boolean isVegetarian, boolean isAvailable,
-                   int ingredientPortion, String ingredientName, String standardPizzasauce) {
+    public PizzaIngredientsCsvLine(String categoryName, String subCategoryName, String productName,
+                                   String productDescription, BigDecimal price, BigDecimal deliveryFee,
+                                   boolean isSpicy, boolean isVegetarian, boolean isAvailable,
+                                   int ingredientPortion, String ingredientName, String standardPizzasauce) {
         this.categoryName = categoryName;
         this.subCategoryName = subCategoryName;
         this.productName = productName;
