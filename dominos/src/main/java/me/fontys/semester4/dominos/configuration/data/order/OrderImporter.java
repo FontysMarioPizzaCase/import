@@ -148,10 +148,12 @@ public class OrderImporter {
 
             String[] lineDetails = line.split(";");
 
-            Customer customer = getCustomerFromLine(lineDetails);
-            if (customer == null) continue;
+            if (!isDelimitedOrder(lineDetails)) {
+                Customer customer = getCustomerFromLine(lineDetails);
+                if (customer == null) continue;
 
-            result.add(customer);
+                result.add(customer);
+            }
         }
         return result;
     }
@@ -221,16 +223,26 @@ public class OrderImporter {
     private Customer getCustomerFromLine(String[] line) {
 
         // If it doesn't have at least 3 fields, we can't build a customer
-        if (line.length < 2) return null;
+        if (line.length < 8) return null;
 
         String customerName = line[1];
         String email = line[3];
-        if (customerName.isEmpty()) {
+        String deliveryType = line[7];
+
+        if ("bezorgen".equalsIgnoreCase(deliveryType) && customerName.isEmpty()) {
             processWarning("Order does not have any customer name");
         }
-        if (email.isEmpty()) {
+        if ("bezorgen".equalsIgnoreCase(deliveryType) && email.isEmpty()) {
             processWarning("Order does not have any email");
         }
+
+        if ("afhalen".equalsIgnoreCase(deliveryType) && (customerName == null || customerName.isEmpty() ||
+                email == null || email.isEmpty())) {
+
+            // It was delivery, and we have no customer name & email. We can skip this
+            return null;
+        }
+
         // TODO split customer first and last name
         return new Customer(null, email, customerName, customerName);
     }
