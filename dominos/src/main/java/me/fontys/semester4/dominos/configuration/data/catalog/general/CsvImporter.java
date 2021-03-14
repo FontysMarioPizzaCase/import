@@ -19,15 +19,20 @@ public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
     protected final ExtendedLogger extendedLogger;
 
     private final Resource[] resources;
-    private final DataPrepper<RawT, CleanT> dataPrepper;
+    private final DataExtractor<RawT> dataExtractor;
+    protected DataValidator<RawT> validator;
+    protected DataCleaner<RawT, CleanT> cleaner;
     protected DatabaseLoader loader;
 
     public CsvImporter(ExtendedLoggerFactory extendedLoggerFactory,
-                       Resource[] resources, DataPrepper<RawT, CleanT> dataPrepper,
+                       Resource[] resources, DataExtractor<RawT> dataExtractor,
+                       DataValidator<RawT> validator, DataCleaner<RawT, CleanT> cleaner,
                        DatabaseLoader loader) {
         this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
-        this.dataPrepper = dataPrepper;
+        this.dataExtractor = dataExtractor;
+        this.validator = validator;
+        this.cleaner = cleaner;
         this.loader = loader;
     }
 
@@ -36,7 +41,9 @@ public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
         LOGGER.info("Start import of catalog items");
         extendedLogger.clearWarnings();
 
-        List<CleanT> csvLines = dataPrepper.prep(resources);
+        List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
+        validator.validate(rawCsvLines);
+        List<CleanT> csvLines = cleaner.clean(rawCsvLines);
         doImport(csvLines);
     }
 
@@ -60,7 +67,8 @@ public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
 
     @Override
     public void report() {
-        dataPrepper.report();
+        dataExtractor.report();
+        validator.report();
         loader.report();
         extendedLogger.report();
     }

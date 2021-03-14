@@ -1,10 +1,9 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients;
 
 import me.fontys.semester4.data.entity.Ingredient;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.*;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,9 +20,10 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
     @Autowired
     public ExtraIngredientsImporter(ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("ingredientSurcharge") Resource[] resources,
-                                    ExtraIngredientDataPrepper extraIngredientDataExtractor,
+                                    ExtraIngredientsDataExtractor dataExtractor,
+                                    ExtraIngredientDataValidator validator, ExtraIngredientDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, extraIngredientDataExtractor, loader);
+        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         this.ingredients = new HashMap<>();
     }
 
