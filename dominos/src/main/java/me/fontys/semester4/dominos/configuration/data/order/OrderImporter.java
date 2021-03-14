@@ -236,7 +236,7 @@ public class OrderImporter {
             lastName.append(" ").append(customerNameSplit[i]);
         }
 
-        String email = line[3];
+        String email = line[3].toLowerCase();
         String deliveryType = line[7];
 
         if ("bezorgen".equalsIgnoreCase(deliveryType) && customerName.isEmpty()) {
@@ -249,6 +249,11 @@ public class OrderImporter {
         if ("afhalen".equalsIgnoreCase(deliveryType) && (customerName.isEmpty() || email == null || email.isEmpty())) {
 
             // It was delivery, and we have no customer name & email. We can skip this
+            return null;
+        }
+
+        if (this.customerRepository.findByEmail(email).isEmpty()) {
+            // we already have customer based on email
             return null;
         }
 

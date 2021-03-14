@@ -96,7 +96,11 @@ public class StoreImporter {
             String storeName = lines[0];
             String storeStreet = String.format("%s %s", lines[1], lines[2]);
             String municipality = lines[3];
-            stores.add(new Store(null, storeName, storeStreet,municipality));
+
+            if (this.storeRepository.findByName(storeName).isEmpty()) {
+                stores.add(new Store(null, storeName, storeStreet,municipality));
+            }
+
         });
         return stores;
     }
