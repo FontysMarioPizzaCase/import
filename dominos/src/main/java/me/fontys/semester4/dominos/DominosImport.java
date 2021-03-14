@@ -54,11 +54,6 @@ public class DominosImport implements CommandLineRunner {
         this.storeImporter.doImport();
         this.storeImporter.report();
 
-        // Do the order import
-        this.orderImporter.doImport();
-        this.orderImporter.report();
-        this.orderImporter.test();
-
         // Do the postalcode import
         pcImporter.doImport();
         pcImporter.report();
@@ -68,6 +63,11 @@ public class DominosImport implements CommandLineRunner {
         this.pizzaIngredientsImporter.report();
         this.extraIngredientsImporter.doImport();
         this.extraIngredientsImporter.report();
+
+        // Do the order import
+        this.orderImporter.doImport();
+        this.orderImporter.report();
+        this.orderImporter.test();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));
