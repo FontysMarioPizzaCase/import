@@ -216,6 +216,10 @@ public class OrderImporter {
     }
 
     private Customer getCustomerFromLine(String[] line) {
+
+        // If it doesn't have at least 3 fields, we can't build a customer
+        if (line.length < 2) return null;
+
         String customerName = line[1];
         String email = line[3];
         if (customerName.isEmpty()) {
