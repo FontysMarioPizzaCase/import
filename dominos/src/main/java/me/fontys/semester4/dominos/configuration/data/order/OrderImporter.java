@@ -157,7 +157,7 @@ public class OrderImporter {
         return rowIndex <= 5;
     }
 
-    private Order createNewOrderFromLine(String[] line) throws ParseException {
+    private Order createNewOrderFromLine(String[] line) {
         String storeName = line[0];
         String customerName = line[1];
         String phoneNumber = line[2];
@@ -211,7 +211,8 @@ public class OrderImporter {
         Date deliveryDateParsed = this.orderDateFormatter.fromString(deliveryDate);
 
         return new Order(null, null, store.get(), null, orderDateParsed,
-                deliveryDateParsed, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
+                deliveryDateParsed, "afhalen".equalsIgnoreCase(deliveryType), 0, 0,
+                couponDiscount, null, customerName);
     }
 
     private Customer getCustomerFromLine(String[] line) {
