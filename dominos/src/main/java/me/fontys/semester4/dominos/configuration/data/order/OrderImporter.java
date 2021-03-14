@@ -109,7 +109,7 @@ public class OrderImporter {
         ImportTest.test("Order", OrderImportRecordValidityTest.class);
     }
 
-    private List<Order> processOrderResource(Resource resource) throws IOException, ParseException {
+    private List<Order> processOrderResource(Resource resource) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
         List<Order> result = new ArrayList<>();
@@ -135,7 +135,7 @@ public class OrderImporter {
         return result;
     }
 
-    private List<Customer> processCustomerResource(Resource resource) throws IOException, ParseException {
+    private List<Customer> processCustomerResource(Resource resource) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
         List<Customer> result = new ArrayList<>();
         int rowCount = 0;
