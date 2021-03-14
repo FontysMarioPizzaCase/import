@@ -66,18 +66,22 @@ public class OrderImporter {
     }
 
     public void doImport() throws IOException, ParseException {
-        LOGGER.info("Starting import of orders...");
+        LOGGER.info("Starting import of orders and customers...");
 
         this.warnings.clear();
         List<Order> orders = new ArrayList<>();
+        List<Customer> customers = new ArrayList<>();
 
         for (Resource resource : this.orders) {
             LOGGER.info("Reading resource " + resource.getFilename());
             orders.addAll(this.processOrderResource(resource));
+            customers.addAll(this.processCustomerResource(resource));
         }
 
         LOGGER.info(String.format("Inserting %s orders...", orders.size()));
         this.orderRepository.saveAll(orders);
+        LOGGER.info(String.format("Inserting %s customers...", customers.size()));
+        this.customerRepository.saveAll(customers);
     }
 
     public void report() {
@@ -128,6 +132,24 @@ public class OrderImporter {
             }
         }
 
+        return result;
+    }
+
+    private List<Customer> processCustomerResource(Resource resource) throws IOException, ParseException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+        List<Customer> result = new ArrayList<>();
+        int rowCount = 0;
+        while (reader.ready()) {
+            rowCount++;
+            String line = reader.readLine();
+            // Ignore the initial header rows and empty lines
+            if (isHeader(rowCount)) continue;
+            if (line.isEmpty()) continue;
+
+            String[] lineDetails = line.split(";");
+
+            result.add(getCustomerFromLine(lineDetails));
+        }
         return result;
     }
 
@@ -190,6 +212,19 @@ public class OrderImporter {
 
         return new Order(null, null, store.get(), null, orderDateParsed,
                 deliveryDateParsed, deliveryType, totalPrice, deliveryCost, couponDiscount, null, customerName);
+    }
+
+    private Customer getCustomerFromLine(String[] line) {
+        String customerName = line[1];
+        String email = line[3];
+        if (customerName.isEmpty()) {
+            processWarning("Order does not have any customer name");
+        }
+        if (email.isEmpty()) {
+            processWarning("Order does not have any email");
+        }
+        // TODO split customer first and last name
+        return new Customer(null, email, customerName, customerName);
     }
 
     private void processWarning(String message) {
