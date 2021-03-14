@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-public class PizzaIngredientsImporter extends CatalogImporter<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
+public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
 
     private final Map<Long, Ingredient> ingredients;
     private final Map<Long, Category> categories;

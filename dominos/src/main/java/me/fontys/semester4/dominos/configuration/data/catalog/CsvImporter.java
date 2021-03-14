@@ -17,17 +17,17 @@ import java.io.IOException;
 import java.util.List;
 
 @Configuration
-public abstract class CatalogImporter<RawT, CleanT> implements HasExtendedLogger {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CatalogImporter.class);
+public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CsvImporter.class);
     protected final ExtendedLogger extendedLogger;
 
     private final Resource[] resources;
     private final DataPrepper<RawT, CleanT> dataPrepper;
     protected DatabaseLoader loader;
 
-    public CatalogImporter(ExtendedLoggerFactory extendedLoggerFactory,
-                           @Qualifier("pizzaWithIngredients") Resource[] resources,
-                           DataPrepper<RawT, CleanT> dataPrepper, DatabaseLoader loader) {
+    public CsvImporter(ExtendedLoggerFactory extendedLoggerFactory,
+                       @Qualifier("pizzaWithIngredients") Resource[] resources,
+                       DataPrepper<RawT, CleanT> dataPrepper, DatabaseLoader loader) {
         this.extendedLogger = extendedLoggerFactory.get(LOGGER);
         this.resources = resources;
         this.dataPrepper = dataPrepper;

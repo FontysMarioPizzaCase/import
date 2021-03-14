@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class ExtraIngredientsImporter extends CatalogImporter<ExtraIngredientRawCsvLine, ExtraIngredientCsvLine> {
+public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvLine, ExtraIngredientCsvLine> {
     private final Map<Long, Ingredient> ingredients;
 
     @Autowired
