@@ -41,28 +41,27 @@ public class DominosImport implements CommandLineRunner {
     public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
                          PizzaIngredientsImporter pizzaIngredientsImporter,
                          ExtraIngredientsImporter extraIngredientsImporter,
-                         ExtraIngredientsImporter extraIngredientsImporter,
-                         OverigeProductenImporter overigeProductenImporter
+                         OverigeProductenImporter overigeProductenImporter,
                          PCImporter pcImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
         this.pizzaIngredientsImporter = pizzaIngredientsImporter;
         this.extraIngredientsImporter = extraIngredientsImporter;
-        this.pcImporter = pcImporter;
         this.overigeProductenImporter = overigeProductenImporter;
+        this.pcImporter = pcImporter;
     }
 
     @Override
     public void run(String... args) throws Exception {
         long start = System.currentTimeMillis();
 
-        // Do the store import
-        this.storeImporter.doImport();
-        this.storeImporter.report();
-
-        // Do the postalcode import
-        pcImporter.doImport();
-        pcImporter.report();
+//        // Do the store import
+//        this.storeImporter.doImport();
+//        this.storeImporter.report();
+//
+//        // Do the postalcode import
+//        pcImporter.doImport();
+//        pcImporter.report();
 
         // Do the catalog imports
         this.pizzaIngredientsImporter.doImport();
@@ -70,12 +69,12 @@ public class DominosImport implements CommandLineRunner {
         this.extraIngredientsImporter.doImport();
         this.extraIngredientsImporter.report();
         this.overigeProductenImporter.doImport();
-        this.extraIngredientsImporter.report();
+        this.overigeProductenImporter.report();
 
-        // Do the order import
-        this.orderImporter.doImport();
-        this.orderImporter.report();
-        this.orderImporter.test();
+//        // Do the order import
+//        this.orderImporter.doImport();
+//        this.orderImporter.report();
+//        this.orderImporter.test();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));

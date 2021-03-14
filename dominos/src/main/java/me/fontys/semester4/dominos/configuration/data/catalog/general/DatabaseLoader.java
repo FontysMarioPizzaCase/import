@@ -44,8 +44,11 @@ public class DatabaseLoader implements HasExtendedLogger {
         if (temp.isPresent()) {
             Ingredient newData = ingredient;
             ingredient = temp.get();
-            updateIngredient(ingredient, newData);
-            extendedLogger.processWarning("Ingredient updated");
+            if(newData.getAddprice() != null) {
+                ingredient.setAddprice(newData.getAddprice());
+                extendedLogger.processWarning("Ingredient surcharge updated");
+            }
+            else extendedLogger.processWarning("No Ingredient properties to update");
         } else {
             this.ingredientRepository.save(ingredient);
             extendedLogger.processWarning("Ingredient saved");
@@ -104,12 +107,6 @@ public class DatabaseLoader implements HasExtendedLogger {
         }
 
         return product;
-    }
-
-    private void updateIngredient(Ingredient dbIngredient, Ingredient i) {
-        dbIngredient.setName(i.getName());
-        if(i.getAddprice() != null)
-            dbIngredient.setAddprice(i.getAddprice());
     }
 
     private void updateProduct(Product dbProduct, Product p) {
