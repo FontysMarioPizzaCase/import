@@ -2,11 +2,13 @@ package me.fontys.semester4.dominos.configuration.data.order;
 
 import me.fontys.semester4.data.entity.Order;
 import me.fontys.semester4.data.entity.Store;
+import me.fontys.semester4.data.entity.Customer;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
 import me.fontys.semester4.data.repository.OrderRepository;
 import me.fontys.semester4.data.repository.StoreRepository;
+import me.fontys.semester4.data.repository.CustomerRepository;
 import me.fontys.semester4.dominos.configuration.data.ImportTest;
 import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordValidityTest;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ public class OrderImporter {
     private final OrderCustomOptionRepository orderCustomOptionRepository;
     private final OrderProductIngredientRepository orderProductIngredientRepository;
     private final StoreRepository storeRepository;
+    private final CustomerRepository customerRepository;
     private final OrderDateFormatter orderDateFormatter;
 
     private final Map<String, Integer> warnings = new HashMap<>();
@@ -50,7 +53,8 @@ public class OrderImporter {
                          OrderProductRepository orderProductRepository,
                          OrderCustomOptionRepository orderCustomOptionRepository,
                          OrderProductIngredientRepository orderProductIngredientRepository,
-                         StoreRepository storeRepository, OrderDateFormatter orderDateFormatter) {
+                         StoreRepository storeRepository, OrderDateFormatter orderDateFormatter,
+                         CustomerRepository customerRepository) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
@@ -58,6 +62,7 @@ public class OrderImporter {
         this.orderProductIngredientRepository = orderProductIngredientRepository;
         this.storeRepository = storeRepository;
         this.orderDateFormatter = orderDateFormatter;
+        this.customerRepository = customerRepository;
     }
 
     public void doImport() throws IOException, ParseException {
@@ -167,7 +172,7 @@ public class OrderImporter {
         }
 
         if (email.isEmpty()) {
-            processWarning("Order does not have any phone email");
+            processWarning("Order does not have any email");
         }
 
         Optional<Store> store = this.storeRepository.findByName(storeName);
