@@ -23,20 +23,33 @@ public class Ingredient implements Serializable {
     @Column(name = "name", unique = true)
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "size")
+    private Integer size;
+
     @Column(name = "addprice")
     private BigDecimal addprice;
+
+    @Column(name = "available")
+    private Boolean isAvailable;
 
     @ManyToMany(mappedBy = "ingredients")
     private Set<Product> products;
 
     protected Ingredient() {
-        this(null, null, null);
+        this(null, null, null, null, null, true);
     }
 
-    public Ingredient(Long ingredientid, String name, BigDecimal addprice) {
+    public Ingredient(Long ingredientid, String name, String description, BigDecimal addprice,
+                      Integer size, boolean isAvailable) {
         this.ingredientid = ingredientid;
         this.name = name;
-        if (addprice != null) setAddprice(addprice);
+        this.description = description;
+        this.size = size;
+        this.isAvailable = isAvailable;
+        this.addprice = addprice;
         products = new HashSet<>();
     }
 
@@ -56,12 +69,38 @@ public class Ingredient implements Serializable {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
+
+    public Integer getSize() { return size; }
+
     public void setAddprice(BigDecimal addprice) {
         this.addprice = addprice;
     }
 
     public BigDecimal getAddprice() {
         return addprice;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
     public Set<Product> getProducts() {
@@ -85,11 +124,14 @@ public class Ingredient implements Serializable {
     public String toString() {
         String idStr = (this.ingredientid != null) ? this.ingredientid.toString() : "null";
         String addPriceStr = (this.addprice != null) ? this.addprice.toString() : "null";
+        String sizeStr = (this.size != null) ? this.size.toString() : "n/a";
 
         return "Ingredient{" +
                 "ingredientid=" + idStr + '\'' +
                 "name=" + name + '\'' +
+                "size=" + sizeStr + '\'' +
                 "addprice=" + addPriceStr + '\'' +
+                "available=" + isAvailable + '\'' +
                 "}";
     }
 }

@@ -6,6 +6,11 @@ import java.math.BigDecimal;
 
 @Service
 public class CleanerUtil {
+    public String cleanString(String string) {
+        return string.trim().toLowerCase()
+                .replaceAll("[^\\x20-\\x7E]", "");
+    }
+
     public BigDecimal cleanPrice(String priceString) {
         String temp = priceString.trim()
                 .replace(',', '.')
@@ -13,9 +18,8 @@ public class CleanerUtil {
         return new BigDecimal(temp);
     }
 
-    public String cleanString(String string) {
-        return string.trim().toLowerCase()
-                .replaceAll("[^\\x20-\\x7E]", "");
+    public int cleanInteger(String string) {
+        return Integer.parseInt(cleanString(string));
     }
 
     public boolean cleanBool(String string, String trueValue) {

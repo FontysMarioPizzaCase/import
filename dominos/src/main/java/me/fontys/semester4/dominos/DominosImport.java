@@ -3,6 +3,7 @@ package me.fontys.semester4.dominos;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.ExtraIngredientsImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.overige_producten.OverigeProductenImporter;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.PizzaIngredientsImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.pizzacrusts.CrustsImporter;
 import me.fontys.semester4.dominos.configuration.data.order.OrderImporter;
 import me.fontys.semester4.dominos.configuration.data.store.StoreImporter;
 import me.fontys.semester4.interfaces.Importer;
@@ -32,22 +33,23 @@ public class DominosImport implements CommandLineRunner {
     private final OrderImporter orderImporter;
     private final StoreImporter storeImporter;
     private final PizzaIngredientsImporter pizzaIngredientsImporter;
-    private final ExtraIngredientsImporter extraIngredientsImporter;
     private final OverigeProductenImporter overigeProductenImporter;
+    private final ExtraIngredientsImporter extraIngredientsImporter;
+    private final CrustsImporter crustsImporter;
     private final Importer pcImporter;
 
 
     @Autowired
     public DominosImport(OrderImporter orderImporter, StoreImporter storeImporter,
                          PizzaIngredientsImporter pizzaIngredientsImporter,
-                         ExtraIngredientsImporter extraIngredientsImporter,
-                         OverigeProductenImporter overigeProductenImporter,
-                         PCImporter pcImporter) {
+                         OverigeProductenImporter overigeProductenImporter, ExtraIngredientsImporter extraIngredientsImporter,
+                         CrustsImporter crustsImporter, PCImporter pcImporter) {
         this.orderImporter = orderImporter;
         this.storeImporter = storeImporter;
         this.pizzaIngredientsImporter = pizzaIngredientsImporter;
-        this.extraIngredientsImporter = extraIngredientsImporter;
         this.overigeProductenImporter = overigeProductenImporter;
+        this.extraIngredientsImporter = extraIngredientsImporter;
+        this.crustsImporter = crustsImporter;
         this.pcImporter = pcImporter;
     }
 
@@ -66,10 +68,13 @@ public class DominosImport implements CommandLineRunner {
         // Do the catalog imports
         this.pizzaIngredientsImporter.doImport();
         this.pizzaIngredientsImporter.report();
-        this.extraIngredientsImporter.doImport();
-        this.extraIngredientsImporter.report();
         this.overigeProductenImporter.doImport();
         this.overigeProductenImporter.report();
+
+        this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
+        this.crustsImporter.doImport();
+        this.crustsImporter.report();
 
 //        // Do the order import
 //        this.orderImporter.doImport();

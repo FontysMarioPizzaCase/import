@@ -29,11 +29,11 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
 
     @Override
     protected void transformAndLoad(ExtraIngredientCsvLine l) {
-        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), l.getAddPrice());
+        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null, l.getAddPrice(),
+                null, true);
 
-        if (!ingredients.containsKey(ingredient.getIngredientid())) {
-            ingredient = loader.toDb(ingredient);
-            ingredients.put(ingredient.getIngredientid(), ingredient);
-        }
+        // cache ingredient
+        ingredient = loader.toDb(ingredient);
+        ingredients.put(ingredient.getIngredientid(), ingredient);
     }
 }
