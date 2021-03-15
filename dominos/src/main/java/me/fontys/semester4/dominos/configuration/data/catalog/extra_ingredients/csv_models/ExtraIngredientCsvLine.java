@@ -6,9 +6,7 @@ import java.math.BigDecimal;
 
 public class ExtraIngredientCsvLine {
 
-    @CsvBindByPosition(position = 0)
     private final String ingredientName;
-    @CsvBindByPosition(position = 1)
     private final BigDecimal addPrice;
 
     public ExtraIngredientCsvLine(String ingredientName, BigDecimal addPrice) {

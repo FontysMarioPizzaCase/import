@@ -44,17 +44,23 @@ public class DatabaseLoader implements HasExtendedLogger {
         if (temp.isPresent()) {
             Ingredient newData = ingredient;
             ingredient = temp.get();
-            if(newData.getAddprice() != null) {
-                ingredient.setAddprice(newData.getAddprice());
-                extendedLogger.processWarning("Ingredient surcharge updated");
-            }
-            else extendedLogger.processWarning("No Ingredient properties to update");
+            updateIngredient(ingredient, newData);
+            extendedLogger.processWarning("Ingredient updated");
         } else {
             this.ingredientRepository.save(ingredient);
             extendedLogger.processWarning("Ingredient saved");
         }
 
         return ingredient;
+    }
+
+    private void updateIngredient(Ingredient ingredient, Ingredient newData) {
+        ingredient.setName(newData.getName());
+        ingredient.setDescription(newData.getDescription());
+        ingredient.setSize(newData.getSize());
+        ingredient.setAddprice(newData.getAddprice());
+        ingredient.setAvailable(newData.isAvailable());
+        ingredient.setAddprice(newData.getAddprice());
     }
 
     public Category toDb(Category category) {
@@ -109,13 +115,13 @@ public class DatabaseLoader implements HasExtendedLogger {
         return product;
     }
 
-    private void updateProduct(Product dbProduct, Product p) {
-        dbProduct.setName(p.getName());
-        dbProduct.setDescription(p.getDescription());
-        dbProduct.setSpicy(p.getSpicy());
-        dbProduct.setVegetarian(p.getVegetarian());
-        dbProduct.setTaxrate(p.getTaxrate());
-        dbProduct.setImagepath(p.getImagepath());
+    private void updateProduct(Product product, Product newData) {
+        product.setName(newData.getName());
+        product.setDescription(newData.getDescription());
+        product.setSpicy(newData.getSpicy());
+        product.setVegetarian(newData.getVegetarian());
+        product.setTaxrate(newData.getTaxrate());
+        product.setImagepath(newData.getImagepath());
     }
 
     @Override

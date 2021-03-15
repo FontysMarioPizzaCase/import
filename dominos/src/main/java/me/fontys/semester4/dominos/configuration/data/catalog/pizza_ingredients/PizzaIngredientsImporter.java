@@ -63,7 +63,8 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
                 l.isSpicy(), l.isVegetarian(), l.isAvailable(), TAXRATE, null);
         Category mainCat = new Category(null, null, l.getCategoryName());
         Category subCat = new Category(null, null, l.getSubCategoryName());
-        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null);
+        Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null, null,
+                null, true);
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
         // cache main category
