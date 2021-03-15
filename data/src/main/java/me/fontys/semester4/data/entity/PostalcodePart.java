@@ -28,6 +28,9 @@ public class PostalcodePart implements Serializable {
     @Column(name = "even")
     private String even;
 
+    @Column(name = "street")
+    private String street;
+
     protected PostalcodePart() {
 
     }
@@ -38,6 +41,7 @@ public class PostalcodePart implements Serializable {
         this.starthousenr = starthousenr;
         this.endhousenr = endhousenr;
         this.even = even;
+        this.street = street;
     }
 
     public void setPostalcodeid(Long postalcodeid) {
@@ -88,6 +92,17 @@ public class PostalcodePart implements Serializable {
                 "starthousenr=" + starthousenr + '\'' +
                 "endhousenr=" + endhousenr + '\'' +
                 "even=" + even + '\'' +
+                "street=" + street + '\'' +
                 '}';
+    }
+
+    public String getStreet()
+    {
+        return street;
+    }
+
+    public void setStreet(String street)
+    {
+        this.street = street;
     }
 }

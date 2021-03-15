@@ -65,6 +65,7 @@ public class PCConverterTest
         // define row test result
         when(row.getString(PC_ROW_PC)).thenReturn("1234 AB");
         when(row.getString(PC_ROW_RANGE_TYPE)).thenReturn("1");
+        when(row.getString(PC_ROW_STREET)).thenReturn("test Straat");
         when(row.getBigDecimal(PC_ROW_RANGE_START)).thenReturn(BigDecimal.valueOf(2L));
         when(row.getBigDecimal(PC_ROW_RANGE_END)).thenReturn(BigDecimal.valueOf(100L));
         when(row.getBigDecimal(PC_ROW_PCMUN_CODE)).thenReturn(BigDecimal.valueOf(123L));
@@ -79,6 +80,7 @@ public class PCConverterTest
         assertEquals(2L,rows.get(0).getStarthousenr());
         assertEquals(100L,rows.get(0).getEndhousenr());
         assertEquals(123L,rows.get(0).getMunicipality());
+        assertEquals("test Straat",rows.get(0).getStreet());
 
     }
 }

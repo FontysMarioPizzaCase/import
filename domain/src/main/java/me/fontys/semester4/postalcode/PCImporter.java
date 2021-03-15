@@ -1,24 +1,17 @@
 package me.fontys.semester4.postalcode;
 
+import me.fontys.semester4.data.entity.ImportLogEntry;
 import me.fontys.semester4.interfaces.Importer;
 import me.fontys.semester4.tempdata.entity.MunicipalityTemp;
 import me.fontys.semester4.tempdata.entity.PostalcodeTemp;
 import me.fontys.semester4.tempdata.repository.MunicipalityTempRepository;
 import me.fontys.semester4.tempdata.repository.PostalcodeTempRepository;
-import org.hibernate.internal.SessionImpl;
+import me.fontys.semester4.utility.ProcessPCStoredProc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import java.nio.charset.Charset;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 
@@ -33,37 +26,23 @@ public class PCImporter implements Importer
     private final MunicipalityConverter municipalityConverter;
     private final PCConverter pcConverter;
 
-    @Value("classpath:processPostalcodes.sql")
-    private Resource storedProcResource;
+    private final ProcessPCStoredProc processPCStoredProc;
 
     @Autowired
     public PCImporter(
             PostalcodeTempRepository postalcodeTempRepository,
             MunicipalityTempRepository municipalityTempRepository,
             EntityManagerFactory emf,
-            PCConverter pcConverter, MunicipalityConverter municipalityConverter)
+            PCConverter pcConverter, MunicipalityConverter municipalityConverter,
+            ProcessPCStoredProc processPCStoredProc)
     {
         this.postalcodeTempRepository = postalcodeTempRepository;
         this.municipalityTempRepository = municipalityTempRepository;
         this.emf = emf;
         this.municipalityConverter = municipalityConverter;
         this.pcConverter = pcConverter;
+        this.processPCStoredProc = processPCStoredProc;
     }
-
-
-
-    private void myCustomSqlExecutor(String statement,boolean transaction) throws SQLException
-    {
-        EntityManager em = emf.createEntityManager();
-        if(transaction)
-            em.getTransaction().begin();
-        Statement st = em.unwrap(SessionImpl.class).connection().createStatement();
-        st.executeUpdate(statement);
-        if(transaction)
-            em.getTransaction().commit();
-    }
-
-
 
     @Override
     public void doImport()
@@ -80,14 +59,6 @@ public class PCImporter implements Importer
 
             municipalityTempRepository.deleteAll();
             postalcodeTempRepository.deleteAll();
-            // create or update stored procedure in database
-            myCustomSqlExecutor(
-                    StreamUtils.copyToString(storedProcResource.getInputStream()
-                            , Charset.defaultCharset()),
-                    true
-            );
-
-
 
             municipalityTempRepository.saveAll(municipalityTemps);
 
@@ -107,13 +78,7 @@ public class PCImporter implements Importer
         LOGGER.info(String.format("seconds it took to import postal codes: %s", reportSecondsWrite));
         start = System.currentTimeMillis();
         LOGGER.info("start stored procedure, transform postal codes...");
-        try
-        {
-            myCustomSqlExecutor("CALL process_postalcodes()",false);
-        } catch (SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
+        processPCStoredProc.Execute();
         reportSecondsSP = ((System.currentTimeMillis() - start) / 1000);
         LOGGER.info(String.format("seconds it took to transform postal codes: %s", reportSecondsSP));
     }
@@ -121,6 +86,11 @@ public class PCImporter implements Importer
     @Override
     public void report()
     {
+        for(ImportLogEntry importLogEntry : processPCStoredProc.RetrieveLogs())
+        {
+            LOGGER.info(importLogEntry.getMessage());
+        }
+
 
     }
 }
