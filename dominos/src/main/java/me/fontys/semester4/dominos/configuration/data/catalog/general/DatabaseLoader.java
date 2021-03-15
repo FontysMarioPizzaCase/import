@@ -14,6 +14,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.util.HasExtendedLo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -77,6 +78,7 @@ public class DatabaseLoader implements HasExtendedLogger {
         return category;
     }
 
+    @Transactional
     public ProductPrice toDb(ProductPrice price, Product product) {
         Optional<ProductPrice> temp;
 

@@ -12,6 +12,10 @@ public class PizzaIngredientsDataValidator extends DataValidator<PizzaIngredient
         super(extendedLoggerFactory);
     }
 
+    // TODO: refactor:
+    //  - consolidate PizzaIngredient with OtherProducts (same-ish)
+    //  - consolidate ExtraIngredient with Crust (same-ish)
+
     @Override
     protected void validate(PizzaIngredientsRawCsvLine line){
         if (line.getIngredientName().isEmpty()) {
