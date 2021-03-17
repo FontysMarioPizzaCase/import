@@ -1,16 +1,18 @@
 package me.fontys.semester4.dominos.configuration.data.order;
 
 import me.fontys.semester4.data.entity.Order;
-import me.fontys.semester4.data.entity.Store;
 import me.fontys.semester4.data.entity.Customer;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
 import me.fontys.semester4.data.repository.OrderRepository;
-import me.fontys.semester4.data.repository.StoreRepository;
 import me.fontys.semester4.data.repository.CustomerRepository;
 import me.fontys.semester4.dominos.configuration.data.ImportTest;
+import me.fontys.semester4.dominos.configuration.data.order.formatter.OrderDateFormatter;
+import me.fontys.semester4.dominos.configuration.data.order.formatter.OrderPhoneNumberFormatter;
 import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordValidityTest;
+import me.fontys.semester4.tempdata.entity.OrderTemp;
+import me.fontys.semester4.tempdata.repository.OrderTempRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +23,11 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Configuration
 public class OrderImporter {
@@ -42,9 +42,10 @@ public class OrderImporter {
     private final OrderProductRepository orderProductRepository;
     private final OrderCustomOptionRepository orderCustomOptionRepository;
     private final OrderProductIngredientRepository orderProductIngredientRepository;
-    private final StoreRepository storeRepository;
+    private final OrderTempRepository orderTempRepository;
     private final CustomerRepository customerRepository;
     private final OrderDateFormatter orderDateFormatter;
+    private final OrderPhoneNumberFormatter orderPhoneNumberFormatter;
 
     private final Map<String, Integer> warnings = new HashMap<>();
 
@@ -53,23 +54,24 @@ public class OrderImporter {
                          OrderProductRepository orderProductRepository,
                          OrderCustomOptionRepository orderCustomOptionRepository,
                          OrderProductIngredientRepository orderProductIngredientRepository,
-                         StoreRepository storeRepository, OrderDateFormatter orderDateFormatter,
-                         CustomerRepository customerRepository) {
+                         OrderTempRepository orderTempRepository, OrderDateFormatter orderDateFormatter,
+                         CustomerRepository customerRepository, OrderPhoneNumberFormatter orderPhoneNumberFormatter) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderCustomOptionRepository = orderCustomOptionRepository;
         this.orderProductIngredientRepository = orderProductIngredientRepository;
-        this.storeRepository = storeRepository;
+        this.orderTempRepository = orderTempRepository;
         this.orderDateFormatter = orderDateFormatter;
         this.customerRepository = customerRepository;
+        this.orderPhoneNumberFormatter = orderPhoneNumberFormatter;
     }
 
-    public void doImport() throws IOException, ParseException {
+    public void doImport() throws IOException {
         LOGGER.info("Starting import of orders and customers...");
 
         this.warnings.clear();
-        List<Order> orders = new ArrayList<>();
+        List<OrderTemp> orders = new ArrayList<>();
         List<Customer> customers = new ArrayList<>();
 
         for (Resource resource : this.orders) {
@@ -79,7 +81,7 @@ public class OrderImporter {
         }
 
         LOGGER.info(String.format("Inserting %s orders...", orders.size()));
-        this.orderRepository.saveAll(orders);
+        this.orderTempRepository.saveAll(orders);
         LOGGER.info(String.format("Inserting %s customers...", customers.size()));
         this.customerRepository.saveAll(customers);
     }
@@ -109,10 +111,10 @@ public class OrderImporter {
         ImportTest.test("Order", OrderImportRecordValidityTest.class);
     }
 
-    private List<Order> processOrderResource(Resource resource) throws IOException {
+    private List<OrderTemp> processOrderResource(Resource resource) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
 
-        List<Order> result = new ArrayList<>();
+        List<OrderTemp> result = new ArrayList<>();
 
         int rowCount = 0;
         while(reader.ready()) {
@@ -125,10 +127,9 @@ public class OrderImporter {
 
             String[] lineDetails = line.split(";");
 
-            if (isDelimitedOrder(lineDetails)) {
-                appendDelimitedLineToOrder(lineDetails, result.get(result.size() - 1));
-            } else {
-                result.add(createNewOrderFromLine(lineDetails));
+            OrderTemp order = createNewOrderFromLine(lineDetails);
+            if (order != null) {
+                result.add(order);
             }
         }
 
@@ -162,7 +163,10 @@ public class OrderImporter {
         return rowIndex <= 5;
     }
 
-    private Order createNewOrderFromLine(String[] line) {
+    private OrderTemp createNewOrderFromLine(String[] line) {
+
+        if (line.length < 19) return null;
+
         String storeName = line[0];
         String customerName = line[1];
         String phoneNumber = line[2];
@@ -176,48 +180,51 @@ public class OrderImporter {
         String productName = line[10];
         String pizzaBottom = line[11];
         String pizzaSauce = line[12];
-        String deliveryCost = line[13];
-        String quantity = line[14];
-        String price = line[15];
+        String pizzaPrice = line[13];
+        String deliveryCost = line[14];
+        String quantity = line[15];
         String extraIngredients = line[16];
-        String rowPrice = line[17];
-        String totalPrice = line[18];
-        String usedCoupon = line[19];
-        String couponDiscount = line[20];
-        String toPayPrice = line[21];
+        String extraIngredientPrice = line[17];
+        String rowPrice = line[18];
+        String totalPrice = null;
+        String usedCoupon = null;
+        String couponDiscount = null;
+        String toPayPrice = null;
 
-        if (storeName.isEmpty()) {
-            processWarning("Order does not have any store name");
+        if (line.length > 19) {
+            totalPrice = line[19];
+            usedCoupon = line[20];
+            couponDiscount = line[21];
+            toPayPrice = line[22];
         }
 
-        if (customerName.isEmpty()) {
-            processWarning("Order does not have any customer name");
-        }
+        return new OrderTemp(storeName, customerName, this.orderPhoneNumberFormatter.fromString(phoneNumber), email, address, city,
+                this.orderDateFormatter.fromString(orderDate), deliveryType,
+                this.orderDateFormatter.fromString(deliveryDate + " " + deliveryMoment), productName, pizzaBottom,
+                pizzaSauce, parsePrice(pizzaPrice), parsePrice(deliveryCost), parseQuantity(quantity), extraIngredients,
+                parsePrice(extraIngredientPrice), parsePrice(rowPrice), parsePrice(totalPrice), usedCoupon,
+                parsePrice(couponDiscount), parsePrice(toPayPrice));
+    }
 
-        if (phoneNumber.isEmpty()) {
-            processWarning("Order does not have any phone number");
-        }
+    private BigDecimal parsePrice(String price) {
+        if (price == null || price.isEmpty()) return null;
 
-        if (email.isEmpty()) {
-            processWarning("Order does not have any email");
-        }
+        price = price
+                .replace("€", "")
+                .replace(",", ".")
+                .trim();
 
-        Optional<Store> store = this.storeRepository.findByName(storeName);
-        if (store.isEmpty()) {
-            processWarning("Order has an unknown store name");
-            return null;
-        }
+        if (price.isEmpty()) return null;
 
-        Date orderDateParsed = this.orderDateFormatter.fromString(orderDate);
-        if (orderDateParsed == null) {
-            processWarning("Order has no order date");
-        }
+        return new BigDecimal(price);
+    }
 
-        Date deliveryDateParsed = this.orderDateFormatter.fromString(deliveryDate);
+    private int parseQuantity(String quantity) {
+        if (quantity == null || quantity.isEmpty()) return 0;
 
-        return new Order(null, null, store.get(), null, orderDateParsed,
-                deliveryDateParsed, "afhalen".equalsIgnoreCase(deliveryType), 0, 0,
-                couponDiscount, null, customerName);
+        quantity = quantity.trim();
+
+        return Integer.parseInt(quantity);
     }
 
     private Customer getCustomerFromLine(String[] line) {
