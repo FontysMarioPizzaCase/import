@@ -1,5 +1,6 @@
 package me.fontys.semester4.dominos.configuration.data.order.formatter;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,27 +14,10 @@ public class OrderDateFormatter {
 
     public OrderDateFormatter() {
         this.dateFormats = new ArrayList<>();
-
         Locale dutch = Locale.forLanguageTag("nl-nl");
         Locale english = Locale.forLanguageTag("en-en");
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm a", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm a", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm a", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy", dutch));
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm a", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm a", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm a", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm", english));
-        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy", english));
+        this.addDateFormats(dutch);
+        this.addDateFormats(english);
     }
 
     public Date fromString(String date) {
@@ -45,5 +29,17 @@ public class OrderDateFormatter {
             } catch (Exception ignored) {}
         }
         return null;
+    }
+
+    public void addDateFormats(Locale locale) {
+        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm a", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy hh:mm", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE dd MMM yyyy", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm a", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy hh:mm", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, dd, MMM, yyyy", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm a", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy hh:mm", locale));
+        this.dateFormats.add(new SimpleDateFormat("EEEE, MMM dd, yyyy", locale));
     }
 }
