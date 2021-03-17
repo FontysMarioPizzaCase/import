@@ -1,5 +1,6 @@
-package me.fontys.semester4.dominos.configuration.data.order;
+package me.fontys.semester4.dominos.configuration.data.order.formatter.bootstrap;
 
+import me.fontys.semester4.dominos.configuration.data.order.formatter.OrderDateFormatter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
