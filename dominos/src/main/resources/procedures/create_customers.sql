@@ -38,5 +38,3 @@ BEGIN
 
 END
 $$;
-
-CALL create_customers();
