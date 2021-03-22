@@ -6,6 +6,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.util.HasExtendedLo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.List;
 public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(CsvImporter.class);
     protected final ExtendedLogger extendedLogger;
+    protected final Environment environment;
 
     private final Resource[] resources;
     private final DataExtractor<RawT> dataExtractor;
@@ -24,10 +26,12 @@ public abstract class CsvImporter<RawT, CleanT> implements HasExtendedLogger {
     protected DataCleaner<RawT, CleanT> cleaner;
     protected DatabaseLoader loader;
 
-    public CsvImporter(ExtendedLoggerFactory extendedLoggerFactory,
+    public CsvImporter(Environment environment,
+                       ExtendedLoggerFactory extendedLoggerFactory,
                        Resource[] resources, DataExtractor<RawT> dataExtractor,
                        DataValidator<RawT> validator, DataCleaner<RawT, CleanT> cleaner,
                        DatabaseLoader loader) {
+        this.environment = environment;
         this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
         this.dataExtractor = dataExtractor;

@@ -11,6 +11,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLogge
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
 import java.util.*;
@@ -22,12 +23,13 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
     private final Set<Relationship<Ingredient, Category>> ingredient_category;
 
     @Autowired
-    public ExtraIngredientsImporter(ExtendedLoggerFactory extendedLoggerFactory,
+    public ExtraIngredientsImporter(Environment environment,
+                                    ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("ingredientSurcharge") Resource[] resources,
                                     ExtraIngredientsDataExtractor dataExtractor,
                                     ExtraIngredientDataValidator validator, ExtraIngredientDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         this.ingredients = new HashMap<>();
         this.categories = new HashMap<>();
         this.ingredient_category = new HashSet<>();
@@ -41,11 +43,12 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
 
     @Override
     protected void transformAndLoad(ExtraIngredientCsvLine l) {
-        final String CATEGORYNAME = "ingredient";
+        final String INGREDIENTCATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_ingredients");
 
         Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null, l.getAddPrice(),
                 null, true);
-        Category category = new Category(null, null, CATEGORYNAME);
+        Category category = new Category(null, null, INGREDIENTCATEGORYNAME);
 
         // save ingredient categories
         category = loader.toDb(category);

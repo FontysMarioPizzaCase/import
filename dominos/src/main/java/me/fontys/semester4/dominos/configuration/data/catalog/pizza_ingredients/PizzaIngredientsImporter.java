@@ -1,20 +1,23 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients;
 
-import ch.qos.logback.core.BasicStatusManager;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.*;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.csv_models.PizzaIngredientsCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.csv_models.PizzaIngredientsRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_models.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Configuration
@@ -32,12 +35,13 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
     private final Set<Relationship<Ingredient, Category>> ingredient_category;
 
     @Autowired
-    public PizzaIngredientsImporter(ExtendedLoggerFactory extendedLoggerFactory,
+    public PizzaIngredientsImporter(Environment environment,
+                                    ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("pizzaWithIngredients") Resource[] resources,
                                     PizzaIngredientsDataExtractor dataExtractor,
                                     PizzaIngredientsDataValidator validator, PizzaIngredientsDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         ingredients = new HashMap<>();
         categories = new HashMap<>();
         products = new HashMap<>();
@@ -57,12 +61,21 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
 
     @Override
     protected void transformAndLoad(PizzaIngredientsCsvLine l) {
-        // TODO: pizzasaus (+ contraint), aantalkeer_ingredient
-
-        final double TAXRATE = 0.06; // TODO: user input?
-        final Date FROMDATE = new Date();
-        final String INGREDIENTCATEGORYNAME = "pizza ingredient"; // TODO: move to settings
-        final String SAUCECATEGORYNAME = "pizza sauce"; // idem
+        final String INGREDIENTCATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_ingredients");
+        final String SAUCECATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_sauce");
+        final double TAXRATE =
+                Double.parseDouble(Objects.requireNonNull(environment.getProperty(
+                "catalog.pizzaingredientsimport.default_taxrate_for_products")));
+        Date FROMDATE;
+        try {
+            SimpleDateFormat dateFormatter=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            FROMDATE = dateFormatter.parse(environment.getProperty(
+                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
+        } catch (ParseException e) {
+            FROMDATE = new Date();
+        }
 
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), l.isAvailable(), TAXRATE, null);

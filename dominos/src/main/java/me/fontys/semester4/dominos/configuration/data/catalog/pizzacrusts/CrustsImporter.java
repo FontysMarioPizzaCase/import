@@ -11,6 +11,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLogge
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
 import java.util.*;
@@ -23,12 +24,13 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
 
 
     @Autowired
-    public CrustsImporter(ExtendedLoggerFactory extendedLoggerFactory,
+    public CrustsImporter(Environment environment,
+                          ExtendedLoggerFactory extendedLoggerFactory,
                           @Qualifier("pizzacrusts") Resource[] resources,
                           CrustsDataExtractor dataExtractor,
                           CrustsDataValidator validator, CrustsDataCleaner cleaner,
                           DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         this.crusts = new HashMap<>();
         this.categories = new HashMap<>();
         this.crust_category = new HashSet<>();
@@ -42,7 +44,8 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
 
     @Override
     protected void transformAndLoad(CrustCsvLine l) {
-        final String CATEGORYNAME = "pizza crust"; // TODO: move to settings
+        final String CATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_crust");
 
         Ingredient crust = new Ingredient(null, l.getCrustName(), l.getDescription(), l.getAddPrice(),
                 l.getSize(), l.isAvailable());

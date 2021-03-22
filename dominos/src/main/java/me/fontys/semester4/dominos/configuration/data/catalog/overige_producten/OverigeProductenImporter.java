@@ -11,8 +11,11 @@ import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_mod
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Configuration
@@ -26,12 +29,13 @@ public class OverigeProductenImporter extends CsvImporter<OverigProductRawCsvLin
     private final Set<Relationship<Product, Category>> product_category;
 
     @Autowired
-    public OverigeProductenImporter(ExtendedLoggerFactory extendedLoggerFactory,
+    public OverigeProductenImporter(Environment environment,
+                                    ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("overigeProducten") Resource[] resources,
                                     OverigeProductenDataExtractor dataExtractor,
                                     OverigeProductenDataValidator validator, OverigeProductenDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();
@@ -48,9 +52,19 @@ public class OverigeProductenImporter extends CsvImporter<OverigProductRawCsvLin
 
     @Override
     protected void transformAndLoad(OverigProductCsvLine l) {
-        final double TAXRATE = 0.06; // TODO: user input?
-        final boolean ISAVAILABLE = true;
-        final Date FROMDATE = new Date();
+        final boolean ISAVAILABLE = Boolean.parseBoolean(environment.getProperty(
+                "catalog.pizzaingredientsimport.default_isavailable_for_products"));
+        final double TAXRATE =
+                Double.parseDouble(Objects.requireNonNull(environment.getProperty(
+                        "catalog.pizzaingredientsimport.default_taxrate_for_products")));
+        Date FROMDATE;
+        try {
+            SimpleDateFormat dateFormatter=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            FROMDATE = dateFormatter.parse(environment.getProperty(
+                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
+        } catch (ParseException e) {
+            FROMDATE = new Date();
+        }
 
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), ISAVAILABLE, TAXRATE, null);
