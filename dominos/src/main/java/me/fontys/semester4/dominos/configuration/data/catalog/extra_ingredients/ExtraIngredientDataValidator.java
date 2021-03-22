@@ -19,7 +19,7 @@ public class ExtraIngredientDataValidator extends DataValidator<ExtraIngredientR
             throw new IllegalArgumentException();
         }
         if (line.getAddPrice().isEmpty()){
-            extendedLogger.processWarning("Record does not have a ingredient surcharge");
+            extendedLogger.processWarning("Record does not have an ingredient surcharge");
             throw new IllegalArgumentException();
         }
     }

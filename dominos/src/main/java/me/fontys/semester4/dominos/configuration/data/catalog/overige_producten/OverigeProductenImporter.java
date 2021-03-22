@@ -32,10 +32,12 @@ public class OverigeProductenImporter extends CsvImporter<OverigProductRawCsvLin
     public OverigeProductenImporter(Environment environment,
                                     ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("overigeProducten") Resource[] resources,
-                                    OverigeProductenDataExtractor dataExtractor,
+                                    DataExtractorFactory dataExtractorFactory,
                                     OverigeProductenDataValidator validator, OverigeProductenDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources,
+                dataExtractorFactory.getOverigeProductenDataExtractor(),
+                validator, cleaner, loader);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();

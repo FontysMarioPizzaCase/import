@@ -3,6 +3,7 @@ package me.fontys.semester4.dominos.configuration.data.catalog.pizzacrusts;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizzacrusts.csv_models.CrustCsvLine;
@@ -27,10 +28,12 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
     public CrustsImporter(Environment environment,
                           ExtendedLoggerFactory extendedLoggerFactory,
                           @Qualifier("pizzacrusts") Resource[] resources,
-                          CrustsDataExtractor dataExtractor,
+                          DataExtractorFactory dataExtractorFactory,
                           CrustsDataValidator validator, CrustsDataCleaner cleaner,
                           DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources,
+                dataExtractorFactory.getCrustsDataExtractor(),
+                validator, cleaner, loader);
         this.crusts = new HashMap<>();
         this.categories = new HashMap<>();
         this.crust_category = new HashSet<>();

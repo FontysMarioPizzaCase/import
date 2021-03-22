@@ -5,6 +5,7 @@ import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.pizza_ingredients.csv_models.PizzaIngredientsCsvLine;
@@ -38,10 +39,12 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
     public PizzaIngredientsImporter(Environment environment,
                                     ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("pizzaWithIngredients") Resource[] resources,
-                                    PizzaIngredientsDataExtractor dataExtractor,
+                                    DataExtractorFactory dataExtractorFactory,
                                     PizzaIngredientsDataValidator validator, PizzaIngredientsDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources,
+                dataExtractorFactory.getPizzaIngredientsDataExtractor(),
+                validator, cleaner, loader);
         ingredients = new HashMap<>();
         categories = new HashMap<>();
         products = new HashMap<>();

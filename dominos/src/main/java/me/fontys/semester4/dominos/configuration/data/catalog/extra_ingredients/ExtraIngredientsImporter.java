@@ -2,11 +2,12 @@ package me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
-import me.fontys.semester4.dominos.configuration.data.catalog.general.*;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.extra_ingredients.csv_models.ExtraIngredientRawCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.CsvImporter;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.DataExtractorFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.general.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.general.helper_models.Relationship;
-import me.fontys.semester4.dominos.configuration.data.catalog.pizzacrusts.csv_models.CrustCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.util.ExtendedLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,10 +27,14 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
     public ExtraIngredientsImporter(Environment environment,
                                     ExtendedLoggerFactory extendedLoggerFactory,
                                     @Qualifier("ingredientSurcharge") Resource[] resources,
-                                    ExtraIngredientsDataExtractor dataExtractor,
+                                    DataExtractorFactory dataExtractorFactory,
                                     ExtraIngredientDataValidator validator, ExtraIngredientDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources, dataExtractor, validator, cleaner, loader);
+        super(environment, extendedLoggerFactory, resources,
+                dataExtractorFactory.getExtraIngredientsDataExtractor(),
+                validator,
+                cleaner,
+                loader);
         this.ingredients = new HashMap<>();
         this.categories = new HashMap<>();
         this.ingredient_category = new HashSet<>();

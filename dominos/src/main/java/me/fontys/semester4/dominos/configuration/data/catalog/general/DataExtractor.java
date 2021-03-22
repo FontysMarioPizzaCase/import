@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DataExtractor<RawT> implements HasExtendedLogger {
+public class DataExtractor<RawT> implements HasExtendedLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DataExtractor.class);
     protected final ExtendedLogger extendedLogger;
 
