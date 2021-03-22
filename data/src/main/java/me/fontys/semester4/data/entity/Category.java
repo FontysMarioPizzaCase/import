@@ -33,6 +33,9 @@ public class Category implements Serializable {
     @ManyToMany(mappedBy = "categories")
     private Set<Product> products;
 
+    @ManyToMany(mappedBy = "categories")
+    private Set<Ingredient> ingredients;
+
     public Category(Long catid, Category parent, String name) {
         this.catid = catid;
         this.parent = parent;

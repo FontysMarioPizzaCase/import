@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 public class CleanerUtil {
     public String cleanString(String string) {
         return string.trim().toLowerCase()
-                .replaceAll("[^\\x20-\\x7E]", "");
+                // removes all bytes that are not readable ASCII chars
+                .replaceAll("[^\\x20-\\x7E]", ""); // TODO: loggen!
     }
 
     public BigDecimal cleanPrice(String priceString) {

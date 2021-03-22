@@ -38,6 +38,13 @@ public class Ingredient implements Serializable {
     @ManyToMany(mappedBy = "ingredients")
     private Set<Product> products;
 
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "category_ingredient",
+            joinColumns = @JoinColumn(name = "ingredientid"),
+            inverseJoinColumns = @JoinColumn(name = "catid"))
+    private Set<Category> categories;
+
+
     protected Ingredient() {
         this(null, null, null, null, null, true);
     }
@@ -51,6 +58,7 @@ public class Ingredient implements Serializable {
         this.isAvailable = isAvailable;
         this.addprice = addprice;
         products = new HashSet<>();
+        categories = new HashSet<>();
     }
 
     public void setIngredientid(Long ingredientid) {
@@ -133,5 +141,9 @@ public class Ingredient implements Serializable {
                 "addprice=" + addPriceStr + '\'' +
                 "available=" + isAvailable + '\'' +
                 "}";
+    }
+
+    public void addCategory(Category value) {
+        this.categories.add(value);
     }
 }

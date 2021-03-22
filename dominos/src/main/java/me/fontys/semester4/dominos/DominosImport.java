@@ -62,19 +62,19 @@ public class DominosImport implements CommandLineRunner {
         this.storeImporter.report();
 //
 //        // Do the postalcode import
-        pcImporter.doImport();
-        pcImporter.report();
+//        pcImporter.doImport();
+//        pcImporter.report();
 
         // Do the catalog imports
-//        this.pizzaIngredientsImporter.doImport();
-//        this.pizzaIngredientsImporter.report();
-//        this.overigeProductenImporter.doImport();
-//        this.overigeProductenImporter.report();
-//
-//        this.extraIngredientsImporter.doImport();
-//        this.extraIngredientsImporter.report();
-//        this.crustsImporter.doImport();
-//        this.crustsImporter.report();
+        this.pizzaIngredientsImporter.doImport();
+        this.pizzaIngredientsImporter.report();
+        this.overigeProductenImporter.doImport();
+        this.overigeProductenImporter.report();
+
+        this.extraIngredientsImporter.doImport();
+        this.extraIngredientsImporter.report();
+        this.crustsImporter.doImport();
+        this.crustsImporter.report();
 
 //        // Do the order import
         this.orderImporter.doImport();
