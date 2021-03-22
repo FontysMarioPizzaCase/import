@@ -1,19 +1,17 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.io.Serializable;
 
 @Entity
-@Table(name = "address")
+@Table(name = "address", uniqueConstraints = {@UniqueConstraint(columnNames={"streetext","streetnr"})})
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "addressid", nullable = false)
     private Long addressid;
 
