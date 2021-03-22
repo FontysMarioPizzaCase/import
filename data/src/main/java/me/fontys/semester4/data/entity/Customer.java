@@ -15,7 +15,7 @@ public class Customer implements Serializable {
     @Column(name = "customerid", nullable = false)
     private Long customerid;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "name")

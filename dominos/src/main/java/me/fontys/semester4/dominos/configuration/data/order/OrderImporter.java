@@ -13,10 +13,12 @@ import me.fontys.semester4.dominos.configuration.data.order.formatter.OrderPhone
 import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordValidityTest;
 import me.fontys.semester4.tempdata.entity.OrderTemp;
 import me.fontys.semester4.tempdata.repository.OrderTempRepository;
+import me.fontys.semester4.utils.StoredProcedureExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
@@ -24,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +49,9 @@ public class OrderImporter {
     private final CustomerRepository customerRepository;
     private final OrderDateFormatter orderDateFormatter;
     private final OrderPhoneNumberFormatter orderPhoneNumberFormatter;
-
+    private final StoredProcedureExecutor storedProcedureExecutor;
     private final Map<String, Integer> warnings = new HashMap<>();
+    private final Resource createCustomerStoredProcedure;
 
     @Autowired
     public OrderImporter(Resource[] orders, OrderRepository orderRepository,
@@ -55,7 +59,9 @@ public class OrderImporter {
                          OrderCustomOptionRepository orderCustomOptionRepository,
                          OrderProductIngredientRepository orderProductIngredientRepository,
                          OrderTempRepository orderTempRepository, OrderDateFormatter orderDateFormatter,
-                         CustomerRepository customerRepository, OrderPhoneNumberFormatter orderPhoneNumberFormatter) {
+                         CustomerRepository customerRepository, OrderPhoneNumberFormatter orderPhoneNumberFormatter,
+                         StoredProcedureExecutor storedProcedureExecutor,
+                         @Value("classpath:procedures/create_customers.sql") Resource createCustomerStoredProcedure) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
@@ -65,10 +71,14 @@ public class OrderImporter {
         this.orderDateFormatter = orderDateFormatter;
         this.customerRepository = customerRepository;
         this.orderPhoneNumberFormatter = orderPhoneNumberFormatter;
+        this.storedProcedureExecutor = storedProcedureExecutor;
+        this.createCustomerStoredProcedure = createCustomerStoredProcedure;
     }
 
-    public void doImport() throws IOException {
+    public void doImport() throws IOException, SQLException {
         LOGGER.info("Starting import of orders and customers...");
+
+        this.createOrUpdateProcedures();
 
         this.warnings.clear();
         List<OrderTemp> orders = new ArrayList<>();
@@ -82,8 +92,10 @@ public class OrderImporter {
 
         LOGGER.info(String.format("Inserting %s orders...", orders.size()));
         this.orderTempRepository.saveAll(orders);
+
         LOGGER.info(String.format("Inserting %s customers...", customers.size()));
         this.customerRepository.saveAll(customers);
+        this.storedProcedureExecutor.executeSql("CALL create_customers()", false);
     }
 
     public void report() {
@@ -109,6 +121,10 @@ public class OrderImporter {
         OrderImportRecordValidityTest.orderProductIngredientRepository = orderProductIngredientRepository;
 
         ImportTest.test("Order", OrderImportRecordValidityTest.class);
+    }
+
+    private void createOrUpdateProcedures() throws IOException, SQLException {
+        this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createCustomerStoredProcedure);
     }
 
     private List<OrderTemp> processOrderResource(Resource resource) throws IOException {
