@@ -17,15 +17,7 @@ public class Order implements Serializable {
     private Long customer;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hilopooled")
-    @GenericGenerator(name = "hilopooled", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "hilo_sequence"),
-                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
-                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "100"),
-                    @org.hibernate.annotations.Parameter(name = "optimizer", value = "pooled")
-            }
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderid", nullable = false)
     private Long orderid;
 
