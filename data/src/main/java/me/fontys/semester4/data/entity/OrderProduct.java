@@ -2,7 +2,12 @@ package me.fontys.semester4.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import java.io.Serializable;
@@ -13,15 +18,17 @@ public class OrderProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "productid")
-    private Long productid;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_productid", nullable = false)
+    private Long orderProductid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productid", nullable = false)
+    private Product productid;
 
     @Column(name = "orderid")
     private Long orderid;
-
-    @Id
-    @Column(name = "order_productid", nullable = false)
-    private Long orderProductid;
 
     @Column(name = "name")
     private String name;
@@ -39,22 +46,22 @@ public class OrderProduct implements Serializable {
 
     }
 
-    public OrderProduct(Long productid, Long orderid, Long orderProductid, String name, String price, Double taxrate,
+    public OrderProduct(Long orderProductid, Product productid, Long orderid, String name, String price, Double taxrate,
                         Long quantity) {
+        this.orderProductid = orderProductid;
         this.productid = productid;
         this.orderid = orderid;
-        this.orderProductid = orderProductid;
         this.name = name;
         this.price = price;
         this.taxrate = taxrate;
         this.quantity = quantity;
     }
 
-    public void setProductid(Long productid) {
+    public void setProductid(Product productid) {
         this.productid = productid;
     }
 
-    public Long getProductid() {
+    public Product getProductid() {
         return productid;
     }
 
