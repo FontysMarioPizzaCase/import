@@ -46,6 +46,7 @@ public class OrderImporter {
     private final StoredProcedureExecutor storedProcedureExecutor;
     private final Map<String, Integer> warnings = new HashMap<>();
     private final Resource createCustomerStoredProcedure;
+    private final Resource createOrdersStoredProcedure;
 
     @Autowired
     public OrderImporter(Resource[] orders, OrderRepository orderRepository,
@@ -54,7 +55,8 @@ public class OrderImporter {
                          OrderProductIngredientRepository orderProductIngredientRepository,
                          OrderTempRepository orderTempRepository, OrderDateFormatter orderDateFormatter,
                          OrderPhoneNumberFormatter orderPhoneNumberFormatter, StoredProcedureExecutor storedProcedureExecutor,
-                         @Value("classpath:procedures/create_customers.sql") Resource createCustomerStoredProcedure) {
+                         @Value("classpath:procedures/create_customers.sql") Resource createCustomerStoredProcedure,
+                         @Value("classpath:procedures/create_orders.sql") Resource createOrdersStoredProcedure) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
@@ -65,6 +67,7 @@ public class OrderImporter {
         this.orderPhoneNumberFormatter = orderPhoneNumberFormatter;
         this.storedProcedureExecutor = storedProcedureExecutor;
         this.createCustomerStoredProcedure = createCustomerStoredProcedure;
+        this.createOrdersStoredProcedure = createOrdersStoredProcedure;
     }
 
     public void doImport() throws IOException, SQLException {
@@ -84,6 +87,7 @@ public class OrderImporter {
         this.orderTempRepository.saveAll(orders);
 
         this.storedProcedureExecutor.executeSql("CALL create_customers()", false);
+        this.storedProcedureExecutor.executeSql("CALL create_orders()", false);
     }
 
     public void report() {
@@ -113,6 +117,7 @@ public class OrderImporter {
 
     private void createOrUpdateProcedures() throws IOException, SQLException {
         this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createCustomerStoredProcedure);
+        this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createOrdersStoredProcedure);
     }
 
     private List<OrderTemp> processOrderResource(Resource resource) throws IOException {
