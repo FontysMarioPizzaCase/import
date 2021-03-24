@@ -2,7 +2,8 @@ package me.fontys.semester4.dominos.configuration.data.catalog.extractors;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLogger;
+import me.fontys.semester4.data.entity.LogLevel;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
 import org.slf4j.Logger;
@@ -17,21 +18,21 @@ import java.util.List;
 
 public class DataExtractor<RawT> implements HasExtendedLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DataExtractor.class);
-    protected final ExtendedLogger extendedLogger;
+    protected final DatabaseLogger log;
 
     private final Class<RawT> type;
 
     public DataExtractor(ExtendedLoggerFactory extendedLoggerFactory, Class<RawT> type) {
-        this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
         this.type = type;
     }
 
     public List<RawT> extractRaw(Resource[] resources) throws IOException {
-        extendedLogger.clearWarnings();
+        log.clearReport();
 
         List<RawT> rawCsvLines = new ArrayList<>();
         for (Resource resource : resources) {
-            LOGGER.info("- Extracting from " + resource.getFilename());
+            log.info("- Extracting from " + resource.getFilename());
             rawCsvLines.addAll(this.extractRaw(resource));
         }
         return rawCsvLines;
@@ -54,13 +55,13 @@ public class DataExtractor<RawT> implements HasExtendedLogger {
         List<RawT> rawCsvLines = beans.parse();
 
         beans.getCapturedExceptions().forEach(
-                (e) -> extendedLogger.processWarning("Inconsistent data: " + e));
+                (e) -> log.addToReport("Inconsistent data: " + e, LogLevel.ERROR));
 
         return rawCsvLines;
     }
 
     public void report(){
-        extendedLogger.report();
+        log.report();
     }
 }
 

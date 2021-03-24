@@ -1,7 +1,8 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.datavalidators;
 
+import me.fontys.semester4.data.entity.LogLevel;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.HasProductData;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
 import org.slf4j.Logger;
@@ -12,15 +13,15 @@ import java.util.List;
 
 public abstract class DataValidator<RawT> implements HasExtendedLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DataValidator.class);
-    protected final ExtendedLogger extendedLogger;
+    protected final DatabaseLogger log;
 
     public DataValidator(ExtendedLoggerFactory extendedLoggerFactory){
-        this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
     }
 
     public List<RawT> validate(List<RawT> rawLines) {
-        LOGGER.info(String.format("- Validating %d lines", rawLines.size()));
-        extendedLogger.clearWarnings();
+        log.info(String.format("- Validating %d lines", rawLines.size()));
+        log.clearReport();
 
         List<RawT> accepted = new ArrayList<>();
         for (RawT line : rawLines) {
@@ -29,7 +30,7 @@ public abstract class DataValidator<RawT> implements HasExtendedLogger {
                 accepted.add(line);
             }
             catch(IllegalArgumentException e){
-                extendedLogger.processWarning("Skipped!");
+                log.addToReport("Skipped: " + line.toString(), LogLevel.ERROR);
             }
         }
         return accepted;
@@ -46,7 +47,7 @@ public abstract class DataValidator<RawT> implements HasExtendedLogger {
 
     protected boolean validateNotEmpty(String stringProperty, String name) {
         if (stringProperty.isEmpty()) {
-            extendedLogger.processWarning(String.format("Record does not have a %s", name));
+            log.addToReport(String.format("Record does not have a %s", name), LogLevel.WARN);
             return false;
         }
         return true;
@@ -56,14 +57,14 @@ public abstract class DataValidator<RawT> implements HasExtendedLogger {
         boolean okToContinue = true;
 
         if(stringProperty.trim().matches(".*,.*")){
-            extendedLogger.processWarning(String.format("Commas in %s will be replaced by periods", name));
+            log.addToReport(String.format("Commas in %s will be replaced by periods", name), LogLevel.INFO);
         }
 
         if(!validateNotEmpty(stringProperty, name)) okToContinue = false;
 
         // TODO: fix + validate and clean in 1 process?
         if(stringProperty.trim().matches(".*[^0-9.].*")){
-            extendedLogger.processWarning(String.format("Unexpected character in %s", name));
+            log.addToReport(String.format("Unexpected character in %s", name), LogLevel.WARN);
 //            okToContinue = false;
         }
         return okToContinue;
@@ -80,6 +81,6 @@ public abstract class DataValidator<RawT> implements HasExtendedLogger {
     }
 
     public void report(){
-        extendedLogger.report();
+        log.report();
     }
 }
