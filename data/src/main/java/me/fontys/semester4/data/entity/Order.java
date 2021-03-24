@@ -1,9 +1,6 @@
 package me.fontys.semester4.data.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -38,10 +35,10 @@ public class Order implements Serializable {
     private boolean takeaway;
 
     @Column(name = "totalprice")
-    private float totalprice;
+    private Float totalprice;
 
     @Column(name = "deliveryprice")
-    private float deliveryprice;
+    private Float deliveryprice;
 
     @Column(name = "applied_discount")
     private String appliedDiscount;
@@ -57,7 +54,7 @@ public class Order implements Serializable {
     }
 
     public Order(Long customer, Long orderid, Store store, Long postalcodeid, Date orderdate, Date deliverydate,
-                 boolean takeaway, float totalprice, float deliveryprice, String appliedDiscount, Long streetnr,
+                 boolean takeaway, Float totalprice, Float deliveryprice, String appliedDiscount, Long streetnr,
                  String customername) {
         this.customer = customer;
         this.orderid = orderid;
