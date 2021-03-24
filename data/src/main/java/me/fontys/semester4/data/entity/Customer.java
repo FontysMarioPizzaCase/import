@@ -3,6 +3,8 @@ package me.fontys.semester4.data.entity;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -23,6 +25,14 @@ public class Customer implements Serializable {
 
     @Column(name = "lastname")
     private String lastname;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "coupon_customer",
+            joinColumns = { @JoinColumn(name = "customerid") },
+            inverseJoinColumns = { @JoinColumn(name = "couponid") }
+    )
+    private Set<Coupon> coupons = new HashSet<Coupon>();
 
     protected Customer() {
 
@@ -65,6 +75,16 @@ public class Customer implements Serializable {
 
     public String getLastname() {
         return lastname;
+    }
+
+    public Set<Coupon> getCoupons()
+    {
+        return coupons;
+    }
+
+    public void setCoupons(Set<Coupon> coupons)
+    {
+        this.coupons = coupons;
     }
 
     @Override

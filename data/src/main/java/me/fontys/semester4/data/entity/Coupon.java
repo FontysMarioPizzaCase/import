@@ -1,12 +1,11 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "coupon")
@@ -18,8 +17,9 @@ public class Coupon implements Serializable {
     @Column(name = "couponid", nullable = false)
     private Long couponid;
 
-    @Column(name = "action")
-    private Long action;
+    @ManyToOne
+    @JoinColumn(name = "action", nullable = false)
+    private CouponActions action;
 
     @Column(name = "couponcode")
     private String couponcode;
@@ -30,14 +30,18 @@ public class Coupon implements Serializable {
     @Column(name = "ends")
     private Date ends;
 
-    @Column(name = "condition")
-    private Long condition;
+    @ManyToOne
+    @JoinColumn(name = "condition", nullable = false)
+    private CouponConditions condition;
+
+    @ManyToMany(mappedBy = "coupons")
+    private Set<Customer> employees = new HashSet<>();
 
     protected Coupon() {
 
     }
 
-    public Coupon(Long couponid, Long action, String couponcode, Date starts, Date ends, Long condition) {
+    public Coupon(Long couponid, CouponActions action, String couponcode, Date starts, Date ends, CouponConditions condition) {
         this.couponid = couponid;
         this.action = action;
         this.couponcode = couponcode;
@@ -54,11 +58,11 @@ public class Coupon implements Serializable {
         return couponid;
     }
 
-    public void setAction(Long action) {
+    public void setAction(CouponActions action) {
         this.action = action;
     }
 
-    public Long getAction() {
+    public CouponActions getAction() {
         return action;
     }
 
@@ -86,12 +90,22 @@ public class Coupon implements Serializable {
         return ends;
     }
 
-    public void setCondition(Long condition) {
+    public void setCondition(CouponConditions condition) {
         this.condition = condition;
     }
 
-    public Long getCondition() {
+    public CouponConditions getCondition() {
         return condition;
+    }
+
+    public Set<Customer> getEmployees()
+    {
+        return employees;
+    }
+
+    public void setEmployees(Set<Customer> employees)
+    {
+        this.employees = employees;
     }
 
     @Override
