@@ -44,7 +44,7 @@ public class Order implements Serializable {
     private String appliedDiscount;
 
     @Column(name = "streetnr")
-    private Long streetnr;
+    private String streetnr;
 
     @Column(name = "customername")
     private String customername;
@@ -54,7 +54,7 @@ public class Order implements Serializable {
     }
 
     public Order(Long customer, Long orderid, Store store, Long postalcodeid, Date orderdate, Date deliverydate,
-                 boolean takeaway, Float totalprice, Float deliveryprice, String appliedDiscount, Long streetnr,
+                 boolean takeaway, Float totalprice, Float deliveryprice, String appliedDiscount, String streetnr,
                  String customername) {
         this.customer = customer;
         this.orderid = orderid;
@@ -150,11 +150,11 @@ public class Order implements Serializable {
         return appliedDiscount;
     }
 
-    public void setStreetnr(Long streetnr) {
+    public void setStreetnr(String streetnr) {
         this.streetnr = streetnr;
     }
 
-    public Long getStreetnr() {
+    public String getStreetnr() {
         return streetnr;
     }
 

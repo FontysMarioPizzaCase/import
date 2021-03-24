@@ -2,7 +2,12 @@ package me.fontys.semester4.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import java.io.Serializable;
@@ -14,11 +19,16 @@ public class OrderProductIngredient implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_product_ingredientid")
+    private Long orderProductIngredientId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_productid", nullable = false)
+    private OrderProduct orderProductid;
+
     @Column(name = "ingredientid", nullable = false)
     private Long ingredientid;
-
-    @Column(name = "order_productid")
-    private Long orderProductid;
 
     @Column(name = "name")
     private String name;
@@ -33,12 +43,21 @@ public class OrderProductIngredient implements Serializable {
 
     }
 
-    public OrderProductIngredient(Long ingredientid, Long orderProductid, String name, Long number, String addprice) {
-        this.ingredientid = ingredientid;
+    public OrderProductIngredient(Long orderProductIngredientId, OrderProduct orderProductid, Long ingredientid, String name, Long number, String addprice) {
+        this.orderProductIngredientId = orderProductIngredientId;
         this.orderProductid = orderProductid;
+        this.ingredientid = ingredientid;
         this.name = name;
         this.number = number;
         this.addprice = addprice;
+    }
+
+    public Long getOrderProductIngredientId() {
+        return this.orderProductIngredientId;
+    }
+
+    public void setOrderProductIngredientId(Long orderProductIngredientId) {
+        this.orderProductIngredientId = orderProductIngredientId;
     }
 
     public void setIngredientid(Long ingredientid) {
@@ -49,11 +68,11 @@ public class OrderProductIngredient implements Serializable {
         return ingredientid;
     }
 
-    public void setOrderProductid(Long orderProductid) {
+    public void setOrderProductid(OrderProduct orderProductid) {
         this.orderProductid = orderProductid;
     }
 
-    public Long getOrderProductid() {
+    public OrderProduct getOrderProductid() {
         return orderProductid;
     }
 
