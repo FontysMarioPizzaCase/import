@@ -97,7 +97,7 @@ public class OrderImporter {
         LOGGER.info("Calling create_customers()");
         this.storedProcedureExecutor.executeSql("CALL create_customers()", false);
         LOGGER.info("Calling create_addresses()");
-        this.storedProcedureExecutor.executeSql("CALL create_addresses()", false);
+//        this.storedProcedureExecutor.executeSql("CALL create_addresses()", false);
         LOGGER.info("Calling create_orders()");
         this.storedProcedureExecutor.executeSql("CALL create_orders()", false);
         LOGGER.info("Process order coupons...");
