@@ -1,10 +1,11 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 
+import me.fontys.semester4.data.entity.LogLevel;
 import me.fontys.semester4.dominos.configuration.data.catalog.datacleaners.DataCleaner;
 import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.DataValidator;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractor;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.List;
 @Configuration
 public abstract class CsvImporter<RawT, CleanT> implements Importer {
     protected static final Logger LOGGER = LoggerFactory.getLogger(CsvImporter.class);
-    protected final ExtendedLogger extendedLogger;
+    protected final DatabaseLogger log;
     protected final Environment environment;
 
     private final Resource[] resources;
@@ -35,7 +36,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
                        DataValidator<RawT> validator, DataCleaner<RawT, CleanT> cleaner,
                        DatabaseLoader loader) {
         this.environment = environment;
-        this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
         this.dataExtractor = dataExtractor;
         this.validator = validator;
@@ -47,7 +48,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doImport() throws IOException {
         announce();
-        extendedLogger.clearWarnings();
+        log.clearReport();
 
         List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
         List<RawT> acceptedLines = validator.validate(rawCsvLines);
@@ -61,19 +62,20 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         for (Resource r : resources) {
             sb.append(r.getFilename()).append(" ");
         }
-        LOGGER.info(String.format("Start import of %s", sb.toString()));
+        log.info(String.format("Start import of %s", sb.toString()));
     }
 
     protected void doImport(List<CleanT> csvLines) {
-        LOGGER.info(String.format("- Transforming and importing %s csv lines...", csvLines.size()));
+        log.info(String.format("- Transforming and importing %s csv lines...", csvLines.size()));
         loader.clearWarnings();
 
         for (var line : csvLines) {
             try {
                 transformAndLoad(line);
             } catch (Exception e) {
-                extendedLogger.processWarning(String.format("Invalid data in line: %s || ERROR: %s",
-                        line.toString(), e.toString()));
+                log.addToReport(
+                        String.format("Invalid data in line: %s || ERROR: %s", line.toString(), e.toString()),
+                        LogLevel.ERROR);
                 throw e; // dev
             }
         }
@@ -90,6 +92,6 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         dataExtractor.report();
         validator.report();
         loader.report();
-        extendedLogger.report();
+        log.report();
     }
 }

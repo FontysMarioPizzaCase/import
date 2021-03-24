@@ -1,14 +1,11 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.dataloader;
 
-import me.fontys.semester4.data.entity.Category;
-import me.fontys.semester4.data.entity.Ingredient;
-import me.fontys.semester4.data.entity.Product;
-import me.fontys.semester4.data.entity.ProductPrice;
+import me.fontys.semester4.data.entity.*;
 import me.fontys.semester4.data.repository.CategoryRepository;
 import me.fontys.semester4.data.repository.IngredientRepository;
 import me.fontys.semester4.data.repository.ProductPriceRepository;
 import me.fontys.semester4.data.repository.ProductRepository;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
 import org.slf4j.Logger;
@@ -22,7 +19,7 @@ import java.util.stream.Stream;
 @Service
 public class DatabaseLoader implements HasExtendedLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
-    protected final ExtendedLogger extendedLogger;
+    protected final DatabaseLogger log;
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -31,7 +28,7 @@ public class DatabaseLoader implements HasExtendedLogger {
 
     public DatabaseLoader(ExtendedLoggerFactory extendedLoggerFactory, ProductRepository productRepository, CategoryRepository categoryRepository,
                           IngredientRepository ingredientRepository, ProductPriceRepository productPriceRepository) {
-        this.extendedLogger = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.ingredientRepository = ingredientRepository;
@@ -46,10 +43,10 @@ public class DatabaseLoader implements HasExtendedLogger {
             Ingredient newData = ingredient;
             ingredient = temp.get();
             updateIngredient(ingredient, newData);
-            extendedLogger.processWarning("Ingredient updated");
+            log.addToReport("Ingredient updated", LogLevel.INFO);
         } else {
             this.ingredientRepository.save(ingredient);
-            extendedLogger.processWarning("Ingredient saved");
+            log.addToReport("Ingredient saved", LogLevel.INFO);
         }
 
         return ingredient;
@@ -69,10 +66,10 @@ public class DatabaseLoader implements HasExtendedLogger {
 
         if (temp.isPresent()) {
             category = temp.get();
-            extendedLogger.processWarning("No Category properties to update");
+            log.addToReport("No Category properties to update", LogLevel.INFO);
         } else {
             this.categoryRepository.save(category);
-            extendedLogger.processWarning("Category created");
+            log.addToReport("Category created", LogLevel.INFO);
         }
 
         return category;
@@ -86,16 +83,18 @@ public class DatabaseLoader implements HasExtendedLogger {
                 .findByPriceAndProduct_Productid(price.getPrice(), product.getProductid())) {
             temp = stream.findFirst();
         } catch (Exception e) {
-            extendedLogger.processWarning(String.format("Could not query db for ProductPrice: %s", e.toString()));
+            log.addToReport(
+                    String.format("Could not query db for ProductPrice: %s", e.toString()),
+                    LogLevel.ERROR);
             throw e;
         }
 
         if (temp.isPresent()) {
             price = temp.get();
-            extendedLogger.processWarning("No ProductPrice properties to update");
+            log.addToReport("No ProductPrice properties to update", LogLevel.INFO);
         } else {
             this.productPriceRepository.save(price);
-            extendedLogger.processWarning("ProductPrice created");
+            log.addToReport("ProductPrice created", LogLevel.INFO);
         }
 
         return price;
@@ -108,10 +107,10 @@ public class DatabaseLoader implements HasExtendedLogger {
             Product newData = product;
             product = temp.get();
             updateProduct(product, newData);
-            extendedLogger.processWarning("Product updated");
+            log.addToReport("Product updated", LogLevel.INFO);
         } else {
             this.productRepository.save(product);
-            extendedLogger.processWarning("Product created");
+            log.addToReport("Product created", LogLevel.INFO);
         }
 
         return product;
@@ -128,10 +127,10 @@ public class DatabaseLoader implements HasExtendedLogger {
 
     @Override
     public void report() {
-        extendedLogger.report();
+        log.report();
     }
 
     public void clearWarnings() {
-        extendedLogger.clearWarnings();
+        log.clearReport();
     }
 }
