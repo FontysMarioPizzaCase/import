@@ -46,6 +46,7 @@ public class OrderImporter {
     private final StoredProcedureExecutor storedProcedureExecutor;
     private final Map<String, Integer> warnings = new HashMap<>();
     private final Resource createCustomerStoredProcedure;
+    private final Resource createAddressStoredProcedure;
     private final Resource createOrdersStoredProcedure;
 
     @Autowired
@@ -56,6 +57,7 @@ public class OrderImporter {
                          OrderTempRepository orderTempRepository, OrderDateFormatter orderDateFormatter,
                          OrderPhoneNumberFormatter orderPhoneNumberFormatter, StoredProcedureExecutor storedProcedureExecutor,
                          @Value("classpath:procedures/create_customers.sql") Resource createCustomerStoredProcedure,
+                         @Value("classpath:procedures/create_addresses.sql") Resource createAddressStoredProcedure,
                          @Value("classpath:procedures/create_orders.sql") Resource createOrdersStoredProcedure) {
         this.orders = orders;
         this.orderRepository = orderRepository;
@@ -67,6 +69,7 @@ public class OrderImporter {
         this.orderPhoneNumberFormatter = orderPhoneNumberFormatter;
         this.storedProcedureExecutor = storedProcedureExecutor;
         this.createCustomerStoredProcedure = createCustomerStoredProcedure;
+        this.createAddressStoredProcedure = createAddressStoredProcedure;
         this.createOrdersStoredProcedure = createOrdersStoredProcedure;
     }
 
@@ -87,6 +90,7 @@ public class OrderImporter {
         this.orderTempRepository.saveAll(orders);
 
         this.storedProcedureExecutor.executeSql("CALL create_customers()", false);
+        this.storedProcedureExecutor.executeSql("CALL create_addresses()", false);
         this.storedProcedureExecutor.executeSql("CALL create_orders()", false);
     }
 
@@ -117,6 +121,7 @@ public class OrderImporter {
 
     private void createOrUpdateProcedures() throws IOException, SQLException {
         this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createCustomerStoredProcedure);
+        this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createAddressStoredProcedure);
         this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createOrdersStoredProcedure);
     }
 
