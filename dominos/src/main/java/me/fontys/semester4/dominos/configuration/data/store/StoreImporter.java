@@ -98,7 +98,7 @@ public class StoreImporter {
             String municipality = lines[3];
 
             if (this.storeRepository.findByName(storeName).isEmpty()) {
-                stores.add(new Store(null, storeName, storeStreet,municipality));
+                stores.add(new Store(null, storeName.trim(), storeStreet.trim(), municipality.trim().toLowerCase(Locale.ROOT)));
             }
 
         });
