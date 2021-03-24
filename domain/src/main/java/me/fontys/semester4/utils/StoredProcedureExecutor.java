@@ -40,6 +40,12 @@ public class StoredProcedureExecutor {
         }
     }
 
+    /**
+     *
+     * @param resource
+     * @throws IOException
+     * @throws SQLException
+     */
     public void createOrReplaceStoredProcedure(Resource resource) throws IOException, SQLException {
         executeSql(StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset()), true);
     }

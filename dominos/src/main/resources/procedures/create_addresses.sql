@@ -37,7 +37,7 @@ BEGIN
         address_count = address_count + 1;
 
         EXCEPTION WHEN unique_violation THEN
-            -- Do nothing, and continue loop.
+            -- Unique violation, should we care to log this? We already have the entry so not important imho
             RAISE NOTICE 'Duplicate entry found while inserting';
             continue;
         END;
