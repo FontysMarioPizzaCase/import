@@ -2,12 +2,10 @@ package me.fontys.semester4.dominos.configuration.data.catalog.extractors;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import me.fontys.semester4.data.entity.LogLevel;
+import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
@@ -17,13 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataExtractor<RawT> implements HasDatabaseLogger {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DataExtractor.class);
     protected final DatabaseLogger log;
 
     private final Class<RawT> type;
 
     public DataExtractor(DatabaseLoggerFactory databaseLoggerFactory, Class<RawT> type) {
-        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
+        this.log = databaseLoggerFactory.newDatabaseLogger(this.getClass().getName());
         this.type = type;
     }
 
@@ -55,7 +52,7 @@ public class DataExtractor<RawT> implements HasDatabaseLogger {
         List<RawT> rawCsvLines = beans.parse();
 
         beans.getCapturedExceptions().forEach(
-                (e) -> log.addToReport("Inconsistent data: " + e, LogLevel.ERROR));
+                (e) -> log.addToReport("Inconsistent data: " + e, Severity.ERROR));
 
         return rawCsvLines;
     }

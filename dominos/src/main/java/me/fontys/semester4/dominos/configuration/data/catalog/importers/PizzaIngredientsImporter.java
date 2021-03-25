@@ -4,14 +4,16 @@ import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.datacleaners.PizzaIngredientsDataCleaner;
-import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.PizzaIngredientsDataValidator;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.PizzaIngredientsDataParser;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.PizzaIngredientsCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.PizzaIngredientsRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,6 @@ import java.util.*;
 
 @Configuration
 public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
-
     private final Map<Long, Ingredient> ingredients;
     private final Map<Long, Category> categories;
     private final Map<Long, Product> products;
@@ -41,11 +42,11 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
                                     DatabaseLoggerFactory databaseLoggerFactory,
                                     @Qualifier("pizzaWithIngredients") Resource[] resources,
                                     DataExtractorFactory dataExtractorFactory,
-                                    PizzaIngredientsDataValidator validator, PizzaIngredientsDataCleaner cleaner,
-                                    DatabaseLoader loader) {
-        super(environment, databaseLoggerFactory, resources,
-                dataExtractorFactory.getPizzaIngredientsDataExtractor(),
-                validator, cleaner, loader);
+                                    PizzaIngredientsDataParser cleaner,
+                                    DatabaseLoaderFactory databaseLoaderFactory) {
+        super(environment, databaseLoggerFactory,
+                resources, dataExtractorFactory.getPizzaIngredientsDataExtractor(),
+                cleaner, databaseLoaderFactory);
         ingredients = new HashMap<>();
         categories = new HashMap<>();
         products = new HashMap<>();

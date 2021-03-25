@@ -1,8 +1,8 @@
 package me.fontys.semester4.utility;
 
 
-import me.fontys.semester4.data.entity.ImportLogEntry;
-import me.fontys.semester4.data.repository.ImportLogEntryRepository;
+import me.fontys.semester4.data.entity.LogEntry;
+import me.fontys.semester4.data.repository.LogEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -28,14 +28,14 @@ public class ProcessPCStoredProc extends CustomSqlExecutor
     private Resource createLogProcResource;
 
     private Date sessionDate;
-    private final ImportLogEntryRepository importLogEntryRepository;
+    private final LogEntryRepository logEntryRepository;
 
     @Autowired
     public ProcessPCStoredProc(EntityManagerFactory emf,
-                               ImportLogEntryRepository importLogEntryRepository)
+                               LogEntryRepository logEntryRepository)
     {
         super(emf);
-        this.importLogEntryRepository = importLogEntryRepository;
+        this.logEntryRepository = logEntryRepository;
     }
 
     @PostConstruct
@@ -75,9 +75,9 @@ public class ProcessPCStoredProc extends CustomSqlExecutor
                 false);
     }
 
-    public Iterable<ImportLogEntry> RetrieveLogs()
+    public Iterable<LogEntry> RetrieveLogs()
     {
-        importLogEntryRepository.flush();
-        return importLogEntryRepository.findAllBylogentrytime(sessionDate);
+        logEntryRepository.flush();
+        return logEntryRepository.findAllBylogentrytime(sessionDate);
     }
 }
