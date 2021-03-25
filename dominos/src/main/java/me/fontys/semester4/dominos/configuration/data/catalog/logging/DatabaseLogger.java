@@ -1,111 +1,79 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.logging;
 
-import me.fontys.semester4.data.entity.ImportLogEntry;
-import me.fontys.semester4.data.entity.LogLevel;
-import me.fontys.semester4.data.repository.ImportLogEntryRepository;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import me.fontys.semester4.data.entity.Severity;
+import me.fontys.semester4.data.repository.ILogRepository;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.LogEntryFactories.ILogEntryFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class DatabaseLogger {
+public class DatabaseLogger<LogEntryType> {
     private final Logger logger;
-    private final ImportLogEntryRepository logRepository;
-    private final Map<Pair<LogLevel, String>, Integer> cachedEntries = new HashMap<>();
+    protected final ILogRepository<LogEntryType> logRepository;
+    private final ILogEntryFactory<LogEntryType> logEntryFactory;
+    private final Report report;
 
-    public DatabaseLogger(Logger logger, ImportLogEntryRepository logRepository) {
-        this.logger = logger;
+    public DatabaseLogger(String loggerName,
+                          ILogRepository<LogEntryType> logRepository,
+                          ILogEntryFactory<LogEntryType> logEntryFactory,
+                          Report report) {
+        this.logger = LoggerFactory.getLogger(loggerName);
         this.logRepository = logRepository;
-    }
-
-    public void addToReport(String message, LogLevel logLevel) {
-        Pair<LogLevel, String> entry = new MutablePair<>(logLevel, message);
-        if (this.cachedEntries.containsKey(entry)) {
-            this.cachedEntries.put(entry, this.cachedEntries.get(entry) + 1);
-        } else {
-            this.cachedEntries.put(entry, 1);
-        }
-    }
-
-    public void clearReport() {
-        this.cachedEntries.clear();
-    }
-
-    public void report() {
-        // resisting the urge to make this a class ;)
-        // get totals
-        int sumTotal = 0, totalInfo = 0, totalWarnings = 0,
-                totalErrors = 0, totalTrace = 0, totalDebug = 0;
-        for (Map.Entry<Pair<LogLevel, String>, Integer> entry : this.cachedEntries.entrySet()) {
-            LogLevel level = entry.getKey().getKey();
-            int quantity = entry.getValue();
-            sumTotal += quantity;
-            if (level == LogLevel.INFO) totalInfo += quantity;
-            if (level == LogLevel.WARN) totalWarnings += quantity;
-            if (level == LogLevel.ERROR) totalErrors += quantity;
-            if (level == LogLevel.TRACE) totalTrace += quantity;
-            if (level == LogLevel.DEBUG) totalDebug += quantity;
-        }
-
-        if (sumTotal > 0) {
-            // log totals
-            StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%s result : ", getLoggerName()));
-            if (totalErrors > 0) sb.append(String.format("%d errors ", totalErrors));
-            if (totalWarnings > 0) sb.append(String.format("%d warnings ", totalWarnings));
-            if (totalInfo > 0) sb.append(String.format("%d messages ", totalInfo));
-            if (totalTrace > 0) sb.append(String.format("%d trace ", totalTrace));
-            if (totalDebug > 0) sb.append(String.format("%d debug ", totalDebug));
-            info(sb.toString());
-
-            // log entries
-            for (Map.Entry<Pair<LogLevel, String>, Integer> entry : this.cachedEntries.entrySet()) {
-                LogLevel level = entry.getKey().getKey();
-                String text = entry.getKey().getValue();
-                int quantity = entry.getValue();
-                String finalMessage = String.format("  -> %s : %s", text, quantity);
-                if (level == LogLevel.WARN) warn(finalMessage);
-                if (level == LogLevel.INFO) info(finalMessage);
-                if (level == LogLevel.DEBUG) debug(finalMessage);
-                if (level == LogLevel.ERROR) error(finalMessage);
-                if (level == LogLevel.TRACE) trace(finalMessage);
-            }
-        }
-    }
-
-    private String getLoggerName() {
-        return logger.getName().substring(logger.getName().lastIndexOf('.') + 1);
+        this.logEntryFactory = logEntryFactory;
+        this.report = report;
     }
 
     public void info(String message) {
         logger.info(message);
-        logToDb(message, LogLevel.INFO);
+        logToDb(message, Severity.INFO);
     }
 
     public void warn(String message) {
         logger.warn(message);
-        logToDb(message, LogLevel.WARN);
+        logToDb(message, Severity.WARN);
     }
 
     public void debug(String message) {
         logger.debug(message);
-        logToDb(message, LogLevel.DEBUG);
+        logToDb(message, Severity.DEBUG);
     }
 
     public void error(String message) {
         logger.error(message);
-        logToDb(message, LogLevel.ERROR);
+        logToDb(message, Severity.ERROR);
     }
 
     public void trace(String message) {
         logger.trace(message);
-        logToDb(message, LogLevel.TRACE);
+        logToDb(message, Severity.TRACE);
     }
 
-    private void logToDb(String message, LogLevel logLevel) {
-        ImportLogEntry entry = new ImportLogEntry(message, logLevel, getLoggerName());
+    public void log(String message, Severity severity){
+        if (severity == Severity.INFO) logger.info(message);
+        if (severity == Severity.WARN) logger.warn(message);
+        if (severity == Severity.ERROR) logger.error(message);
+        if (severity == Severity.DEBUG) logger.debug(message);
+        if (severity == Severity.TRACE) logger.trace(message);
+        logToDb(message, severity);
+    }
+
+    public void logToDb(String message, Severity severity) {
+        LogEntryType entry = logEntryFactory.newEntry(message, severity, getLoggerName());
         logRepository.save(entry);
+    }
+
+    public String getLoggerName() {
+        return logger.getName().substring(logger.getName().lastIndexOf('.') + 1);
+    }
+
+    public void addToReport(String message, Severity severity) {
+        report.add(message, severity);
+    }
+
+    public void clearReport() {
+        report.clear();
+    }
+
+    public void report() {
+        report.log(this);
     }
 }

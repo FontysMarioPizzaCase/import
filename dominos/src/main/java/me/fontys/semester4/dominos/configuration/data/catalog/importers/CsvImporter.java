@@ -1,14 +1,12 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 
-import me.fontys.semester4.data.entity.LogLevel;
-import me.fontys.semester4.dominos.configuration.data.catalog.datacleaners.DataCleaner;
-import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.DataValidator;
+import me.fontys.semester4.data.entity.Severity;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.DataParser;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractor;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -20,28 +18,25 @@ import java.util.List;
 
 @Configuration
 public abstract class CsvImporter<RawT, CleanT> implements Importer {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CsvImporter.class);
     protected final DatabaseLogger log;
     protected final Environment environment;
 
     private final Resource[] resources;
     private final DataExtractor<RawT> dataExtractor;
-    protected DataValidator<RawT> validator;
-    protected DataCleaner<RawT, CleanT> cleaner;
+    protected DataParser<RawT, CleanT> parser;
     protected DatabaseLoader loader;
 
     public CsvImporter(Environment environment,
                        DatabaseLoggerFactory databaseLoggerFactory,
                        Resource[] resources, DataExtractor<RawT> dataExtractor,
-                       DataValidator<RawT> validator, DataCleaner<RawT, CleanT> cleaner,
-                       DatabaseLoader loader) {
+                       DataParser<RawT, CleanT> parser,
+                       DatabaseLoaderFactory databaseLoaderFactory) {
+        this.log = databaseLoggerFactory.newDatabaseLogger(this.getClass().getSuperclass().getName());
         this.environment = environment;
-        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
         this.dataExtractor = dataExtractor;
-        this.validator = validator;
-        this.cleaner = cleaner;
-        this.loader = loader;
+        this.parser = parser;
+        this.loader = databaseLoaderFactory.getDatabaseLoader();
     }
 
     @Override
@@ -51,8 +46,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         log.clearReport();
 
         List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
-        List<RawT> acceptedLines = validator.validate(rawCsvLines);
-        List<CleanT> cleanedLines = cleaner.clean(acceptedLines);
+        List<CleanT> cleanedLines = parser.validateAndClean(rawCsvLines);
         transformAndLoad(cleanedLines);
         loadCachedRelationships();
     }
@@ -75,7 +69,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
             } catch (Exception e) {
                 log.addToReport(
                         String.format("Invalid data in line: %s || ERROR: %s", line.toString(), e.toString()),
-                        LogLevel.ERROR);
+                        Severity.ERROR);
                 throw e; // dev
             }
         }
@@ -90,8 +84,9 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
     @Override
     public void report() {
         dataExtractor.report();
-        validator.report();
+        parser.report();
         loader.report();
         log.report();
+        parser.reportDetails();
     }
 }

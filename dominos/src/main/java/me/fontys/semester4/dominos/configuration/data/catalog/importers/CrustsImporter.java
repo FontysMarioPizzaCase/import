@@ -2,14 +2,16 @@ package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Ingredient;
-import me.fontys.semester4.dominos.configuration.data.catalog.datacleaners.CrustsDataCleaner;
-import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.CrustsDataValidator;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.CrustsDataParser;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.CrustCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.CrustRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +32,11 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
                           DatabaseLoggerFactory databaseLoggerFactory,
                           @Qualifier("pizzacrusts") Resource[] resources,
                           DataExtractorFactory dataExtractorFactory,
-                          CrustsDataValidator validator, CrustsDataCleaner cleaner,
-                          DatabaseLoader loader) {
-        super(environment, databaseLoggerFactory, resources,
-                dataExtractorFactory.getCrustsDataExtractor(),
-                validator, cleaner, loader);
+                          CrustsDataParser parser,
+                          DatabaseLoaderFactory databaseLoaderFactory) {
+        super(environment, databaseLoggerFactory,
+                resources, dataExtractorFactory.getCrustsDataExtractor(),
+                parser, databaseLoaderFactory);
         this.crusts = new HashMap<>();
         this.categories = new HashMap<>();
         this.crust_category = new HashSet<>();

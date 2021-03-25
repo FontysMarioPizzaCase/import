@@ -8,19 +8,13 @@ import me.fontys.semester4.data.repository.ProductRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Service
 public class DatabaseLoader implements HasDatabaseLogger {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
-    protected final DatabaseLogger log;
-
+    protected final DatabaseLogger<LogEntry> log;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final IngredientRepository ingredientRepository;
@@ -28,7 +22,7 @@ public class DatabaseLoader implements HasDatabaseLogger {
 
     public DatabaseLoader(DatabaseLoggerFactory databaseLoggerFactory, ProductRepository productRepository, CategoryRepository categoryRepository,
                           IngredientRepository ingredientRepository, ProductPriceRepository productPriceRepository) {
-        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
+        this.log = databaseLoggerFactory.newDatabaseLogger(this.getClass().getName());
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.ingredientRepository = ingredientRepository;
@@ -43,10 +37,10 @@ public class DatabaseLoader implements HasDatabaseLogger {
             Ingredient newData = ingredient;
             ingredient = temp.get();
             updateIngredient(ingredient, newData);
-            log.addToReport("Ingredient updated", LogLevel.INFO);
+            log.addToReport("Ingredient updated", Severity.INFO);
         } else {
             this.ingredientRepository.save(ingredient);
-            log.addToReport("Ingredient saved", LogLevel.INFO);
+            log.addToReport("Ingredient saved", Severity.INFO);
         }
 
         return ingredient;
@@ -66,10 +60,10 @@ public class DatabaseLoader implements HasDatabaseLogger {
 
         if (temp.isPresent()) {
             category = temp.get();
-            log.addToReport("No Category properties to update", LogLevel.INFO);
+            log.addToReport("No Category properties to update", Severity.INFO);
         } else {
             this.categoryRepository.save(category);
-            log.addToReport("Category created", LogLevel.INFO);
+            log.addToReport("Category created", Severity.INFO);
         }
 
         return category;
@@ -85,16 +79,16 @@ public class DatabaseLoader implements HasDatabaseLogger {
         } catch (Exception e) {
             log.addToReport(
                     String.format("Could not query db for ProductPrice: %s", e.toString()),
-                    LogLevel.ERROR);
+                    Severity.ERROR);
             throw e;
         }
 
         if (temp.isPresent()) {
             price = temp.get();
-            log.addToReport("No ProductPrice properties to update", LogLevel.INFO);
+            log.addToReport("No ProductPrice properties to update", Severity.INFO);
         } else {
             this.productPriceRepository.save(price);
-            log.addToReport("ProductPrice created", LogLevel.INFO);
+            log.addToReport("ProductPrice created", Severity.INFO);
         }
 
         return price;
@@ -107,10 +101,10 @@ public class DatabaseLoader implements HasDatabaseLogger {
             Product newData = product;
             product = temp.get();
             updateProduct(product, newData);
-            log.addToReport("Product updated", LogLevel.INFO);
+            log.addToReport("Product updated", Severity.INFO);
         } else {
             this.productRepository.save(product);
-            log.addToReport("Product created", LogLevel.INFO);
+            log.addToReport("Product created", Severity.INFO);
         }
 
         return product;
@@ -125,12 +119,12 @@ public class DatabaseLoader implements HasDatabaseLogger {
         product.setImagepath(newData.getImagepath());
     }
 
+    public void clearWarnings() {
+        log.clearReport();
+    }
+
     @Override
     public void report() {
         log.report();
-    }
-
-    public void clearWarnings() {
-        log.clearReport();
     }
 }

@@ -1,6 +1,6 @@
 package me.fontys.semester4.data.entity;
 
-public enum LogLevel {
+public enum Severity {
     WARN,
     INFO,
     DEBUG,

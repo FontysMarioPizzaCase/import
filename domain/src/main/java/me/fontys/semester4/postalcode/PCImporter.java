@@ -1,6 +1,6 @@
 package me.fontys.semester4.postalcode;
 
-import me.fontys.semester4.data.entity.ImportLogEntry;
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.interfaces.Importer;
 import me.fontys.semester4.tempdata.entity.MunicipalityTemp;
 import me.fontys.semester4.tempdata.entity.PostalcodeTemp;
@@ -86,9 +86,9 @@ public class PCImporter implements Importer
     @Override
     public void report()
     {
-        for(ImportLogEntry importLogEntry : processPCStoredProc.RetrieveLogs())
+        for(LogEntry logEntry : processPCStoredProc.RetrieveLogs())
         {
-            LOGGER.info(importLogEntry.getMessage());
+            LOGGER.info(logEntry.getMessage());
         }
 
 

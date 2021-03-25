@@ -7,53 +7,52 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "importlog")
-public class ImportLogEntry implements Serializable
-{
+@Table(name = "logdetails")
+public class LogDetailsEntry implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "logentryid", nullable = false)
-    private Long logentryid;
+    private Long id;
 
     @Column(name = "logentrytime")
     private Date logentrytime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "logtype")
-    private LogLevel logLevel;
+    private Severity severity;
 
     @Column(name = "logger")
     private String loggerName;
 
-    @Column(name = "message")
+    @Column(name = "message", length = 1000 )
     private String message;
 
-    protected ImportLogEntry(){
+    protected LogDetailsEntry(){
         this(null);
     }
 
-    public ImportLogEntry(String message){
-        this(message, LogLevel.INFO, null);
+    public LogDetailsEntry(String message){
+        this(message, Severity.INFO, null);
     }
 
-    public ImportLogEntry(String message, LogLevel logLevel, String LoggerName){
+    public LogDetailsEntry(String message, Severity severity, String LoggerName){
         this.message = message;
-        this.logLevel = logLevel;
+        this.severity = severity;
         this.loggerName = LoggerName;
         this.logentrytime = new Date();
     }
 
-    public Long getLogentryid()
+    public Long getId()
     {
-        return logentryid;
+        return id;
     }
 
-    public void setLogentryid(Long logentryid)
+    public void setId(Long logentryid)
     {
-        this.logentryid = logentryid;
+        this.id = logentryid;
     }
 
     public Date getLogentrytime()
@@ -79,18 +78,18 @@ public class ImportLogEntry implements Serializable
     @Override
     public String toString() {
         return "ImportLogEntry{" +
-                "logentryid=" + logentryid + '\'' +
+                "logentryid=" + id + '\'' +
                 "logentrytime=" + logentrytime + '\'' +
                 "message=" + message + '\'' +
                 '}';
     }
 
-    public LogLevel getLogType() {
-        return logLevel;
+    public Severity getLogType() {
+        return severity;
     }
 
-    public void setLogType(LogLevel logLevel) {
-        this.logLevel = logLevel;
+    public void setLogType(Severity severity) {
+        this.severity = severity;
     }
 
     public String getLoggerName() {

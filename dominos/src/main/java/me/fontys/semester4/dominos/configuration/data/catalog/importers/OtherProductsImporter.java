@@ -3,14 +3,16 @@ package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.datacleaners.OtherProductsDataCleaner;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.OtherProductsDataParser;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
-import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.OtherProductsDataValidator;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.OtherProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -36,11 +38,11 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, O
                                  DatabaseLoggerFactory databaseLoggerFactory,
                                  @Qualifier("overigeProducten") Resource[] resources,
                                  DataExtractorFactory dataExtractorFactory,
-                                 OtherProductsDataValidator validator, OtherProductsDataCleaner cleaner,
-                                 DatabaseLoader loader) {
-        super(environment, databaseLoggerFactory, resources,
-                dataExtractorFactory.getOverigeProductenDataExtractor(),
-                validator, cleaner, loader);
+                                 OtherProductsDataParser cleaner,
+                                 DatabaseLoaderFactory databaseLoaderFactory) {
+        super(environment, databaseLoggerFactory,
+                resources, dataExtractorFactory.getOverigeProductenDataExtractor(),
+                cleaner, databaseLoaderFactory);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();
