@@ -1,11 +1,10 @@
 package me.fontys.semester4.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Currency;
 
 @Entity
 @Table(name = "coupon_actions")
@@ -14,6 +13,7 @@ public class CouponActions implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "actionid", nullable = false)
     private Long actionid;
 
@@ -21,7 +21,7 @@ public class CouponActions implements Serializable {
     private Double dPercentage;
 
     @Column(name = "fixedprice")
-    private String fixedprice;
+    private BigDecimal fixedprice;
 
     @Column(name = "freeship")
     private String freeship;
@@ -33,7 +33,7 @@ public class CouponActions implements Serializable {
 
     }
 
-    public CouponActions(Long actionid, Double dPercentage, String fixedprice, String freeship, Long eachXFree) {
+    public CouponActions(Long actionid, Double dPercentage, BigDecimal fixedprice, String freeship, Long eachXFree) {
         this.actionid = actionid;
         this.dPercentage = dPercentage;
         this.fixedprice = fixedprice;
@@ -57,11 +57,11 @@ public class CouponActions implements Serializable {
         return dPercentage;
     }
 
-    public void setFixedprice(String fixedprice) {
+    public void setFixedprice(BigDecimal fixedprice) {
         this.fixedprice = fixedprice;
     }
 
-    public String getFixedprice() {
+    public BigDecimal getFixedprice() {
         return fixedprice;
     }
 

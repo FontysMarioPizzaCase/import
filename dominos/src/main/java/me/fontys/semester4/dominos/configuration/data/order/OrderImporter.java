@@ -1,5 +1,6 @@
 package me.fontys.semester4.dominos.configuration.data.order;
 
+import me.fontys.semester4.data.entity.ImportLogEntry;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
@@ -10,6 +11,7 @@ import me.fontys.semester4.dominos.configuration.data.order.formatter.OrderPhone
 import me.fontys.semester4.dominos.configuration.data.order.test.OrderImportRecordValidityTest;
 import me.fontys.semester4.tempdata.entity.OrderTemp;
 import me.fontys.semester4.tempdata.repository.OrderTempRepository;
+import me.fontys.semester4.utility.ProcessCouponsProc;
 import me.fontys.semester4.utils.StoredProcedureExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public class OrderImporter {
     private final Resource createCustomerStoredProcedure;
     private final Resource createAddressStoredProcedure;
     private final Resource createOrdersStoredProcedure;
+    private final ProcessCouponsProc processCouponsProc;
 
     @Autowired
     public OrderImporter(Resource[] orders, OrderRepository orderRepository,
@@ -58,7 +61,8 @@ public class OrderImporter {
                          OrderPhoneNumberFormatter orderPhoneNumberFormatter, StoredProcedureExecutor storedProcedureExecutor,
                          @Value("classpath:procedures/create_customers.sql") Resource createCustomerStoredProcedure,
                          @Value("classpath:procedures/create_addresses.sql") Resource createAddressStoredProcedure,
-                         @Value("classpath:procedures/create_orders.sql") Resource createOrdersStoredProcedure) {
+                         @Value("classpath:procedures/create_orders.sql") Resource createOrdersStoredProcedure,
+                         ProcessCouponsProc processCouponsProc) {
         this.orders = orders;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
@@ -69,6 +73,7 @@ public class OrderImporter {
         this.orderPhoneNumberFormatter = orderPhoneNumberFormatter;
         this.storedProcedureExecutor = storedProcedureExecutor;
         this.createCustomerStoredProcedure = createCustomerStoredProcedure;
+        this.processCouponsProc = processCouponsProc;
         this.createAddressStoredProcedure = createAddressStoredProcedure;
         this.createOrdersStoredProcedure = createOrdersStoredProcedure;
     }
@@ -92,6 +97,8 @@ public class OrderImporter {
         this.storedProcedureExecutor.executeSql("CALL create_customers()", false);
         this.storedProcedureExecutor.executeSql("CALL create_addresses()", false);
         this.storedProcedureExecutor.executeSql("CALL create_orders()", false);
+        LOGGER.info("Process order coupons...");
+        processCouponsProc.Execute();
     }
 
     public void report() {
@@ -105,6 +112,13 @@ public class OrderImporter {
                 LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
             }
         }
+
+        // get coupons stored procedure logs stored in database
+        for(ImportLogEntry importLogEntry : processCouponsProc.RetrieveLogs())
+        {
+            LOGGER.info(importLogEntry.getMessage());
+        }
+
     }
 
     public void test() {

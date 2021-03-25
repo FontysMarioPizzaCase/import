@@ -14,11 +14,12 @@ public class Coupon implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "couponid", nullable = false)
     private Long couponid;
 
     @ManyToOne
-    @JoinColumn(name = "action", nullable = false)
+    @JoinColumn(name = "action", nullable = true)
     private CouponActions action;
 
     @Column(name = "couponcode")
@@ -31,7 +32,7 @@ public class Coupon implements Serializable {
     private Date ends;
 
     @ManyToOne
-    @JoinColumn(name = "condition", nullable = false)
+    @JoinColumn(name = "condition", nullable = true)
     private CouponConditions condition;
 
     @ManyToMany(mappedBy = "coupons")
