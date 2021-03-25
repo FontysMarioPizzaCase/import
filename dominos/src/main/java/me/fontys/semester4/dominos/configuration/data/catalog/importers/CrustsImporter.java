@@ -9,7 +9,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.Databas
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.CrustCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.CrustRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +27,12 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
 
     @Autowired
     public CrustsImporter(Environment environment,
-                          ExtendedLoggerFactory extendedLoggerFactory,
+                          DatabaseLoggerFactory databaseLoggerFactory,
                           @Qualifier("pizzacrusts") Resource[] resources,
                           DataExtractorFactory dataExtractorFactory,
                           CrustsDataValidator validator, CrustsDataCleaner cleaner,
                           DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources,
+        super(environment, databaseLoggerFactory, resources,
                 dataExtractorFactory.getCrustsDataExtractor(),
                 validator, cleaner, loader);
         this.crusts = new HashMap<>();

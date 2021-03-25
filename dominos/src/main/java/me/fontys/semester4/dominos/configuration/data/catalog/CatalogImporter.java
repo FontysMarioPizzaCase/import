@@ -1,7 +1,7 @@
 package me.fontys.semester4.dominos.configuration.data.catalog;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.importers.*;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class CatalogImporter implements HasExtendedLogger {
+public class CatalogImporter implements HasDatabaseLogger {
 
     private final List<Importer> importers;
 

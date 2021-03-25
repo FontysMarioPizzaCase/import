@@ -1,14 +1,14 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.datavalidators;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.PizzaIngredientsRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PizzaIngredientsDataValidator extends DataValidator<PizzaIngredientsRawCsvLine> {
 
-    public PizzaIngredientsDataValidator(ExtendedLoggerFactory extendedLoggerFactory) {
-        super(extendedLoggerFactory);
+    public PizzaIngredientsDataValidator(DatabaseLoggerFactory databaseLoggerFactory) {
+        super(databaseLoggerFactory);
     }
 
     @Override

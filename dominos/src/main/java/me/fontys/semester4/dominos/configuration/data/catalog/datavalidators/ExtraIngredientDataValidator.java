@@ -1,14 +1,14 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.datavalidators;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.ExtraIngredientRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExtraIngredientDataValidator extends DataValidator<ExtraIngredientRawCsvLine> {
 
-    public ExtraIngredientDataValidator(ExtendedLoggerFactory extendedLoggerFactory) {
-        super(extendedLoggerFactory);
+    public ExtraIngredientDataValidator(DatabaseLoggerFactory databaseLoggerFactory) {
+        super(databaseLoggerFactory);
     }
 
     @Override

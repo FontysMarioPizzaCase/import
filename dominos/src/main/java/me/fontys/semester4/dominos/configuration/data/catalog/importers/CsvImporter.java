@@ -6,7 +6,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.Dat
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractor;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -31,12 +31,12 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
     protected DatabaseLoader loader;
 
     public CsvImporter(Environment environment,
-                       ExtendedLoggerFactory extendedLoggerFactory,
+                       DatabaseLoggerFactory databaseLoggerFactory,
                        Resource[] resources, DataExtractor<RawT> dataExtractor,
                        DataValidator<RawT> validator, DataCleaner<RawT, CleanT> cleaner,
                        DatabaseLoader loader) {
         this.environment = environment;
-        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
         this.resources = resources;
         this.dataExtractor = dataExtractor;
         this.validator = validator;
@@ -53,7 +53,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
         List<RawT> acceptedLines = validator.validate(rawCsvLines);
         List<CleanT> cleanedLines = cleaner.clean(acceptedLines);
-        doImport(cleanedLines);
+        transformAndLoad(cleanedLines);
         loadCachedRelationships();
     }
 
@@ -65,7 +65,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         log.info(String.format("Start import of %s", sb.toString()));
     }
 
-    protected void doImport(List<CleanT> csvLines) {
+    protected void transformAndLoad(List<CleanT> csvLines) {
         log.info(String.format("- Transforming and importing %s csv lines...", csvLines.size()));
         loader.clearWarnings();
 

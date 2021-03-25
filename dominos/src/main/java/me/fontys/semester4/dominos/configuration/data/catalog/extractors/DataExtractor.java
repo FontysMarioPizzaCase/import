@@ -4,8 +4,8 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import me.fontys.semester4.data.entity.LogLevel;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -16,14 +16,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataExtractor<RawT> implements HasExtendedLogger {
+public class DataExtractor<RawT> implements HasDatabaseLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DataExtractor.class);
     protected final DatabaseLogger log;
 
     private final Class<RawT> type;
 
-    public DataExtractor(ExtendedLoggerFactory extendedLoggerFactory, Class<RawT> type) {
-        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
+    public DataExtractor(DatabaseLoggerFactory databaseLoggerFactory, Class<RawT> type) {
+        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
         this.type = type;
     }
 

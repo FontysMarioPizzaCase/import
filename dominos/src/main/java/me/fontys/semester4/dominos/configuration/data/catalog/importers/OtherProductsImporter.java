@@ -9,7 +9,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.Oth
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.OtherProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,12 +33,12 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, O
 
     @Autowired
     public OtherProductsImporter(Environment environment,
-                                 ExtendedLoggerFactory extendedLoggerFactory,
+                                 DatabaseLoggerFactory databaseLoggerFactory,
                                  @Qualifier("overigeProducten") Resource[] resources,
                                  DataExtractorFactory dataExtractorFactory,
                                  OtherProductsDataValidator validator, OtherProductsDataCleaner cleaner,
                                  DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources,
+        super(environment, databaseLoggerFactory, resources,
                 dataExtractorFactory.getOverigeProductenDataExtractor(),
                 validator, cleaner, loader);
         categories = new HashMap<>();
