@@ -2,7 +2,7 @@ package me.fontys.semester4.dominos.configuration.data.catalog.datacleaners;
 
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.OtherProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 @Service
 public class OtherProductsDataCleaner extends DataCleaner<OtherProductRawCsvLine, OtherProductCsvLine> {
 
-    public OtherProductsDataCleaner(ExtendedLoggerFactory extendedLoggerFactory, CleanerUtil util) {
-        super(extendedLoggerFactory, util);
+    public OtherProductsDataCleaner(DatabaseLoggerFactory databaseLoggerFactory, CleanerUtil util) {
+        super(databaseLoggerFactory, util);
     }
 
     @Override

@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExtendedLoggerFactory {
+public class DatabaseLoggerFactory {
 
     private final ImportLogEntryRepository logRepository;
 
     @Autowired
-    public ExtendedLoggerFactory(ImportLogEntryRepository logRepository){
+    public DatabaseLoggerFactory(ImportLogEntryRepository logRepository){
         this.logRepository = logRepository;
     }
 

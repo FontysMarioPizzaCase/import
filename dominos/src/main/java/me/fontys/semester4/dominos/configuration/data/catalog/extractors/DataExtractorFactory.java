@@ -4,7 +4,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_mod
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.PizzaIngredientsRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.CrustRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,15 +14,15 @@ public class DataExtractorFactory {
     private final DataExtractor<PizzaIngredientsRawCsvLine> pizzaIngredientsDataExtractor;
     private final DataExtractor<CrustRawCsvLine> crustsDataExtractor;
 
-    public DataExtractorFactory(ExtendedLoggerFactory extendedLoggerFactory){
+    public DataExtractorFactory(DatabaseLoggerFactory databaseLoggerFactory){
         // create new extractors
-        this.extraIngredientsDataExtractor = new DataExtractor<>(extendedLoggerFactory,
+        this.extraIngredientsDataExtractor = new DataExtractor<>(databaseLoggerFactory,
                 ExtraIngredientRawCsvLine.class);
-        this.overigeProductenDataExtractor = new DataExtractor<>(extendedLoggerFactory,
+        this.overigeProductenDataExtractor = new DataExtractor<>(databaseLoggerFactory,
                 OtherProductRawCsvLine.class);
-        this.pizzaIngredientsDataExtractor = new DataExtractor<>(extendedLoggerFactory,
+        this.pizzaIngredientsDataExtractor = new DataExtractor<>(databaseLoggerFactory,
                 PizzaIngredientsRawCsvLine.class);
-        this.crustsDataExtractor = new DataExtractor<>(extendedLoggerFactory,
+        this.crustsDataExtractor = new DataExtractor<>(databaseLoggerFactory,
                 CrustRawCsvLine.class);
     }
 

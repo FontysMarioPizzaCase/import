@@ -6,8 +6,8 @@ import me.fontys.semester4.data.repository.IngredientRepository;
 import me.fontys.semester4.data.repository.ProductPriceRepository;
 import me.fontys.semester4.data.repository.ProductRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasExtendedLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public class DatabaseLoader implements HasExtendedLogger {
+public class DatabaseLoader implements HasDatabaseLogger {
     protected static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
     protected final DatabaseLogger log;
 
@@ -26,9 +26,9 @@ public class DatabaseLoader implements HasExtendedLogger {
     private final IngredientRepository ingredientRepository;
     private final ProductPriceRepository productPriceRepository;
 
-    public DatabaseLoader(ExtendedLoggerFactory extendedLoggerFactory, ProductRepository productRepository, CategoryRepository categoryRepository,
+    public DatabaseLoader(DatabaseLoggerFactory databaseLoggerFactory, ProductRepository productRepository, CategoryRepository categoryRepository,
                           IngredientRepository ingredientRepository, ProductPriceRepository productPriceRepository) {
-        this.log = extendedLoggerFactory.extendedLogger(LOGGER);
+        this.log = databaseLoggerFactory.extendedLogger(LOGGER);
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.ingredientRepository = ingredientRepository;

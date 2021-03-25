@@ -9,7 +9,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.datavalidators.Ext
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -26,12 +26,12 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
 
     @Autowired
     public ExtraIngredientsImporter(Environment environment,
-                                    ExtendedLoggerFactory extendedLoggerFactory,
+                                    DatabaseLoggerFactory databaseLoggerFactory,
                                     @Qualifier("ingredientSurcharge") Resource[] resources,
                                     DataExtractorFactory dataExtractorFactory,
                                     ExtraIngredientDataValidator validator, ExtraIngredientDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources,
+        super(environment, databaseLoggerFactory, resources,
                 dataExtractorFactory.getExtraIngredientsDataExtractor(),
                 validator,
                 cleaner,

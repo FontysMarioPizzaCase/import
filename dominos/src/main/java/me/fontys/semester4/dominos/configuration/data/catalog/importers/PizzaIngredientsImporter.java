@@ -11,7 +11,7 @@ import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.Databas
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.PizzaIngredientsCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.PizzaIngredientsRawCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.logging.ExtendedLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -38,12 +38,12 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
 
     @Autowired
     public PizzaIngredientsImporter(Environment environment,
-                                    ExtendedLoggerFactory extendedLoggerFactory,
+                                    DatabaseLoggerFactory databaseLoggerFactory,
                                     @Qualifier("pizzaWithIngredients") Resource[] resources,
                                     DataExtractorFactory dataExtractorFactory,
                                     PizzaIngredientsDataValidator validator, PizzaIngredientsDataCleaner cleaner,
                                     DatabaseLoader loader) {
-        super(environment, extendedLoggerFactory, resources,
+        super(environment, databaseLoggerFactory, resources,
                 dataExtractorFactory.getPizzaIngredientsDataExtractor(),
                 validator, cleaner, loader);
         ingredients = new HashMap<>();
