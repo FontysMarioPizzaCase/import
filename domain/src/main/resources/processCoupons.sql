@@ -160,10 +160,6 @@ begin
 
         end loop;
 
-    exception
-        when others then
-            call createLogEntry(format('Exception occurred in process_coupons: %L', SQLERRM)::varchar(255),logsessiontime);
-
 end;
 $$
     LANGUAGE plpgsql;
