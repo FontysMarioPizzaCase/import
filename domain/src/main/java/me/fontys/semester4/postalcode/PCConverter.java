@@ -23,6 +23,7 @@ public class PCConverter implements FileConverter<PostalcodeTemp>
     protected final static String PC_ROW_RANGE_END="A13_BREEKPUNT_TEM";
     protected final static String PC_ROW_PCMUN_CODE="A13_GEMEENTECODE";
     protected final static String PC_ROW_STREET="A13_STRAATNAAM";
+    protected final static String PC_ROW_CITY="A13_WOONPLAATS";
     private final List<PostalcodeTemp> postalcodes;
     private final Logger LOGGER = LoggerFactory.getLogger(PCConverter.class);
     private IndexHelper indexHelper;
@@ -72,6 +73,7 @@ public class PCConverter implements FileConverter<PostalcodeTemp>
             long fromrange = row.getBigDecimal(PC_ROW_RANGE_START).longValueExact();
             long torange = row.getBigDecimal(PC_ROW_RANGE_END).longValueExact();
             long municipality = row.getBigDecimal(PC_ROW_PCMUN_CODE).longValueExact();
+            String city = row.getString(PC_ROW_CITY);
 
             PostalcodeTemp pc = new PostalcodeTemp(
                     null,
@@ -80,7 +82,8 @@ public class PCConverter implements FileConverter<PostalcodeTemp>
                     torange,
                     even,
                     municipality,
-                    street);
+                    street,
+                    city);
 
             postalcodes.add(pc);
             counter++;
