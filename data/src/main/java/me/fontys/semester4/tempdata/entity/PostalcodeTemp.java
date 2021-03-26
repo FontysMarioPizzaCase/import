@@ -49,6 +49,9 @@ public class PostalcodeTemp implements Serializable {
     @Column(name = "street")
     private String street;
 
+    @Column(name = "city")
+    private String city;
+
     protected PostalcodeTemp() {
 
     }
@@ -59,7 +62,8 @@ public class PostalcodeTemp implements Serializable {
                           Long endhousenr,
                           String even,
                           Long municipality,
-                          String street) {
+                          String street,
+                          String city) {
         this.postalcodeid = postalcodeid;
         this.postalcode = postalcode;
         this.starthousenr = starthousenr;
@@ -67,6 +71,17 @@ public class PostalcodeTemp implements Serializable {
         this.even = even;
         this.municipality = municipality;
         this.street = street;
+        this.city = city;
+    }
+
+    public String getCity()
+    {
+        return city;
+    }
+
+    public void setCity(String city)
+    {
+        this.city = city;
     }
 
     public void setPostalcodeid(Long postalcodeid) {
@@ -119,6 +134,7 @@ public class PostalcodeTemp implements Serializable {
                 "even=" + even + '\'' +
                 "municipality=" + municipality + '\'' +
                 "street=" + street + '\'' +
+                "city=" + city + '\'' +
                 '}';
     }
 
