@@ -162,8 +162,7 @@ begin
 
     exception
         when others then
-            GET STACKED DIAGNOSTICS l_context = PG_EXCEPTION_CONTEXT;
-            call createLogEntry(format('Exception occurred in process_coupons: %L', l_context)::varchar(255),logsessiontime);
+            call createLogEntry(format('Exception occurred in process_coupons: %L', SQLERRM)::varchar(255),logsessiontime);
 
 end;
 $$
