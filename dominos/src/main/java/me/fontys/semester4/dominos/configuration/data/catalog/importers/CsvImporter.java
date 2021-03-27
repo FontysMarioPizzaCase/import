@@ -46,7 +46,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         log.clearReport();
 
         List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
-        List<CleanT> cleanedLines = parser.validateAndClean(rawCsvLines);
+        List<CleanT> cleanedLines = parser.parse(rawCsvLines);
         transformAndLoad(cleanedLines);
         loadCachedRelationships();
     }
@@ -83,10 +83,11 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
 
     @Override
     public void report() {
-        dataExtractor.report();
+        dataExtractor.report(); // nothing?
         parser.report();
-        loader.report();
-        log.report();
         parser.reportDetails();
+        loader.report();
+        log.report(); // nothing?
+
     }
 }
