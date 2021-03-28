@@ -2,6 +2,7 @@ package me.fontys.semester4.dominos.configuration.data.catalog.extractors;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataExtractor<RawT> implements HasDatabaseLogger {
-    protected final DatabaseLogger log;
+    protected final DatabaseLogger<LogEntry> log;
 
     private final Class<RawT> type;
 

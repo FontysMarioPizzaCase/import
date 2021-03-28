@@ -21,7 +21,7 @@ public class CrustsDataParser extends DataParser<CrustRawCsvLine, CrustCsvLine> 
         String description = parseString(raw.getDescription(), "crust description", Severity.WARN);
         int size = parseInteger(raw.getSize(), "crust size", Severity.ERROR);
         BigDecimal addPrice = parsePrice(raw.getAddPrice(), "crust surcharge", Severity.ERROR);
-        boolean isAvailable = parseBoolean(raw.getIsAvailable(), "JA", "availability indicator", Severity.WARN);
+        boolean isAvailable = parseBoolean(raw.getIsAvailable(), "availability indicator", Severity.WARN);
 
         return new CrustCsvLine(crustName, description, size, addPrice, isAvailable);
     }
