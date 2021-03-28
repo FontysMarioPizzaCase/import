@@ -1,6 +1,7 @@
 package me.fontys.semester4.data.repository;
 
 import me.fontys.semester4.data.entity.LogEntry;
+import me.fontys.semester4.data.repository.interfaces.ILogRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
