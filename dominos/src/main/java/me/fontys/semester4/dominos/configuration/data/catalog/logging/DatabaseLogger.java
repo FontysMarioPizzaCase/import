@@ -1,7 +1,7 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.logging;
 
 import me.fontys.semester4.data.entity.Severity;
-import me.fontys.semester4.data.repository.ILogRepository;
+import me.fontys.semester4.data.repository.interfaces.ILogRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.LogEntryFactories.ILogEntryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

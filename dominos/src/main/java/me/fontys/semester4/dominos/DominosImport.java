@@ -47,21 +47,21 @@ public class DominosImport implements CommandLineRunner {
         long start = System.currentTimeMillis();
 
         // Do the store import
-//        this.storeImporter.doImport();
-//        this.storeImporter.report();
+        this.storeImporter.doImport();
+        this.storeImporter.report();
 
         // Do the postalcode import
-//        pcImporter.doImport();
-//        pcImporter.report();
+        pcImporter.doImport();
+        pcImporter.report();
 
         // Do the catalog imports
         this.catalogImporter.doImport();
         this.catalogImporter.report();
 
         // Do the order import
-//        this.orderImporter.doImport();
-//        this.orderImporter.report();
-//        this.orderImporter.test();
+        this.orderImporter.doImport();
+        this.orderImporter.report();
+        this.orderImporter.test();
 
         long timeElapsed = System.currentTimeMillis() - start;
         LOGGER.info(String.format("Finished import, took %s seconds.", timeElapsed / 1000));
