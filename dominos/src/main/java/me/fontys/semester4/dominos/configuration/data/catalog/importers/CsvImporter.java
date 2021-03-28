@@ -85,7 +85,6 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
     public void report() {
         dataExtractor.report(); // nothing?
         parser.report();
-        parser.reportDetails();
         loader.report();
         log.report(); // nothing?
 
