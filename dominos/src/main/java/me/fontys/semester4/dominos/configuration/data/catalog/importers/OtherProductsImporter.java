@@ -5,14 +5,11 @@ import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.OtherProductsDataParser;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
 import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.OtherProductCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Configuration
-public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, OtherProductCsvLine> {
+public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, ProductCsvLine> {
     private final Map<Long, Category> categories;
     private final Map<Long, Product> products;
     private final Map<Long, ProductPrice> prices;
@@ -52,7 +49,7 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, O
     }
 
     @Override
-    protected void transformAndLoad(OtherProductCsvLine l) {
+    protected void transformAndLoad(ProductCsvLine l) {
         final boolean ISAVAILABLE = Boolean.parseBoolean(environment.getProperty(
                 "catalog.pizzaingredientsimport.default_isavailable_for_products"));
         final double TAXRATE =

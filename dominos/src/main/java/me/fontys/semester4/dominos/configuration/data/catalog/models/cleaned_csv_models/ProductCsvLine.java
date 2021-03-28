@@ -4,7 +4,7 @@ import com.opencsv.bean.CsvBindByPosition;
 
 import java.math.BigDecimal;
 
-public class OtherProductCsvLine {
+public class ProductCsvLine {
 
     private final String categoryName;
     private final String subCategoryName;
@@ -14,9 +14,9 @@ public class OtherProductCsvLine {
     private final boolean isSpicy;
     private final boolean isVegetarian;
 
-    public OtherProductCsvLine(String categoryName, String subCategoryName, String productName,
-                               String productDescription, BigDecimal price, boolean isSpicy,
-                               boolean isVegetarian) {
+    public ProductCsvLine(String categoryName, String subCategoryName, String productName,
+                          String productDescription, BigDecimal price, boolean isSpicy,
+                          boolean isVegetarian) {
         this.categoryName = categoryName;
         this.subCategoryName = subCategoryName;
         this.productName = productName;

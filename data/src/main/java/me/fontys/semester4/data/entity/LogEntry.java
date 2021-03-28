@@ -7,7 +7,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "log")
+@Table(name = "importlog")
 public class LogEntry implements Serializable
 {
     @Serial
@@ -78,7 +78,7 @@ public class LogEntry implements Serializable
 
     @Override
     public String toString() {
-        return "ImportLogEntry{" +
+        return "LogEntry{" +
                 "logentryid=" + id + '\'' +
                 "logentrytime=" + logentrytime + '\'' +
                 "message=" + message + '\'' +

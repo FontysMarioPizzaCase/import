@@ -18,9 +18,8 @@ public class PizzaIngredientsCsvLine {
 
 
     public PizzaIngredientsCsvLine(String categoryName, String subCategoryName, String productName,
-                                   String productDescription, BigDecimal price, BigDecimal deliveryFee,
-                                   boolean isSpicy, boolean isVegetarian, boolean isAvailable,
-                                   int ingredientPortion, String ingredientName, String standardPizzasauce) {
+                                   String productDescription, BigDecimal price, boolean isSpicy, boolean isVegetarian, boolean isAvailable, BigDecimal deliveryFee,
+                                   String ingredientName, int ingredientPortion, String standardPizzasauce) {
         this.categoryName = categoryName;
         this.subCategoryName = subCategoryName;
         this.productName = productName;
@@ -33,6 +32,14 @@ public class PizzaIngredientsCsvLine {
         this.ingredientPortion = ingredientPortion;
         this.ingredientName = ingredientName;
         this.standardPizzasauce = standardPizzasauce;
+    }
+
+    public PizzaIngredientsCsvLine(ProductCsvLine productData, BigDecimal deliveryFee, boolean isAvailable,
+                                   int ingredientPortion, String ingredientName, String standardPizzasauce) {
+        this(productData.getCategoryName(), productData.getSubCategoryName(), productData.getProductName(),
+                productData.getProductDescription(), productData.getPrice(), productData.isSpicy(),
+                productData.isVegetarian(), isAvailable, deliveryFee, ingredientName, ingredientPortion,
+                standardPizzasauce);
     }
 
     public String getCategoryName() {

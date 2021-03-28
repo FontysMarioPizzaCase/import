@@ -52,7 +52,6 @@ public class DatabaseLoader implements HasDatabaseLogger {
         ingredient.setSize(newData.getSize());
         ingredient.setAddprice(newData.getAddprice());
         ingredient.setAvailable(newData.isAvailable());
-        ingredient.setAddprice(newData.getAddprice());
     }
 
     public Category toDb(Category category) {
@@ -80,7 +79,7 @@ public class DatabaseLoader implements HasDatabaseLogger {
             log.addToReport(
                     String.format("Could not query db for ProductPrice: %s", e.toString()),
                     Severity.ERROR);
-            throw e;
+            throw e; // FIXME (dev)
         }
 
         if (temp.isPresent()) {

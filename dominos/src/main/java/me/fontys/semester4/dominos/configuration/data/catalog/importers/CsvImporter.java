@@ -70,7 +70,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
                 log.addToReport(
                         String.format("Invalid data in line: %s || ERROR: %s", line.toString(), e.toString()),
                         Severity.ERROR);
-                throw e; // dev
+                throw e; // FIXME (dev)
             }
         }
     }
