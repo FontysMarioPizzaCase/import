@@ -1,7 +1,7 @@
 package me.fontys.semester4.utility;
 
-import me.fontys.semester4.data.entity.ImportLogEntry;
-import me.fontys.semester4.data.repository.ImportLogEntryRepository;
+import me.fontys.semester4.data.entity.LogEntry;
+import me.fontys.semester4.data.repository.LogEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -25,11 +25,11 @@ public class ProcessCouponsProc extends CustomSqlExecutor
     private Resource processCouponsProc;
 
     private Date sessionDate;
-    private final ImportLogEntryRepository importLogEntryRepository;
+    private final LogEntryRepository importLogEntryRepository;
 
     @Autowired
     public ProcessCouponsProc(EntityManagerFactory emf,
-                               ImportLogEntryRepository importLogEntryRepository)
+                              LogEntryRepository importLogEntryRepository)
     {
         super(emf);
         this.importLogEntryRepository = importLogEntryRepository;
@@ -74,7 +74,7 @@ public class ProcessCouponsProc extends CustomSqlExecutor
 
     }
 
-    public Iterable<ImportLogEntry> RetrieveLogs()
+    public Iterable<LogEntry> RetrieveLogs()
     {
         importLogEntryRepository.flush();
         return importLogEntryRepository.findAllBylogentrytime(sessionDate);

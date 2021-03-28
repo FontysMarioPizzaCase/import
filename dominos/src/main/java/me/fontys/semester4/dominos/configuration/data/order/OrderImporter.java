@@ -1,6 +1,6 @@
 package me.fontys.semester4.dominos.configuration.data.order;
 
-import me.fontys.semester4.data.entity.ImportLogEntry;
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.repository.OrderCustomOptionRepository;
 import me.fontys.semester4.data.repository.OrderProductIngredientRepository;
 import me.fontys.semester4.data.repository.OrderProductRepository;
@@ -114,7 +114,7 @@ public class OrderImporter {
         }
 
         // get coupons stored procedure logs stored in database
-        for(ImportLogEntry importLogEntry : processCouponsProc.RetrieveLogs())
+        for(LogEntry importLogEntry : processCouponsProc.RetrieveLogs())
         {
             LOGGER.info(importLogEntry.getMessage());
         }
