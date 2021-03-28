@@ -9,16 +9,15 @@ import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabas
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
     protected final DatabaseLogger<LogEntry> summaryLog;
-    private final DatabaseLogger<LogDetailsEntry> detailsLog;
 
     public DataParser(DatabaseLoggerFactory databaseLoggerFactory) {
         String className = this.getClass().getName();
         this.summaryLog = databaseLoggerFactory.newDatabaseLogger(className);
-        this.detailsLog = databaseLoggerFactory.newDbDetailsLogger(className);
     }
 
     public List<CleanT> parse(List<RawT> rawCsvLines) {
@@ -32,8 +31,7 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
                 CleanT cleaned = parse(raw);
                 cleanedLines.add(cleaned);
             } catch (IllegalArgumentException e) {
-                summaryLog.addToReport("Skipped (see details)", Severity.ERROR);
-                detailsLog.addToReport("DETAILS  Skipped: " + raw.toString() + e, Severity.ERROR);
+                summaryLog.addToReport("SKIPPED: " + raw.toString() + e, Severity.ERROR);
             }
         }
         return cleanedLines;
@@ -44,7 +42,7 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
     public String parseString(String stringProperty, String propertyName, Severity level) {
         // Check empty
         if (stringProperty.isEmpty()) {
-            final String MSG = String.format("Record does not have a %s", propertyName);
+            final String MSG = String.format("Field %s is empty", propertyName);
             summaryLog.addToReport(MSG, level);
             if (level == Severity.ERROR) {
                 throw new IllegalArgumentException(MSG);
@@ -56,20 +54,19 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
         final String NONREADABLE = "[^\\x20-\\x7E]";
         String badChars = stringProperty.trim().replaceAll(READABLE, "");
         if (badChars.length() > 0) {
-            final String MSG = String.format("Unreadable character(s) in %s will be deleted", propertyName);
+            final String MSG = String.format("Unreadable character(s) %s found in %s will be deleted",
+                    Arrays.toString(badChars.toCharArray()), stringProperty);
             final String ERRORMSG = String.format("Unreadable character(s) found in %s ", propertyName);
-            final String DETAILS = String.format("Unreadable character(s) (%s) found in %s ", badChars, stringProperty);
 
 //            if (level == Severity.ERROR) {  TODO: remove
 //                summaryLog.addToReport(ERRORMSG, level);
-//                throw new IllegalArgumentException(DETAILS);
+//                throw new IllegalArgumentException(MSG);
 //            }
 
             summaryLog.addToReport(MSG, level);
-            detailsLog.addToReport(DETAILS, level);
 
-            return stringProperty.trim().toLowerCase()
-                    .replaceAll(NONREADABLE, "");
+            return stringProperty.replaceAll(NONREADABLE, "")
+                    .trim().toLowerCase();
         }
         return stringProperty;
     }
@@ -94,13 +91,14 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
         final String NONNUMERIC = "[^0-9.]";
         String badChars = priceString.trim().replaceAll(NUMERIC, "");
         if (badChars.length() > 0) {
-            final String NUM_MSG = String.format("Non-numeric character(s) in %s will be deleted", propertyName);
-            final String ERRORMSG = String.format("Non-numeric character(s) in %s", propertyName);
-            final String DETAILS = String.format("Unexpected character(s) (%s) in %s", badChars, priceString);
+            final String NUM_MSG = String.format("Non-numeric character(s) %s in %s will be deleted",
+                    Arrays.toString(badChars.toCharArray()), propertyName);
+            final String ERRORMSG = String.format("Non-numeric character(s) %s in %s",
+                    Arrays.toString(badChars.toCharArray()), propertyName);
 
             if (level == Severity.ERROR) {
                 summaryLog.addToReport(ERRORMSG, level);
-                throw new IllegalArgumentException(DETAILS);
+                throw new IllegalArgumentException(ERRORMSG);
             }
 
             summaryLog.addToReport(NUM_MSG, level);
@@ -120,9 +118,5 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
 
     public void report() {
         summaryLog.report();
-    }
-
-    public void reportDetails() {
-        detailsLog.report();
     }
 }
