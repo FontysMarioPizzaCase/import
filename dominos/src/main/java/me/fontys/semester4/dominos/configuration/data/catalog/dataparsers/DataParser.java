@@ -5,6 +5,9 @@ import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.HasProductData;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,16 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
-    protected final DatabaseLogger<LogEntry> summaryLog;
+    protected final DatabaseLogger<LogEntry> log;
 
     public DataParser(DatabaseLoggerFactory databaseLoggerFactory) {
         String className = this.getClass().getName();
-        this.summaryLog = databaseLoggerFactory.newDatabaseLogger(className);
+        this.log = databaseLoggerFactory.newDatabaseLogger(className);
     }
 
     public List<CleanT> parse(List<RawT> rawCsvLines) {
-        summaryLog.info(String.format("- Parsing %d lines", rawCsvLines.size()));
-        summaryLog.clearReport();
+        log.info(String.format("- Parsing %d lines", rawCsvLines.size()));
+        log.clearReport();
 
         List<CleanT> cleanedLines = new ArrayList<>();
 
@@ -30,7 +33,7 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
                 CleanT cleaned = parse(raw);
                 cleanedLines.add(cleaned);
             } catch (IllegalArgumentException e) {
-                summaryLog.addToReport("SKIPPED: " + raw.toString() + e, Severity.ERROR);
+                log.addToReport("SKIPPED: " + raw.toString() + e, Severity.ERROR);
             }
         }
         return cleanedLines;
@@ -39,16 +42,18 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
     protected abstract CleanT parse(RawT raw) throws IllegalArgumentException;
 
     public String parseString(String stringProperty, String propertyName, Severity level) {
+
         // Check empty
         if (stringProperty.isEmpty()) {
             final String MSG = String.format("Field %s is empty", propertyName);
-            summaryLog.addToReport(MSG, level);
+            log.addToReport(MSG, level);
             if (level == Severity.ERROR) {
                 throw new IllegalArgumentException(MSG);
             }
         }
 
         // Check for unreadable ASCII chars
+        final Severity UNREADABLECHARSEVERITY = Severity.WARN;
         final String READABLE = "[\\x20-\\x7E]";
         final String NONREADABLE = "[^\\x20-\\x7E]";
         String badChars = stringProperty.trim().replaceAll(READABLE, "");
@@ -62,7 +67,7 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
 //                throw new IllegalArgumentException(MSG);
 //            }
 
-            summaryLog.addToReport(MSG, level);
+            log.addToReport(MSG, UNREADABLECHARSEVERITY);
 
             return stringProperty.replaceAll(NONREADABLE, "")
                     .trim().toLowerCase();
@@ -71,17 +76,18 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
     }
 
     public BigDecimal parsePrice(String priceString, String propertyName, Severity level) {
-        Severity nonBreakingSeverity = Severity.INFO;
 
         // check string
-        priceString = parseString(priceString, propertyName, nonBreakingSeverity);
+        final Severity EMPTYSTRINGSEVERITY = Severity.WARN;
+        priceString = parseString(priceString, propertyName, EMPTYSTRINGSEVERITY);
         if (priceString.isEmpty()) return null;
 
         // check comma's
+        final Severity COMMASEVERITY = Severity.INFO;
         final String COMMA_MSG = String.format("Commas in %s will be replaced by periods", propertyName);
         final String HASCOMMA = ".*,.*";
         if (priceString.trim().matches(HASCOMMA)) {
-            summaryLog.addToReport(COMMA_MSG, nonBreakingSeverity);
+            log.addToReport(COMMA_MSG, COMMASEVERITY);
         }
         priceString = priceString.replace(',', '.');
 
@@ -96,11 +102,11 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
                     Arrays.toString(badChars.toCharArray()), propertyName);
 
             if (level == Severity.ERROR) {
-                summaryLog.addToReport(ERRORMSG, level);
+                log.addToReport(ERRORMSG, level);
                 throw new IllegalArgumentException(ERRORMSG);
             }
 
-            summaryLog.addToReport(NUM_MSG, level);
+            log.addToReport(NUM_MSG, level);
             priceString.trim().replaceAll(NONNUMERIC, "");
         }
 
@@ -111,11 +117,45 @@ public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
         return Integer.parseInt(parseString(integerString, propertyName, level));
     }
 
-    public boolean parseBoolean(String booleanString, String trueValue, String propertyName, Severity level) {
-        return parseString(booleanString, propertyName, level).equalsIgnoreCase(trueValue);
+    public boolean parseBoolean(String booleanString, String propertyName, Severity level) {
+        final String trueValue = "JA";
+        final String falseValue = "NEE";
+
+        String value = parseString(booleanString, propertyName, level);
+        if (!(value.equals(trueValue) || value.equals(falseValue))){
+            final String MSG = String.format("Value %s in %s not recognized as boolean value",
+                    booleanString, propertyName);
+            final String ERRORMSG = String.format("Value %s in %s not recognized as boolean value. " +
+                            "Value set to false.", booleanString, propertyName);
+
+            if (level == Severity.ERROR) {
+                log.addToReport(ERRORMSG, level);
+                throw new IllegalArgumentException(MSG);
+            }
+
+            log.addToReport(MSG, level);
+        }
+
+        return value.equalsIgnoreCase(trueValue);
+    }
+
+    protected ProductCsvLine parseProduct(HasProductData raw) {
+        String categoryName = parseString(raw.getCategoryName(), "category name", Severity.ERROR);
+        String subCategoryName = parseString(raw.getSubCategoryName(), "subcategory name", Severity.ERROR);
+        String productName = parseString(raw.getProductName(), "product name", Severity.ERROR);
+        String productDescription = parseString(raw.getProductDescription(),
+                "product description", Severity.WARN);
+        BigDecimal price = parsePrice(raw.getPrice(), "product price", Severity.ERROR);
+        boolean isSpicy = parseBoolean(raw.getIsSpicy(),
+                "product spicy indicator", Severity.WARN);
+        boolean isVegetarian = parseBoolean(raw.getIsVegetarian(),
+                "product vegetarian indicator", Severity.WARN);
+
+        return new ProductCsvLine(categoryName, subCategoryName, productName,
+                productDescription, price, isSpicy, isVegetarian);
     }
 
     public void report() {
-        summaryLog.report();
+        log.report();
     }
 }
