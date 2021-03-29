@@ -40,12 +40,15 @@ begin
             end if;
         END LOOP;
 
-    call createLogEntry(('Imported postalcode ranges : ' || nrImportedPC), logsessiontime);
-    call createLogEntry(('Imported available store ranges : ' || nrImportedStoreRel), logsessiontime);
+    call createLogEntry(('Imported postalcode ranges : ' || nrImportedPC), logsessiontime
+        ,'INFO','process_postalcodes procedure');
+    call createLogEntry(('Imported available store ranges : ' || nrImportedStoreRel), logsessiontime
+        ,'INFO','process_postalcodes procedure');
     for r_row in result_curs loop
         nrUniquePC = nrUniquePC + 1;
         end loop;
-    call createLogEntry(('Unique postal codes : ' || nrUniquePC), logsessiontime);
+    call createLogEntry(('Unique postal codes : ' || nrUniquePC), logsessiontime
+        ,'INFO','process_postalcodes procedure');
 
     commit;
 END;
