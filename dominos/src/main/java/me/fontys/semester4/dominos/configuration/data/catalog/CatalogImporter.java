@@ -19,10 +19,10 @@ public class CatalogImporter {
                            ExtraIngredientsImporter extraIngredientsImporter,
                            CrustsImporter crustsImporter) {
         importers = new ArrayList<>();
-        importers.add(pizzaIngredientsImporter);
         importers.add(otherProductsImporter);
         importers.add(extraIngredientsImporter);
         importers.add(crustsImporter);
+        importers.add(pizzaIngredientsImporter);
     }
 
     public void doImport() throws IOException {

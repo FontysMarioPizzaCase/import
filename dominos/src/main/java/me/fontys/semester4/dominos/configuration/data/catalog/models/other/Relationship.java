@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models;
+package me.fontys.semester4.dominos.configuration.data.catalog.models.other;
 
 import java.util.Objects;
 

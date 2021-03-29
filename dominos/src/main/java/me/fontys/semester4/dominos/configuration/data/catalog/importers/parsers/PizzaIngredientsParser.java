@@ -1,20 +1,18 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.dataparsers;
+package me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers;
 
 import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.PizzaIngredientsCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.PizzaIngredientsRawCsvLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
-public class PizzaIngredientsDataParser extends DataParser<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
+public class PizzaIngredientsParser extends Parser<PizzaIngredientsRawCsvLine, PizzaIngredientsCsvLine> {
 
-    public PizzaIngredientsDataParser(DatabaseLoggerFactory databaseLoggerFactory) {
+    public PizzaIngredientsParser(DatabaseLoggerFactory databaseLoggerFactory) {
         super(databaseLoggerFactory);
     }
 

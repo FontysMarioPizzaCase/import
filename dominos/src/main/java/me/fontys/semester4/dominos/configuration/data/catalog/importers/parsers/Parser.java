@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.dataparsers;
+package me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers;
 
 import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
@@ -7,17 +7,16 @@ import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLo
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.HasDatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.HasProductData;
-import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class DataParser<RawT, CleanT> implements HasDatabaseLogger {
+public abstract class Parser<RawT, CleanT> implements HasDatabaseLogger {
     protected final DatabaseLogger<LogEntry> log;
 
-    public DataParser(DatabaseLoggerFactory databaseLoggerFactory) {
+    public Parser(DatabaseLoggerFactory databaseLoggerFactory) {
         String className = this.getClass().getName();
         this.log = databaseLoggerFactory.newDatabaseLogger(className);
     }

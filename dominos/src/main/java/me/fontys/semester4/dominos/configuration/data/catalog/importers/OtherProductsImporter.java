@@ -3,12 +3,12 @@ package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 import me.fontys.semester4.data.entity.Category;
 import me.fontys.semester4.data.entity.Product;
 import me.fontys.semester4.data.entity.ProductPrice;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.OtherProductsDataParser;
-import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractorFactory;
+import me.fontys.semester4.dominos.configuration.data.catalog.importers.repohelper.*;
+import me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers.OtherProductsParser;
+import me.fontys.semester4.dominos.configuration.data.catalog.importers.extractors.ExtractorFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
-import me.fontys.semester4.dominos.configuration.data.catalog.models.helper_models.Relationship;
+import me.fontys.semester4.dominos.configuration.data.catalog.models.other.Relationship;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,23 +29,29 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, P
     private final Set<Relationship<Category, Category>> category_parent;
     private final Set<Relationship<ProductPrice, Product>> price_product;
     private final Set<Relationship<Product, Category>> product_category;
+    private final CategoryRepoHelper categoryRepoHelper;
+    private final ProductRepoHelper productRepoHelper;
+    private final ProductPriceRepoHelper priceRepoHelper;
 
     @Autowired
     public OtherProductsImporter(Environment environment,
                                  DatabaseLoggerFactory databaseLoggerFactory,
                                  @Qualifier("overigeProducten") Resource[] resources,
-                                 DataExtractorFactory dataExtractorFactory,
-                                 OtherProductsDataParser cleaner,
-                                 DatabaseLoaderFactory databaseLoaderFactory) {
+                                 ExtractorFactory extractorFactory,
+                                 OtherProductsParser cleaner,
+                                 RepoHelperFactory repoHelperFactory) {
         super(environment, databaseLoggerFactory,
-                resources, dataExtractorFactory.getOverigeProductenDataExtractor(),
-                cleaner, databaseLoaderFactory);
+                resources, extractorFactory.getOverigeProductenDataExtractor(),
+                cleaner);
         categories = new HashMap<>();
         products = new HashMap<>();
         prices = new HashMap<>();
         category_parent = new HashSet<>();
         price_product = new HashSet<>();
         product_category = new HashSet<>();
+        this.categoryRepoHelper = repoHelperFactory.getCategoryRepoHelper(log);
+        this.productRepoHelper = repoHelperFactory.getProductRepoHelper(log);
+        this.priceRepoHelper = repoHelperFactory.getProductPriceRepoHelper(log);
     }
 
     @Override
@@ -71,22 +77,22 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, P
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);
 
         // cache main category
-        mainCat = loader.toDb(mainCat);
+        mainCat = categoryRepoHelper.saveOrUpdate(mainCat);
         categories.put(mainCat.getCatid(), mainCat);
 
         // cache subcategory and relationships to parent
-        subCat = loader.toDb(subCat);
+        subCat = categoryRepoHelper.saveOrUpdate(subCat);
         categories.put(subCat.getCatid(), subCat);
         category_parent.add(new Relationship<>(subCat, categories.get(mainCat.getCatid())));
 
         // cache product and relationship to categories
-        product = loader.toDb(product);
+        product = productRepoHelper.saveOrUpdate(product);
         products.put(product.getProductid(), product);
         product_category.add(new Relationship<>(product, categories.get(mainCat.getCatid())));
         product_category.add(new Relationship<>(product, categories.get(subCat.getCatid())));
 
         // cache ingredient and relationship to product
-        price = loader.toDb(price, product);
+        price = priceRepoHelper.saveOrUpdate(price, product);
         prices.put(price.getPriceid(), price);
         price_product.add(new Relationship<>(price, products.get(product.getProductid())));
     }
