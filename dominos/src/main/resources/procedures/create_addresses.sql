@@ -59,7 +59,7 @@ begin
 			EXCEPTION WHEN unique_violation THEN
 	            -- Unique violation, should we care to log this? We already have the entry so not important imho
 	            -- should check here if the email address is different and log the address to the customer in address_customer
---	            lognotice = 'Duplicate entry found while inserting ' || streettext ||' '|| streetnumber;
+--	            lognotice = 'Duplicate entry found while inserting ' || streettext;
 --	        	CALL createlogentry(lognotice, logtime);
 				CONTINUE;
         END;

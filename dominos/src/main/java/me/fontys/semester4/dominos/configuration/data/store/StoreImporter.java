@@ -1,7 +1,10 @@
 package me.fontys.semester4.dominos.configuration.data.store;
 
+import me.fontys.semester4.data.entity.LogEntry;
+import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.data.entity.Store;
 import me.fontys.semester4.data.repository.StoreRepository;
+import me.fontys.semester4.data.repository.LogEntryRepository;
 import me.fontys.semester4.utils.StoredProcedureExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,26 +27,25 @@ public class StoreImporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreImporter.class);
 
-    private final Resource createLogEntry;
     private final Resource[] stores;
 
     private final StoreRepository storeRepository;
     private final Map<String, Integer> warnings = new HashMap<>();
     private final StoredProcedureExecutor storedProcedureExecutor;
+    private final LogEntryRepository logEntryRepository;
 
     @Autowired
-    public StoreImporter(@Qualifier("createLogEntryBean") Resource createLogEntry,
-                         @Qualifier("stores") Resource[] stores, StoreRepository storeRepository,
-                         StoredProcedureExecutor storedProcedureExecutor) {
+    public StoreImporter(@Qualifier("stores") Resource[] stores, StoreRepository storeRepository,
+                         StoredProcedureExecutor storedProcedureExecutor,
+                         LogEntryRepository logEntryRepository) {
         this.stores = stores;
         this.storeRepository = storeRepository;
         this.storedProcedureExecutor = storedProcedureExecutor;
-        this.createLogEntry = createLogEntry;
+        this.logEntryRepository = logEntryRepository;
     }
 
     public void doImport() throws IOException, SQLException {
         LOGGER.info("Starting import of stores...");
-        this.createOrUpdateProcedures();
         this.warnings.clear();
         List<Store> stores = new ArrayList<>();
 
@@ -52,9 +54,9 @@ public class StoreImporter {
             stores.addAll(this.processStoreResource(resource));
         }
 
-        LOGGER.info(String.format("Inserting %s stores...", stores.size()));
         String caller = String.format("Inserting %s stores...", stores.size());
-        this.storedProcedureExecutor.executeSql(String.format("CALL createLogEntry('%s')", caller), false);
+        LOGGER.info(caller);
+        this.logEntryRepository.save(new LogEntry(caller, Severity.INFO, "StoreImporter"));
         this.storeRepository.saveAll(stores);
     }
 
@@ -64,13 +66,12 @@ public class StoreImporter {
 
         if (totalWarnings > 0) {
             String warning = String.format("Store import result : %s warnings", totalWarnings);
-            String caller = String.format("CALL createLogEntry('%s')", warning);
-            this.storedProcedureExecutor.executeSql(caller, false);
+            this.logEntryRepository.save(new LogEntry(warning, Severity.WARN, "StoreImporter"));
             LOGGER.warn(warning);
 
             for (Map.Entry<String, Integer> _warning : this.warnings.entrySet()) {
                 String warn = String.format("  -> %s : %s", _warning.getKey(), _warning.getValue());
-                this.storedProcedureExecutor.executeSql(String.format("CALL createLogEntry('%s')", warn), false);
+                this.logEntryRepository.save(new LogEntry(warn, Severity.WARN, "StoreImporter"));
                 LOGGER.warn(warn);
             }
         }
@@ -128,9 +129,5 @@ public class StoreImporter {
         } else {
             this.warnings.put(message, 1);
         }
-    }
-
-    private void createOrUpdateProcedures() throws IOException, SQLException {
-        this.storedProcedureExecutor.createOrReplaceStoredProcedure(this.createLogEntry);
     }
 }
