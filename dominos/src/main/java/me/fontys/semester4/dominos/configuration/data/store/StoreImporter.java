@@ -24,10 +24,7 @@ public class StoreImporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreImporter.class);
 
-    @Value("classpath:procedures/createLogEntry.sql")
     private final Resource createLogEntry;
-
-    @Qualifier("stores")
     private final Resource[] stores;
 
     private final StoreRepository storeRepository;
@@ -35,10 +32,9 @@ public class StoreImporter {
     private final StoredProcedureExecutor storedProcedureExecutor;
 
     @Autowired
-    public StoreImporter(Resource[] stores, StoreRepository storeRepository,
-                         StoredProcedureExecutor storedProcedureExecutor,
-                         Resource createLogEntry
-    ) {
+    public StoreImporter(@Qualifier("createLogEntryBean") Resource createLogEntry,
+                         @Qualifier("stores") Resource[] stores, StoreRepository storeRepository,
+                         StoredProcedureExecutor storedProcedureExecutor) {
         this.stores = stores;
         this.storeRepository = storeRepository;
         this.storedProcedureExecutor = storedProcedureExecutor;
