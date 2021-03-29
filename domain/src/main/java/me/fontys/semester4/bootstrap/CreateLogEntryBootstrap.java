@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 @Configuration
 public class CreateLogEntryBootstrap {
