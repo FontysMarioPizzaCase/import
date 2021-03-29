@@ -24,7 +24,7 @@ public class StoreImporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreImporter.class);
 
-    @Qualifier("createLogEntry")
+    @Value("classpath:procedures/createLogEntry.sql")
     private final Resource createLogEntry;
 
     @Qualifier("stores")
@@ -37,7 +37,8 @@ public class StoreImporter {
     @Autowired
     public StoreImporter(Resource[] stores, StoreRepository storeRepository,
                          StoredProcedureExecutor storedProcedureExecutor,
-                         Resource createLogEntry) {
+                         Resource createLogEntry
+    ) {
         this.stores = stores;
         this.storeRepository = storeRepository;
         this.storedProcedureExecutor = storedProcedureExecutor;
