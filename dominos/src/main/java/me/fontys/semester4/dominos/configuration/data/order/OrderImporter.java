@@ -36,8 +36,9 @@ public class OrderImporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderImporter.class);
 
-    @Qualifier("orders")
+
     private final Resource[] orders;
+
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final OrderCustomOptionRepository orderCustomOptionRepository;
@@ -53,7 +54,7 @@ public class OrderImporter {
     private final ProcessCouponsProc processCouponsProc;
 
     @Autowired
-    public OrderImporter(Resource[] orders, OrderRepository orderRepository,
+    public OrderImporter(@Qualifier("orders") Resource[] orders, OrderRepository orderRepository,
                          OrderProductRepository orderProductRepository,
                          OrderCustomOptionRepository orderCustomOptionRepository,
                          OrderProductIngredientRepository orderProductIngredientRepository,
