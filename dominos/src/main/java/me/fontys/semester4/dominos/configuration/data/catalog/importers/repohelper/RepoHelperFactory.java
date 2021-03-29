@@ -26,19 +26,19 @@ public class RepoHelperFactory {
         this.productPriceRepository = productPriceRepository;
     }
 
-    public IngredientRepoHelper getIngredientRepoHelper(DatabaseLogger<LogEntry> log){
+    public IngredientRepoHelper getIngredientRepoHelper(DatabaseLogger log){
         return new IngredientRepoHelper(log, ingredientRepository);
     }
 
-    public CategoryRepoHelper getCategoryRepoHelper(DatabaseLogger<LogEntry> log){
+    public CategoryRepoHelper getCategoryRepoHelper(DatabaseLogger log){
         return new CategoryRepoHelper(log, categoryRepository);
     }
 
-    public ProductRepoHelper getProductRepoHelper(DatabaseLogger<LogEntry> log){
+    public ProductRepoHelper getProductRepoHelper(DatabaseLogger log){
         return new ProductRepoHelper(log, productRepository);
     }
 
-    public ProductPriceRepoHelper getProductPriceRepoHelper(DatabaseLogger<LogEntry> log){
+    public ProductPriceRepoHelper getProductPriceRepoHelper(DatabaseLogger log){
         return new ProductPriceRepoHelper(log, productPriceRepository);
     }
 }

@@ -27,6 +27,7 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
     private final IngredientRepoHelper ingredientRepoHelper;
     private final CategoryRepoHelper categoryRepoHelper;
 
+    final String CATEGORYNAME;
 
     @Autowired
     public CrustsImporter(Environment environment,
@@ -43,13 +44,14 @@ public class CrustsImporter extends CsvImporter<CrustRawCsvLine, CrustCsvLine> {
         this.crust_category = new HashSet<>();
         this.ingredientRepoHelper = repoHelperFactory.getIngredientRepoHelper(log);
         this.categoryRepoHelper = repoHelperFactory.getCategoryRepoHelper(log);
+
+        // init constants
+        CATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_crust");
     }
 
     @Override
     protected void transformAndLoad(CrustCsvLine l) {
-        final String CATEGORYNAME = environment.getProperty(
-                "catalog.pizzaingredientsimport.default_category_for_crust");
-
         Ingredient crust = new Ingredient(null, l.getCrustName(), l.getDescription(), l.getAddPrice(),
                 l.getSize(), l.isAvailable());
         Category category = new Category(null, null, CATEGORYNAME);

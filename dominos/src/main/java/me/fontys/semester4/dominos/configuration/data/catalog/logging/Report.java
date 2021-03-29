@@ -1,13 +1,15 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.logging;
 
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class Report {
@@ -43,11 +45,14 @@ public class Report {
     }
 
     public void log(DatabaseLogger databaseLogger) {
+        List<LogEntry> logEntries = new ArrayList<>();
+        String loggerName = databaseLogger.getLoggerName();
         getTotals();
         if (sumTotal > 0) {
-            logTotals(databaseLogger);
-            logEntries(databaseLogger);
+            logEntries.add(createTotalsEntry(loggerName));
+            logEntries.addAll(createEntries(loggerName));
         }
+        databaseLogger.logAll(logEntries);
         clear();
     }
 
@@ -64,25 +69,28 @@ public class Report {
         }
     }
 
-    private void logTotals(DatabaseLogger databaseLogger) {
+    private LogEntry createTotalsEntry(String loggerName) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Report %s: ", databaseLogger.getLoggerName()));
+        sb.append(String.format("Report %s: ", loggerName));
         if (totalErrors > 0) sb.append(String.format("%d errors ", totalErrors));
         if (totalWarnings > 0) sb.append(String.format("%d warnings ", totalWarnings));
         if (totalInfo > 0) sb.append(String.format("%d messages ", totalInfo));
         if (this.totalTrace > 0) sb.append(String.format("%d trace ", this.totalTrace));
         if (totalDebug > 0) sb.append(String.format("%d debug ", totalDebug));
-        databaseLogger.info(sb.toString());
+        // FIXME: newing
+        return new LogEntry(sb.toString(), Severity.INFO, loggerName);
     }
 
-    private void logEntries(DatabaseLogger databaseLogger) {
+    private List<LogEntry> createEntries(String loggerName) {
+        List<LogEntry> entries = new ArrayList<>();
         for (Map.Entry<Pair<Severity, String>, Integer> entry : cachedEntries.entrySet()) {
             Severity level = entry.getKey().getKey();
             String text = entry.getKey().getValue();
             int quantity = entry.getValue();
             String finalMessage = String.format("  -> %s : %s", text, quantity);
-            databaseLogger.log(finalMessage, level);
+            // FIXME: newing
+            entries.add(new LogEntry(finalMessage, level, loggerName));
         }
-        // TODO: use saveAll
+        return entries;
     }
 }

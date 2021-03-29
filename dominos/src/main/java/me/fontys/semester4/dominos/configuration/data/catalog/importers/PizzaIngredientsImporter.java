@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,6 +39,12 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
     private final ProductRepoHelper productRepoHelper;
     private final ProductPriceRepoHelper priceRepoHelper;
     private final IngredientRepoHelper ingredientRepoHelper;
+
+    final String INGREDIENTCATEGORYNAME;
+    final String SAUCECATEGORYNAME;
+    final double TAXRATE;
+    final Date FROMDATE;
+    final BigDecimal SAUCEDEFAULTPRICE;
 
     @Autowired
     public PizzaIngredientsImporter(Environment environment,
@@ -62,34 +69,44 @@ public class PizzaIngredientsImporter extends CsvImporter<PizzaIngredientsRawCsv
         this.productRepoHelper = repoHelperFactory.getProductRepoHelper(log);
         this.priceRepoHelper = repoHelperFactory.getProductPriceRepoHelper(log);
         this.ingredientRepoHelper = repoHelperFactory.getIngredientRepoHelper(log);
+
+        // init constants
+        TAXRATE = Double.parseDouble(Objects.requireNonNull(environment.getProperty(
+                "catalog.pizzaingredientsimport.default_taxrate_for_products")));
+        SAUCECATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_sauce");
+        INGREDIENTCATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_ingredients");
+
+        BigDecimal tempPrice;
+        Date tempDate;
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            tempDate = dateFormatter.parse(environment.getProperty(
+                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
+        } catch (ParseException e) {
+            tempDate = new Date();
+        }
+        try {
+            tempPrice = new BigDecimal(Objects.requireNonNull(environment.getProperty(
+                    "catalog.pizzaingredientsimport.default_addprice_for_sauce")));
+        } catch (NullPointerException e) {
+            tempPrice = BigDecimal.ZERO;
+        }
+        FROMDATE = tempDate;
+        SAUCEDEFAULTPRICE = tempPrice;
     }
 
     @Override
     protected void transformAndLoad(PizzaIngredientsCsvLine l) {
-        final String INGREDIENTCATEGORYNAME = environment.getProperty(
-                "catalog.pizzaingredientsimport.default_category_for_ingredients");
-        final String SAUCECATEGORYNAME = environment.getProperty(
-                "catalog.pizzaingredientsimport.default_category_for_sauce");
-        final double TAXRATE =
-                Double.parseDouble(Objects.requireNonNull(environment.getProperty(
-                "catalog.pizzaingredientsimport.default_taxrate_for_products")));
-        Date FROMDATE;
-        try {
-            SimpleDateFormat dateFormatter=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            FROMDATE = dateFormatter.parse(environment.getProperty(
-                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
-        } catch (ParseException e) {
-            FROMDATE = new Date();
-        }
-
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), l.isAvailable(), TAXRATE, null);
         Category mainCat = new Category(null, null, l.getCategoryName());
         Category subCat = new Category(null, null, l.getSubCategoryName());
         Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null, null,
                 null, true);
-        Ingredient sauce = new Ingredient(null, l.getStandardPizzasauce(), null, null,
-                null, true);
+        Ingredient sauce = new Ingredient(null, l.getStandardPizzasauce(), null,
+                SAUCEDEFAULTPRICE, null, true);
         Category ingrCat = new Category(null, null, INGREDIENTCATEGORYNAME);
         Category sauceCat = new Category(null, null, SAUCECATEGORYNAME);
         ProductPrice price = new ProductPrice(null, product, l.getPrice(), FROMDATE);

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Extractor<RawT> implements HasDatabaseLogger {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
 
     private final Class<RawT> type;
 

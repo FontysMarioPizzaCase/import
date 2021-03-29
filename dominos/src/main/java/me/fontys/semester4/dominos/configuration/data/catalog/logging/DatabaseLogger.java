@@ -1,20 +1,23 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.logging;
 
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.data.repository.interfaces.ILogRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.LogEntryFactories.ILogEntryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatabaseLogger<LogEntryType> {
+import java.util.List;
+
+public class DatabaseLogger {
     private final Logger logger;
-    protected final ILogRepository<LogEntryType> logRepository;
-    private final ILogEntryFactory<LogEntryType> logEntryFactory;
+    protected final ILogRepository<LogEntry> logRepository;
+    private final ILogEntryFactory<LogEntry> logEntryFactory;
     private final Report report;
 
     public DatabaseLogger(String loggerName,
-                          ILogRepository<LogEntryType> logRepository,
-                          ILogEntryFactory<LogEntryType> logEntryFactory,
+                          ILogRepository<LogEntry> logRepository,
+                          ILogEntryFactory<LogEntry> logEntryFactory,
                           Report report) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.logRepository = logRepository;
@@ -48,16 +51,33 @@ public class DatabaseLogger<LogEntryType> {
     }
 
     public void log(String message, Severity severity){
+        logToConsole(message, severity);
+        logToDb(message, severity);
+    }
+
+    public void logAll(List<LogEntry> logEntries) {
+        logAllToDb(logEntries);
+        logAllToConsole(logEntries);
+    }
+
+    private void logAllToConsole(List<LogEntry> logEntries) {
+        logEntries.forEach((e) -> logToConsole(e.getMessage(), e.getLogType()));
+    }
+
+    private void logAllToDb(List<LogEntry> logEntries) {
+        logRepository.saveAll(logEntries);
+    }
+
+    private void logToConsole(String message, Severity severity) {
         if (severity == Severity.INFO) logger.info(message);
         if (severity == Severity.WARN) logger.warn(message);
         if (severity == Severity.ERROR) logger.error(message);
         if (severity == Severity.DEBUG) logger.debug(message);
         if (severity == Severity.TRACE) logger.trace(message);
-        logToDb(message, severity);
     }
 
     public void logToDb(String message, Severity severity) {
-        LogEntryType entry = logEntryFactory.newEntry(message, severity, getLoggerName());
+        LogEntry entry = logEntryFactory.newEntry(message, severity, getLoggerName());
         logRepository.save(entry);
     }
 

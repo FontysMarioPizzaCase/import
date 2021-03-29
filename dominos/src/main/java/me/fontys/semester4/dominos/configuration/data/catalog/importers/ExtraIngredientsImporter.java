@@ -27,6 +27,9 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
     private final IngredientRepoHelper ingredientRepoHelper;
     private final CategoryRepoHelper categoryRepoHelper;
 
+    final String INGREDIENTCATEGORYNAME;
+    final String EXTRAINGREDIENTCATEGORYNAME;
+
     @Autowired
     public ExtraIngredientsImporter(Environment environment,
                                     DatabaseLoggerFactory databaseLoggerFactory,
@@ -42,15 +45,16 @@ public class ExtraIngredientsImporter extends CsvImporter<ExtraIngredientRawCsvL
         this.ingredient_category = new HashSet<>();
         this.ingredientRepoHelper = repoHelperFactory.getIngredientRepoHelper(log);
         this.categoryRepoHelper = repoHelperFactory.getCategoryRepoHelper(log);
+
+        // init constants
+        INGREDIENTCATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_ingredients");
+        EXTRAINGREDIENTCATEGORYNAME = environment.getProperty(
+                "catalog.pizzaingredientsimport.default_category_for_extraingredients");
     }
 
     @Override
     protected void transformAndLoad(ExtraIngredientCsvLine l) {
-        final String INGREDIENTCATEGORYNAME = environment.getProperty(
-                "catalog.pizzaingredientsimport.default_category_for_ingredients");
-        final String EXTRAINGREDIENTCATEGORYNAME = environment.getProperty(
-                "catalog.pizzaingredientsimport.default_category_for_extraingredients");
-
         Ingredient ingredient = new Ingredient(null, l.getIngredientName(), null, l.getAddPrice(),
                 null, true);
         Category ingredientCat = new Category(null, null, INGREDIENTCATEGORYNAME);

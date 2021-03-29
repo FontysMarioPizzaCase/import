@@ -17,7 +17,7 @@ import java.util.List;
 
 @Configuration
 public abstract class CsvImporter<RawT, CleanT> implements Importer {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
     protected final Environment environment;
 
     private final Resource[] resources;
@@ -43,8 +43,15 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
 
         List<RawT> rawCsvLines = extractor.extractRaw(resources);
         List<CleanT> cleanedLines = parser.parse(rawCsvLines);
-        transformAndLoad(cleanedLines);
-        loadCachedRelationships();
+        try {
+            transformAndLoad(cleanedLines);
+            loadCachedRelationships();
+        } catch (Exception e) {
+            log.addToReport(
+                    String.format("Could not continue import. Rolling back. || ERROR: %s", e.toString()),
+                    Severity.ERROR);
+            throw e; // TODO: look up how to roll back
+        }
     }
 
     protected void announce() {

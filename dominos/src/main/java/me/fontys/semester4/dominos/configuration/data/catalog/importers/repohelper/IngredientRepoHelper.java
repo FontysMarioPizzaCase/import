@@ -7,10 +7,10 @@ import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLo
 import java.util.Optional;
 
 public class IngredientRepoHelper {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
     private final IngredientRepository ingredientRepository;
 
-    public IngredientRepoHelper(DatabaseLogger<LogEntry> databaseLogger, IngredientRepository ingredientRepository) {
+    public IngredientRepoHelper(DatabaseLogger databaseLogger, IngredientRepository ingredientRepository) {
         this.log = databaseLogger;
         this.ingredientRepository = ingredientRepository;
     }
@@ -32,9 +32,10 @@ public class IngredientRepoHelper {
 
     private void saveEntity(Ingredient ingredient) {
         if (ingredient.getAddprice() == null) {
-            log.addToReport("Creating ingredient without price: " + ingredient, Severity.WARN);
-        }
-        else{
+            final String ERRORMSG = "Could not find incomplete ingredient in database: " + ingredient;
+            log.addToReport(ERRORMSG, Severity.ERROR);
+            throw new IllegalArgumentException(ERRORMSG); // FIXME
+        } else {
             log.addToReport("Created ingredient: " + ingredient, Severity.INFO);
         }
         this.ingredientRepository.save(ingredient);
