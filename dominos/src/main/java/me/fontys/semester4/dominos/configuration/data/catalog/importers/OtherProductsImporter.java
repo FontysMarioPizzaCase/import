@@ -29,9 +29,14 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, P
     private final Set<Relationship<Category, Category>> category_parent;
     private final Set<Relationship<ProductPrice, Product>> price_product;
     private final Set<Relationship<Product, Category>> product_category;
+
     private final CategoryRepoHelper categoryRepoHelper;
     private final ProductRepoHelper productRepoHelper;
     private final ProductPriceRepoHelper priceRepoHelper;
+
+    final boolean ISAVAILABLE;
+    final double TAXRATE;
+    final Date FROMDATE;
 
     @Autowired
     public OtherProductsImporter(Environment environment,
@@ -52,24 +57,26 @@ public class OtherProductsImporter extends CsvImporter<OtherProductRawCsvLine, P
         this.categoryRepoHelper = repoHelperFactory.getCategoryRepoHelper(log);
         this.productRepoHelper = repoHelperFactory.getProductRepoHelper(log);
         this.priceRepoHelper = repoHelperFactory.getProductPriceRepoHelper(log);
+
+        // init constants
+        TAXRATE = Double.parseDouble(Objects.requireNonNull(environment.getProperty(
+                "catalog.pizzaingredientsimport.default_taxrate_for_products")));
+        ISAVAILABLE = Boolean.parseBoolean(environment.getProperty(
+                "catalog.pizzaingredientsimport.default_isavailable_for_products"));
+
+        Date tempDate;
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            tempDate = dateFormatter.parse(environment.getProperty(
+                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
+        } catch (ParseException e) {
+            tempDate = new Date();
+        }
+        FROMDATE = tempDate;
     }
 
     @Override
     protected void transformAndLoad(ProductCsvLine l) {
-        final boolean ISAVAILABLE = Boolean.parseBoolean(environment.getProperty(
-                "catalog.pizzaingredientsimport.default_isavailable_for_products"));
-        final double TAXRATE =
-                Double.parseDouble(Objects.requireNonNull(environment.getProperty(
-                        "catalog.pizzaingredientsimport.default_taxrate_for_products")));
-        Date FROMDATE;
-        try {
-            SimpleDateFormat dateFormatter=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            FROMDATE = dateFormatter.parse(environment.getProperty(
-                    "catalog.pizzaingredientsimport.default_fromdate_for_price"));
-        } catch (ParseException e) {
-            FROMDATE = new Date();
-        }
-
         Product product = new Product(null, l.getProductName(), l.getProductDescription(),
                 l.isSpicy(), l.isVegetarian(), ISAVAILABLE, TAXRATE, null);
         Category mainCat = new Category(null, null, l.getCategoryName());

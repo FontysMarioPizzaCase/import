@@ -9,10 +9,10 @@ import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLo
 import java.util.Optional;
 
 public class CategoryRepoHelper {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
     private final CategoryRepository categoryRepository;
 
-    public CategoryRepoHelper(DatabaseLogger<LogEntry> databaseLogger, CategoryRepository categoryRepository) {
+    public CategoryRepoHelper(DatabaseLogger databaseLogger, CategoryRepository categoryRepository) {
         this.log = databaseLogger;
         this.categoryRepository = categoryRepository;
     }

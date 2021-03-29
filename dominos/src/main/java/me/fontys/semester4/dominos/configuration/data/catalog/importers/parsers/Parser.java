@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class Parser<RawT, CleanT> implements HasDatabaseLogger {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
 
     public Parser(DatabaseLoggerFactory databaseLoggerFactory) {
         String className = this.getClass().getName();
@@ -59,12 +59,6 @@ public abstract class Parser<RawT, CleanT> implements HasDatabaseLogger {
         if (badChars.length() > 0) {
             final String MSG = String.format("Unreadable character(s) %s found in %s will be deleted",
                     Arrays.toString(badChars.toCharArray()), stringProperty);
-            final String ERRORMSG = String.format("Unreadable character(s) found in %s ", propertyName);
-
-//            if (level == Severity.ERROR) {  TODO: remove
-//                summaryLog.addToReport(ERRORMSG, level);
-//                throw new IllegalArgumentException(MSG);
-//            }
 
             log.addToReport(MSG, UNREADABLECHARSEVERITY);
 

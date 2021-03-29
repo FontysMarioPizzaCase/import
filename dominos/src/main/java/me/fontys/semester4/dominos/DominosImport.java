@@ -46,6 +46,7 @@ public class DominosImport implements CommandLineRunner {
     public void run(String... args) throws Exception {
         long start = System.currentTimeMillis();
 
+        // TODO: uncomment before merge
 //        // Do the store import
 //        this.storeImporter.doImport();
 //        this.storeImporter.report();

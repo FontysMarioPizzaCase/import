@@ -7,10 +7,10 @@ import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLo
 import java.util.Optional;
 
 public class ProductRepoHelper {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
     private final ProductRepository productRepository;
 
-    public ProductRepoHelper(DatabaseLogger<LogEntry> databaseLogger, ProductRepository productRepository) {
+    public ProductRepoHelper(DatabaseLogger databaseLogger, ProductRepository productRepository) {
         this.log = databaseLogger;
         this.productRepository = productRepository;
     }

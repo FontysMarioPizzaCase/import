@@ -20,7 +20,7 @@ public class DatabaseLoggerFactory {
         this.logEntryFactory = logEntryFactory;
     }
 
-    public DatabaseLogger<LogEntry> newDatabaseLogger(String loggerName){
-        return new DatabaseLogger<>(loggerName, logEntryRepository, logEntryFactory, new Report());
+    public DatabaseLogger newDatabaseLogger(String loggerName){
+        return new DatabaseLogger(loggerName, logEntryRepository, logEntryFactory, new Report());
     }
 }

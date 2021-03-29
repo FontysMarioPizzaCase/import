@@ -3,19 +3,21 @@ package me.fontys.semester4.dominos.configuration.data.catalog.importers.repohel
 import me.fontys.semester4.data.entity.*;
 import me.fontys.semester4.data.repository.ProductPriceRepository;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ProductPriceRepoHelper {
-    protected final DatabaseLogger<LogEntry> log;
+    protected final DatabaseLogger log;
     private final ProductPriceRepository priceRepository;
 
-    public ProductPriceRepoHelper(DatabaseLogger<LogEntry> databaseLogger, ProductPriceRepository priceRepository) {
+    public ProductPriceRepoHelper(DatabaseLogger databaseLogger, ProductPriceRepository priceRepository) {
         this.log = databaseLogger;
         this.priceRepository = priceRepository;
     }
 
+//    @Transactional
     public ProductPrice saveOrUpdate(ProductPrice newData, Product product) {
         Optional<ProductPrice> temp;
 
