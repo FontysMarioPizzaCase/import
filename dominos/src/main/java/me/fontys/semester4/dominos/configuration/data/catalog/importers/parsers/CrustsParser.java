@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.dataparsers;
+package me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers;
 
 import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-public class CrustsDataParser extends DataParser<CrustRawCsvLine, CrustCsvLine> {
+public class CrustsParser extends Parser<CrustRawCsvLine, CrustCsvLine> {
 
-    public CrustsDataParser(DatabaseLoggerFactory databaseLoggerFactory) {
+    public CrustsParser(DatabaseLoggerFactory databaseLoggerFactory) {
         super(databaseLoggerFactory);
     }
 

@@ -5,9 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.stream.Stream;
 
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, Long>, JpaSpecificationExecutor<ProductPrice> {
     // TODO: add date
-    Stream<ProductPrice> findByPriceAndProduct_Productid(BigDecimal price, Long productid);
+//    Stream<ProductPrice> findByPriceAndProduct_Productid(BigDecimal price, Long productid);
+
+    Stream<ProductPrice> findByPriceAndProduct_ProductidAndFromdate(BigDecimal price, Long productid, Date date);
+
 }

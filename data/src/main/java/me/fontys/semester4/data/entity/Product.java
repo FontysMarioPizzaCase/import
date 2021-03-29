@@ -86,13 +86,13 @@ public class Product implements Serializable {
     public String getDescription() {
         return description;
     }
-    public boolean getSpicy() {
+    public Boolean getSpicy() {
         return spicy;
     }
-    public boolean getVegetarian() {
+    public Boolean getVegetarian() {
         return vegetarian;
     }
-    public boolean getAvailable() {
+    public Boolean getAvailable() {
         return available;
     }
     public Double getTaxrate() {

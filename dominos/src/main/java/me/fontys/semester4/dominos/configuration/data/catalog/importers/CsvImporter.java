@@ -1,10 +1,9 @@
 package me.fontys.semester4.dominos.configuration.data.catalog.importers;
 
+import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoaderFactory;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataparsers.DataParser;
-import me.fontys.semester4.dominos.configuration.data.catalog.extractors.DataExtractor;
-import me.fontys.semester4.dominos.configuration.data.catalog.dataloader.DatabaseLoader;
+import me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers.Parser;
+import me.fontys.semester4.dominos.configuration.data.catalog.importers.extractors.Extractor;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLogger;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -18,25 +17,22 @@ import java.util.List;
 
 @Configuration
 public abstract class CsvImporter<RawT, CleanT> implements Importer {
-    protected final DatabaseLogger log;
+    protected final DatabaseLogger<LogEntry> log;
     protected final Environment environment;
 
     private final Resource[] resources;
-    private final DataExtractor<RawT> dataExtractor;
-    protected DataParser<RawT, CleanT> parser;
-    protected DatabaseLoader loader;
+    private final Extractor<RawT> extractor;
+    protected Parser<RawT, CleanT> parser;
 
     public CsvImporter(Environment environment,
                        DatabaseLoggerFactory databaseLoggerFactory,
-                       Resource[] resources, DataExtractor<RawT> dataExtractor,
-                       DataParser<RawT, CleanT> parser,
-                       DatabaseLoaderFactory databaseLoaderFactory) {
+                       Resource[] resources, Extractor<RawT> extractor,
+                       Parser<RawT, CleanT> parser) {
         this.log = databaseLoggerFactory.newDatabaseLogger(this.getClass().getSuperclass().getName());
         this.environment = environment;
         this.resources = resources;
-        this.dataExtractor = dataExtractor;
+        this.extractor = extractor;
         this.parser = parser;
-        this.loader = databaseLoaderFactory.getDatabaseLoader();
     }
 
     @Override
@@ -45,7 +41,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
         announce();
         log.clearReport();
 
-        List<RawT> rawCsvLines = dataExtractor.extractRaw(resources);
+        List<RawT> rawCsvLines = extractor.extractRaw(resources);
         List<CleanT> cleanedLines = parser.parse(rawCsvLines);
         transformAndLoad(cleanedLines);
         loadCachedRelationships();
@@ -61,7 +57,6 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
 
     protected void transformAndLoad(List<CleanT> csvLines) {
         log.info(String.format("- Transforming and importing %s csv lines...", csvLines.size()));
-        loader.clearWarnings();
 
         for (var line : csvLines) {
             try {
@@ -83,10 +78,8 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
 
     @Override
     public void report() {
-        dataExtractor.report(); // nothing?
+        extractor.report();
         parser.report();
-        loader.report();
-        log.report(); // nothing?
-
+        log.report();
     }
 }

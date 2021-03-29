@@ -1,4 +1,4 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.extractors;
+package me.fontys.semester4.dominos.configuration.data.catalog.importers.extractors;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -15,12 +15,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataExtractor<RawT> implements HasDatabaseLogger {
+public class Extractor<RawT> implements HasDatabaseLogger {
     protected final DatabaseLogger<LogEntry> log;
 
     private final Class<RawT> type;
 
-    public DataExtractor(DatabaseLoggerFactory databaseLoggerFactory, Class<RawT> type) {
+    public Extractor(DatabaseLoggerFactory databaseLoggerFactory, Class<RawT> type) {
         this.log = databaseLoggerFactory.newDatabaseLogger(this.getClass().getName());
         this.type = type;
     }

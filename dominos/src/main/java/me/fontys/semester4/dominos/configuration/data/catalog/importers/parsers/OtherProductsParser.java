@@ -1,17 +1,14 @@
-package me.fontys.semester4.dominos.configuration.data.catalog.dataparsers;
+package me.fontys.semester4.dominos.configuration.data.catalog.importers.parsers;
 
-import me.fontys.semester4.data.entity.Severity;
 import me.fontys.semester4.dominos.configuration.data.catalog.logging.DatabaseLoggerFactory;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.cleaned_csv_models.ProductCsvLine;
 import me.fontys.semester4.dominos.configuration.data.catalog.models.raw_csv_models.OtherProductRawCsvLine;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
 @Service
-public class OtherProductsDataParser extends DataParser<OtherProductRawCsvLine, ProductCsvLine> {
+public class OtherProductsParser extends Parser<OtherProductRawCsvLine, ProductCsvLine> {
 
-    public OtherProductsDataParser(DatabaseLoggerFactory databaseLoggerFactory) {
+    public OtherProductsParser(DatabaseLoggerFactory databaseLoggerFactory) {
         super(databaseLoggerFactory);
     }
 

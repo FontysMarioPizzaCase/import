@@ -83,5 +83,6 @@ public class Report {
             String finalMessage = String.format("  -> %s : %s", text, quantity);
             databaseLogger.log(finalMessage, level);
         }
+        // TODO: use saveAll
     }
 }

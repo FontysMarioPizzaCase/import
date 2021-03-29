@@ -97,7 +97,9 @@ public class Ingredient implements Serializable {
         this.products = products;
     }
 
-    public Integer getSize() { return size; }
+    public Integer getSize() {
+        return size;
+    }
 
     public void setAddprice(BigDecimal addprice) {
         this.addprice = addprice;
@@ -107,7 +109,7 @@ public class Ingredient implements Serializable {
         return addprice;
     }
 
-    public boolean isAvailable() {
+    public Boolean isAvailable() {
         return isAvailable;
     }
 
@@ -115,12 +117,22 @@ public class Ingredient implements Serializable {
         return products;
     }
 
-    @Override
-    public boolean equals(Object o) {
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Ingredient that = (Ingredient) o;
+//        return name.equals(that.name);
+//    }
+
+
+    public boolean equalsIgnoreIdAndRelations(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        return name.equals(that.name);
+        return Objects.equals(name, that.name)
+                && Objects.equals(description, that.description) && Objects.equals(size, that.size)
+                && Objects.equals(addprice, that.addprice) && Objects.equals(isAvailable, that.isAvailable);
     }
 
     @Override
