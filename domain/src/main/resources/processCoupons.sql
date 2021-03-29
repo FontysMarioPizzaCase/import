@@ -22,7 +22,6 @@ declare
     takeAwayConditionIdToUse integer        := null;
     newActions               integer        := 0;
     newCouponId              integer        := null;
-    dynCur                   refcursor;
 
 begin
 
@@ -38,7 +37,7 @@ begin
             fixedPriceAct = null;
             minPrice = null;
 
--- check if coupon action exist
+            -- check if coupon action exist
             if (couponTemp.used_coupon ~ '^.+\% korting op je bestelling$') then
 
                 percentageAct = (REGEXP_MATCHES(couponTemp.used_coupon, '([0-9]+)\%'))[1];
@@ -51,7 +50,7 @@ begin
                     returning actionid into actionIdToUse;
                     newActions = newActions + 1;
                     call createLogEntry(format('created coupon action percentage %L%% reduction id:%L',
-                                               percentageAct, actionIdToUse), logsessiontime);
+                                               percentageAct, actionIdToUse), logsessiontime,'INFO','process_coupons procedure');
                 else
                     actionIdToUse = (select ca.actionid
                                      from coupon_actions ca
@@ -62,7 +61,7 @@ begin
                 end if;
             end if;
 
--- check if coupon action exist
+            -- check if coupon action exist
             if (couponTemp.used_coupon ~ '^[1-9]+e pizza gratis bij .+$') then
 
                 eachxFreeAct = (REGEXP_MATCHES(couponTemp.used_coupon, '^([1-9]+)e'))[1];
@@ -79,7 +78,7 @@ begin
                     newActions = newActions + 1;
 
                     call createLogEntry(format('created coupon action each %L free id:%L',
-                                               eachxFreeAct, actionIdToUse), logsessiontime);
+                                               eachxFreeAct, actionIdToUse), logsessiontime,'INFO','process_coupons procedure');
                 else
                     actionIdToUse = (select ca.actionid
                                      from coupon_actions ca
@@ -90,11 +89,11 @@ begin
                 end if;
             end if;
 
--- check if coupon action exist
+            -- check if coupon action exist
             if (couponTemp.used_coupon ~ '.+ [0-9\,\-]+ Korting op.+$') then
                 fixedpricePart = (REGEXP_MATCHES(couponTemp.used_coupon, '.+ ([0-9\,\-]+) Korting'))[1];
                 call createLogEntry(format('extracted coupon action fixedprice %L', fixedpricePart)::varchar(255),
-                                    logsessiontime);
+                                    logsessiontime,'INFO','process_coupons procedure');
                 fixedpriceAct = TO_NUMBER(replace(replace(fixedpricePart, ',', '.'), '-', '00'), '999D9S');
 
                 if ((select count(*)
@@ -109,7 +108,7 @@ begin
                     returning actionid into actionIdToUse;
                     newActions = newActions + 1;
                     call createLogEntry(format('created coupon action reduce price by %L id:%L', fixedpriceAct,
-                                               actionIdToUse), logsessiontime);
+                                               actionIdToUse), logsessiontime,'INFO','process_coupons procedure');
                 else
                     actionIdToUse = (select ca.actionid
                                      from coupon_actions ca
@@ -120,7 +119,7 @@ begin
                 end if;
             end if;
 
--- check if coupon condition exists
+            -- check if coupon condition exists
             if (couponTemp.used_coupon ~ '(afhalen|bezorgen|vanaf)') then
                 takeAwayPart = (REGEXP_MATCHES(couponTemp.used_coupon, '(afhalen|bezorgen)'))[1];
                 if (takeAwayPart = 'afhalen')
@@ -136,7 +135,7 @@ begin
                 if (couponTemp.used_coupon ~ '(vanaf)') then
                     minPricePart = (REGEXP_MATCHES(couponTemp.used_coupon, 'vanaf . ([0-9\,\-]+)'))[1];
                     call createLogEntry(format('extracted coupon condition minimum price %L', minPricePart),
-                                        logsessiontime);
+                                        logsessiontime,'INFO','process_coupons procedure');
                     minPrice = TO_NUMBER(replace(replace(minPricePart, ',', '.'), '-', '00'), '999D9S');
                 else
                     minPrice = null;
@@ -153,7 +152,7 @@ begin
                     newActions = newActions + 1;
                     call createLogEntry(format('created coupon condition takeaway:"%L" minprice:"%L" id:%L',
                                                takeAwayConditionToUse, minPrice, takeAwayConditionIdToUse),
-                                        logsessiontime);
+                                        logsessiontime,'INFO','process_coupons procedure');
                 else
                     takeAwayConditionIdToUse = (select cc.conditionid
                                                 from coupon_conditions cc
@@ -162,22 +161,20 @@ begin
                                                   and cc.min_quantity is null);
                 end if;
             end if;
-
+            --create new coupon and associate with correct action and condition (if applicable)
             insert into coupon (couponcode, "action", "condition")
             values (couponTemp.used_coupon, actionIdToUse, takeAwayConditionIdToUse)
             returning couponid into newCouponId;
             call createLogEntry(format('created coupon with code "%L" actionid:%L conditionid:"%L" couponid:%L',
                                        couponTemp.used_coupon, actionIdToUse, takeAwayConditionIdToUse, newCouponId),
-                                logsessiontime);
+                                logsessiontime,'INFO','process_coupons procedure');
 
         end loop;
-
 exception
     when others then
         GET STACKED DIAGNOSTICS l_context = PG_EXCEPTION_CONTEXT;
-        raise notice '%',right(l_context, 255);
-        call createLogEntry(format('%L', right(l_context, 255)), logsessiontime);
-
+        call createLogEntry(format('%L', right(l_context, 1000)), logsessiontime,'ERROR','process_coupons procedure');
+        raise;
 end;
 $$
     LANGUAGE plpgsql;
