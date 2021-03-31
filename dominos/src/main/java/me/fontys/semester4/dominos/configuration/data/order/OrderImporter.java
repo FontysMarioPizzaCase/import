@@ -101,8 +101,6 @@ public class OrderImporter {
         this.storedProcedureExecutor.executeSql("CALL create_addresses()", false);
         LOGGER.info("Calling create_orders()");
         this.storedProcedureExecutor.executeSql("CALL create_orders()", false);
-        LOGGER.info("Process order coupons...");
-        processCouponsProc.Execute();
     }
 
     public void report() {
@@ -115,12 +113,6 @@ public class OrderImporter {
             for (Map.Entry<String, Integer> warning : this.warnings.entrySet()) {
                 LOGGER.warn(String.format("  -> %s : %s", warning.getKey(), warning.getValue()));
             }
-        }
-
-        // get coupons stored procedure logs stored in database
-        for(LogEntry importLogEntry : processCouponsProc.RetrieveLogs())
-        {
-            LOGGER.info(importLogEntry.getMessage());
         }
 
     }

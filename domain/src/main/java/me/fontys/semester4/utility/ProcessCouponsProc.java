@@ -21,7 +21,7 @@ import java.util.Date;
 public class ProcessCouponsProc extends CustomSqlExecutor
 {
 
-    @Value("classpath:processCoupons.sql")
+    @Value("classpath:processCoupon.sql")
     private Resource processCouponsProc;
 
     private Date sessionDate;
