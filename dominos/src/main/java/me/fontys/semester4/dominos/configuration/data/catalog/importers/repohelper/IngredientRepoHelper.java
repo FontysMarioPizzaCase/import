@@ -32,9 +32,10 @@ public class IngredientRepoHelper {
 
     private void saveEntity(Ingredient ingredient) {
         if (ingredient.getAddprice() == null) {
-            final String ERRORMSG = "Could not find incomplete ingredient in database: " + ingredient;
+            final String ERRORMSG = "Ingredient not found in database. Could not create " +
+                    "incomplete ingredient: " + ingredient;
             log.addToReport(ERRORMSG, Severity.ERROR);
-            throw new IllegalArgumentException(ERRORMSG); // FIXME
+            throw new IllegalArgumentException(ERRORMSG);
         } else {
             log.addToReport("Created ingredient: " + ingredient, Severity.INFO);
         }

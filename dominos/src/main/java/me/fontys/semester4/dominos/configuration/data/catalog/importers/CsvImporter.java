@@ -36,7 +36,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {RuntimeException.class, Exception.class})
     public void doImport() throws IOException {
         announce();
         log.clearReport();
