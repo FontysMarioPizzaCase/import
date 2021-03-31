@@ -44,6 +44,8 @@ BEGIN
                     order_row.delivery_cost, order_row.order_date, 1, 1, LOWER(order_row.delivery_type) = 'afhalen',
                     order_row.total_price, order_row.storeid)
             RETURNING "order".orderid INTO created_order_id;
+            -- process coupon
+            CALL process_coupon(created_order_id,order_row.used_coupon);
 
             INSERT INTO order_product (name, orderid, price, productid, quantity, taxrate)
             VALUES (order_row.product, created_order_id, order_row.product_price, order_row.productid,
