@@ -50,7 +50,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
             log.addToReport(
                     String.format("Could not continue import. Rolling back. || ERROR: %s", e.toString()),
                     Severity.ERROR);
-            throw e; // TODO: look up how to roll back
+            throw e;
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class CsvImporter<RawT, CleanT> implements Importer {
                 log.addToReport(
                         String.format("Invalid data in line: %s || ERROR: %s", line.toString(), e.toString()),
                         Severity.ERROR);
-                throw e; // FIXME (dev)
+                throw e;
             }
         }
     }

@@ -21,6 +21,7 @@ public class DatabaseLoggerFactory {
     }
 
     public DatabaseLogger newDatabaseLogger(String loggerName){
-        return new DatabaseLogger(loggerName, logEntryRepository, logEntryFactory, new Report());
+        Report report = new Report(logEntryFactory);
+        return new DatabaseLogger(loggerName, logEntryRepository, logEntryFactory, report);
     }
 }

@@ -7,12 +7,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-// TODO: UNCOMMENT BEFORE PUSH
-//@Table(name = "product_price",
-//        indexes = @Index(name = "productpricedate",
-//                        columnList = "productid, price, fromdate",
-//                        unique = true))
-@Table(name = "product_price")
+@Table(name = "product_price",
+        indexes = @Index(name = "productpricedate",
+                        columnList = "productid, price, fromdate",
+                        unique = true))
+
 @Entity
 public class ProductPrice implements Serializable {
 
