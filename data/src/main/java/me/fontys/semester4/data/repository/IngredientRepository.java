@@ -9,15 +9,4 @@ import java.util.Optional;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long>, JpaSpecificationExecutor<Ingredient> {
 
     Optional<Ingredient> findByNameIgnoreCase(String name);
-
-    // TODO: remove
-//    boolean existsByNameIgnoreCase(String name);
-//
-//    @Query("SELECT i from Ingredient i " +
-//            "left join fetch i.categories " +
-//            "left join fetch i.products")
-//    List<Ingredient> findAllCustom();
-//
-//    Ingredient saveOrUpdate(Ingredient ingredient);
-
 }

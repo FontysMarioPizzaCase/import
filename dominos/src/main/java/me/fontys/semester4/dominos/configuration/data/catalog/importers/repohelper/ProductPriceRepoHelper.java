@@ -17,7 +17,6 @@ public class ProductPriceRepoHelper {
         this.priceRepository = priceRepository;
     }
 
-//    @Transactional
     public ProductPrice saveOrUpdate(ProductPrice newData, Product product) {
         Optional<ProductPrice> temp;
 
@@ -29,7 +28,7 @@ public class ProductPriceRepoHelper {
             log.addToReport(
                     String.format("Could not query db for ProductPrice: %s", e.toString()),
                     Severity.ERROR);
-            throw e; // FIXME (dev)
+            throw e;
         }
 
         ProductPrice productPrice;

@@ -2,8 +2,10 @@ package me.fontys.semester4.dominos.configuration.data.catalog.logging;
 
 import me.fontys.semester4.data.entity.LogEntry;
 import me.fontys.semester4.data.entity.Severity;
+import me.fontys.semester4.dominos.configuration.data.catalog.logging.LogEntryFactories.ILogEntryFactory;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class Report {
+    private final ILogEntryFactory<LogEntry> logEntryFactory;
     private Map<Pair<Severity, String>, Integer>  cachedEntries;
     private int totalInfo;
     private int totalWarnings;
@@ -21,7 +24,9 @@ public class Report {
     private int totalDebug;
     private int sumTotal;
 
-    public Report() {
+    @Autowired
+    public Report(ILogEntryFactory<LogEntry> logEntryFactory){
+        this.logEntryFactory = logEntryFactory;
         clear();
     }
 
@@ -77,8 +82,8 @@ public class Report {
         if (totalInfo > 0) sb.append(String.format("%d messages ", totalInfo));
         if (this.totalTrace > 0) sb.append(String.format("%d trace ", this.totalTrace));
         if (totalDebug > 0) sb.append(String.format("%d debug ", totalDebug));
-        // FIXME: newing
-        return new LogEntry(sb.toString(), Severity.INFO, loggerName);
+
+        return logEntryFactory.newEntry(sb.toString(), Severity.INFO, loggerName);
     }
 
     private List<LogEntry> createEntries(String loggerName) {
@@ -88,8 +93,8 @@ public class Report {
             String text = entry.getKey().getValue();
             int quantity = entry.getValue();
             String finalMessage = String.format("  -> %s : %s", text, quantity);
-            // FIXME: newing
-            entries.add(new LogEntry(finalMessage, level, loggerName));
+
+            entries.add(logEntryFactory.newEntry(finalMessage, level, loggerName));
         }
         return entries;
     }
