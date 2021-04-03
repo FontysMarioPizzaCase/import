@@ -40,12 +40,12 @@ BEGIN
 
             INSERT INTO "order" (applied_discount, customer, customername, deliverydate, deliveryprice, orderdate,
                                  postalcodeid, streetnr, takeaway, totalprice, store)
-            VALUES (null, order_row.customerid, order_row.customer_name, order_row.delivery_time,
+            VALUES (order_row.coupon_discount, order_row.customerid, order_row.customer_name, order_row.delivery_time,
                     order_row.delivery_cost, order_row.order_date, 1, 1, LOWER(order_row.delivery_type) = 'afhalen',
                     order_row.total_price, order_row.storeid)
             RETURNING "order".orderid INTO created_order_id;
             -- process coupon
-            IF order_row.used_coupon <> '' THEN
+            IF order_row.coupon_discount > 0 THEN
                 CALL process_coupon(created_order_id,order_row.used_coupon);
             END IF;
 

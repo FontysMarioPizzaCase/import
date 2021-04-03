@@ -18,7 +18,9 @@ declare
     workingCouponId          integer        := null;
 
 begin
-    if(originalCouponcode = '') then
+    if(originalCouponcode = '' or originalCouponcode is null) then
+        call createLogEntry(format('orderid %L has discount with no coupon code!',
+                                   orderIdToLink), logsessiontime,'ERROR','process_coupons procedure');
         return;
     end if;
     -- check if coupon action exist
@@ -76,8 +78,7 @@ begin
     -- check if coupon action exist
     if (originalCouponcode ~ '.+ [0-9\,\-]+ Korting op.+$') then
         fixedpricePart = (REGEXP_MATCHES(originalCouponcode, '.+ ([0-9\,\-]+) Korting'))[1];
-        call createLogEntry(format('extracted coupon action fixedprice %L', fixedpricePart)::varchar(255),
-                            logsessiontime,'INFO','process_coupons procedure');
+
         fixedpriceAct = TO_NUMBER(replace(replace(fixedpricePart, ',', '.'), '-', '00'), '999D9S');
 
         if ((select count(*)
@@ -91,6 +92,8 @@ begin
             values (fixedpriceAct)
             returning actionid into actionIdToUse;
             newActions = newActions + 1;
+            call createLogEntry(format('extracted coupon action fixedprice %L', fixedpricePart)::varchar(255),
+                                logsessiontime,'TRACE','process_coupons procedure');
             call createLogEntry(format('created coupon action reduce price by %L id:%L', fixedpriceAct,
                                        actionIdToUse), logsessiontime,'INFO','process_coupons procedure');
         else
@@ -118,8 +121,7 @@ begin
         end if;
         if (originalCouponcode ~ '(vanaf)') then
             minPricePart = (REGEXP_MATCHES(originalCouponcode, 'vanaf . ([0-9\,\-]+)'))[1];
-            call createLogEntry(format('extracted coupon condition minimum price %L', minPricePart),
-                                logsessiontime,'INFO','process_coupons procedure');
+
             minPrice = TO_NUMBER(replace(replace(minPricePart, ',', '.'), '-', '00'), '999D9S');
         else
             minPrice = null;
@@ -136,6 +138,10 @@ begin
             values (takeAwayConditionToUse, minPrice)
             returning conditionid into takeAwayConditionIdToUse;
             newActions = newActions + 1;
+            if (minPrice is not null) then
+                call createLogEntry(format('extracted coupon condition minimum price %L', minPricePart),
+                                    logsessiontime,'TRACE','process_coupons procedure');
+            end if;
             call createLogEntry(format('created coupon condition takeaway:"%L" minprice:"%L" id:%L',
                                        takeAwayConditionToUse, minPrice, takeAwayConditionIdToUse),
                                 logsessiontime,'INFO','process_coupons procedure');
