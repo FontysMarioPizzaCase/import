@@ -126,9 +126,11 @@ begin
         end if;
         if ((select count(*)
              from coupon_conditions cc
-             where cc.takeaway = takeAwayConditionToUse
-               and cc.min_price = minPrice
-               and cc.min_quantity is null) = 0)
+             where
+                 (cc.takeaway = takeAwayConditionToUse or (takeAwayConditionToUse is null and cc.takeaway is null))
+               and (cc.min_price = minPrice or (minPrice is null and cc.min_price is null))
+               and cc.min_quantity is null
+            ) = 0)
         then
             insert into coupon_conditions (takeaway, min_price)
             values (takeAwayConditionToUse, minPrice)
@@ -140,16 +142,19 @@ begin
         else
             takeAwayConditionIdToUse = (select cc.conditionid
                                         from coupon_conditions cc
-                                        where cc.takeaway = takeAwayConditionToUse
-                                          and cc.min_price = minPrice
-                                          and cc.min_quantity is null);
+                                        where (cc.takeaway = takeAwayConditionToUse or (takeAwayConditionToUse is null and cc.takeaway is null))
+                                          and (cc.min_price = minPrice or (minPrice is null and cc.min_price is null))
+                                          and cc.min_quantity is null
+            );
         end if;
     end if;
     workingCouponId = (select c.couponid
                        from coupon c
                        where c.couponcode like originalCouponcode
                          and c.action = actionIdToUse
-                         and coalesce(c.condition,-1) = coalesce(takeAwayConditionIdToUse,-1));
+                         and (c.condition = takeAwayConditionIdToUse
+                                  or (takeAwayConditionIdToUse is null and c.condition is null))
+                        );
     raise notice 'workingCouponId:% originalCouponcode:% actionIdToUse:% conditionIdToUse:%'
         ,workingCouponId,originalCouponcode,actionIdToUse,takeAwayConditionIdToUse;
     if(workingCouponId is null) then
@@ -157,15 +162,17 @@ begin
         insert into coupon (couponcode, "action", "condition")
         values (originalCouponcode, actionIdToUse, takeAwayConditionIdToUse)
         returning couponid into workingCouponId;
+
+        call createLogEntry(format('created coupon with code "%L" actionid:%L conditionid:"%L" couponid:%L',
+                                   originalCouponcode, actionIdToUse, takeAwayConditionIdToUse, workingCouponId),
+                            logsessiontime,'INFO','process_coupons procedure');
     end if;
 
     -- create link table entry order - coupon
     insert into coupon_order (orderid,couponid)
     values(orderIdToLink,workingCouponId);
 
-    call createLogEntry(format('created coupon with code "%L" actionid:%L conditionid:"%L" couponid:%L',
-                               originalCouponcode, actionIdToUse, takeAwayConditionIdToUse, workingCouponId),
-                        logsessiontime,'INFO','process_coupons procedure');
+
 exception
     when others then
         GET STACKED DIAGNOSTICS l_context = PG_EXCEPTION_CONTEXT;
